@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bro-agent"
+version = "1.2.0"
+description = "⚡ Spec-Driven Development CLI - Initialize ASF 3.3 projects with Antigravity standards"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Antigravity Team"}
+]
+keywords = [
+    "spec-driven-development",
+    "ai-agent",
+    "sdlc",
+    "antigravity",
+    "code-generation",
+    "project-scaffolding",
+    "bro-agent"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Build Tools",
+]
+
+[project.urls]
+Homepage = "https://github.com/wedabro/bro-agent"
+Repository = "https://github.com/wedabro/bro-agent"
+Issues = "https://github.com/wedabro/bro-agent/issues"
+
+[project.scripts]
+bro-agent = "bro_agent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["bro_agent*"]
