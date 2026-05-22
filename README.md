@@ -476,6 +476,18 @@ bro-agent validate --target /path/to/project
 
 ---
 
+## CI/CD
+
+- CI: GitHub Actions chạy `pytest` cho pull requests và mọi push.
+- Release: tạo tag `vX.Y.Z` để build sdist/wheel và tạo GitHub Release kèm artifacts.
+
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+---
+
 ## 📄 License
 
 MIT
