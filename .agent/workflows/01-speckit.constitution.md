@@ -5,7 +5,7 @@ description: Thiết lập/cập nhật Constitution (Source of Law)
 # 📜 Constitution Setup
 
 ## Pre-conditions
-- `.agent/` directory đã tồn tại (chạy `bro-agent init` trước)
+- `.agent/` directory đã tồn tại (chạy `bro-skills init` trước)
 
 ## Steps
 

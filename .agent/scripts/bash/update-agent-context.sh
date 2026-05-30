@@ -10,7 +10,7 @@ fi
 if [ -d ".agent/identity" ]; then
   echo "✅ Identity: OK"
 else
-  echo "⚠️  Identity missing — run bro-agent init"
+  echo "⚠️  Identity missing — run bro-skills init"
 fi
 echo "✅ Context update complete"
 

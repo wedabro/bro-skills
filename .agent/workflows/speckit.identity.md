@@ -5,7 +5,7 @@ description: Tạo/cập nhật Master Identity cho AI Agent
 # 🆔 Identity Setup
 
 ## Pre-conditions
-- `.agent/project.json` tồn tại (chạy `bro-agent init` trước)
+- `.agent/project.json` tồn tại (chạy `bro-skills init` trước)
 - `.agent/memory/constitution.md` tồn tại (khuyến nghị)
 
 ## Steps
@@ -16,7 +16,7 @@ description: Tạo/cập nhật Master Identity cho AI Agent
    - Scan codebase → patterns, conventions hiện có
 2. Tạo/cập nhật `.agent/identity/master-identity.md`:
    - Persona + Core Capabilities
-   - Soul (Core Beliefs): "bro-agent First", "Docker is the Law"
+   - Soul (Core Beliefs): "bro-skills First", "Docker is the Law"
    - Project Context (auto-detected)
 3. Nếu `web_public`/`fullstack` → thêm SEO & GEO Awareness section
 

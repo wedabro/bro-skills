@@ -1,9 +1,16 @@
 {
-  "project_name": "bro-agent",
+  "project_name": "bro-skills",
   "project_type": "fullstack",
+  "attributes": {
+    "architecture": "monolith",
+    "platforms": ["web"],
+    "flags": ["public_facing", "has_backend", "has_persistence", "containerized"]
+  },
   "asf_version": "3.3",
-  "bro_agent_version": "1.0.0",
+  "bro_skills_version": "1.0.0",
   "created_at": "2026-02-23T23:09:07.539428",
-  "skills_count": 23,
-  "workflows_count": 25
+  "skills_count": 38,
+  "workflows_count": 33,
+  "multi_agent": true,
+  "agent_registry": ".agent/agents/registry.json"
 }

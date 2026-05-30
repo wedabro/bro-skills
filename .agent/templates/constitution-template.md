@@ -1,7 +1,7 @@
 # 📜 Project Constitution
 
-## §0 bro-agent Protocol (MANDATORY)
-- **BẮT BUỘC**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) PHẢI sử dụng `bro-agent`.
+## §0 bro-skills Protocol (MANDATORY)
+- **BẮT BUỘC**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) PHẢI sử dụng `bro-skills`.
 - **Pipeline**: Tuân thủ nghiêm ngặt quy trình: Specify → Plan → Tasks → Implement.
 - **Tools**: Chỉ sử dụng các workflows trong `.agent/workflows` để thực hiện task.
 
