@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Speckit: Plan",
+  "description": "Tạo plan.md (kiến trúc, Goal-Backward) theo .agent/workflows/04-speckit.plan.md",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Đọc và thực thi `.agent/workflows/04-speckit.plan.md` cho feature spec hiện tại trong `.agent/specs/`. Tạo plan.md. Tuân thủ `.agent/memory/constitution.md`. Phản hồi bằng Tiếng Việt."
+  }
+}

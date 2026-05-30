@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Speckit: Tasks",
+  "description": "Breakdown thành atomic tasks theo .agent/workflows/05-speckit.tasks.md",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Đọc và thực thi `.agent/workflows/05-speckit.tasks.md` cho feature hiện tại trong `.agent/specs/`. Tạo tasks.md với atomic tasks (15-Minute Rule, ≤ 3 files/task). Phản hồi bằng Tiếng Việt."
+  }
+}

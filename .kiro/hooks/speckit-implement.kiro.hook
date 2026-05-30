@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Speckit: Implement",
+  "description": "Thực thi implementation theo tasks.md (.agent/workflows/07-speckit.implement.md)",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Đọc và thực thi `.agent/workflows/07-speckit.implement.md` cho feature hiện tại trong `.agent/specs/`. Implement tuần tự các task trong tasks.md, đánh dấu hoàn thành. Docker-First, dùng ENV vars, tuân thủ `.agent/memory/constitution.md`. BẮT BUỘC: sau khi hoàn thành MỖI task, tạo 1 atomic git commit theo Conventional Commits (`<type>(<scope>): <description>`, message tiếng Anh, imperative mood) chỉ stage các file liên quan tới task đó. Phản hồi bằng Tiếng Việt."
+  }
+}
