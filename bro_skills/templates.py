@@ -140,7 +140,7 @@ You follow **ASF 3.3** standards.
 2. **Security is non-negotiable**: Production environments must be hardened.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
-5. **bro-agent First**: Mọi thay đổi và vận hành phải thông qua bro-agent workflows.
+5. **bro-skills First**: Mọi thay đổi và vận hành phải thông qua bro-skills workflows.
 """
 
 def doc_constitution_template(use_docker=True, is_soft_rules=False):
@@ -163,8 +163,8 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False):
 
     return f"""# 📜 Project Constitution
 
-## §0 bro-agent Protocol ({must_label})
-- **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) {shall_label} sử dụng `bro-agent`.
+## §0 bro-skills Protocol ({must_label})
+- **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) {shall_label} sử dụng `bro-skills`.
 - **Pipeline**: Tuân thủ nghiêm ngặt quy trình: Specify → Plan → Tasks → Implement.
 - **Tools**: Chỉ sử dụng các workflows trong `.agent/workflows` để thực hiện task.
 {docker_infra}
@@ -372,7 +372,7 @@ fi
 if [ -d ".agent/identity" ]; then
   echo "✅ Identity: OK"
 else
-  echo "⚠️  Identity missing — run bro-agent init"
+  echo "⚠️  Identity missing — run bro-skills init"
 fi
 echo "✅ Context update complete"
 """
@@ -390,7 +390,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
     forbidden_label = "KHÔNG" if not is_soft_rules else "Hạn chế"
     
     docker_rule = f"- Docker-First: Mọi hoạt động code và chạy app {shall_label} diễn ra trong container. {forbidden_label} chạy node/python trên host." if use_docker else "- Flexibility: Chạy app trực tiếp hoặc qua Docker tùy nhu cầu dự án."
-    port_rule = f"- Ports: Sử dụng dải port 9000-9999. {must_label} lấy port từ biến môi trường (.env)." if use_docker else "- Ports: Sử dụng port khả dụng trên hệ thống."
+    port_rule = f"- Ports: Sử dụng dải port 8900-8999. {must_label} lấy port từ biến môi trường (.env)." if use_docker else "- Ports: Sử dụng port khả dụng trên hệ thống."
 
     return f"""Dự án: {project_name}
 
@@ -399,7 +399,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 {docker_rule}
 {port_rule}
 
-## 2. bro-agent PROTOCOL
+## 2. bro-skills PROTOCOL
 - Mọi task {shall_label} đi qua quy trình: Specify → Plan → Tasks → Implement.
 - Sử dụng Workflows trong `.agent/workflows/` và Skills trong `.agent/skills/`.
 
@@ -422,36 +422,36 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 
 
 def doc_antigravity_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
-    """Antigravity IDE (Google) — .agent/rules/bro-agent.md"""
+    """Antigravity IDE (Google) — .agent/rules/bro-skills.md"""
     return f"""---
 trigger: always_on
 glob: "**/*"
-description: bro-agent Workspace Rules cho {project_name} - ASF 3.3 Standard
+description: bro-skills Workspace Rules cho {project_name} - ASF 3.3 Standard
 ---
 
-# 🛡️ bro-agent Workspace Rules
+# 🛡️ bro-skills Workspace Rules
 
 {_core_rules_content(project_name, use_docker, is_soft_rules)}
 """
 
 
 def doc_cursor_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
-    """Cursor IDE — .cursor/rules/bro-agent.mdc (YAML frontmatter + markdown)"""
+    """Cursor IDE — .cursor/rules/bro-skills.mdc (YAML frontmatter + markdown)"""
     return f"""---
-description: bro-agent project rules for {project_name}
+description: bro-skills project rules for {project_name}
 globs:
 alwaysApply: true
 ---
 
-# bro-agent Rules
+# bro-skills Rules
 
 {_core_rules_content(project_name, use_docker, is_soft_rules)}
 """
 
 
 def doc_windsurf_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
-    """Windsurf IDE (Codeium) — .windsurf/rules/bro-agent.md"""
-    return f"""# bro-agent Rules
+    """Windsurf IDE (Codeium) — .windsurf/rules/bro-skills.md"""
+    return f"""# bro-skills Rules
 
 {_core_rules_content(project_name, use_docker, is_soft_rules)}
 """
@@ -472,11 +472,30 @@ def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft
 
 
 def doc_jetbrains_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
-    """JetBrains AI Assistant (PhpStorm, WebStorm, PyCharm) — .aiassistant/rules/bro-agent.md"""
-    return f"""# bro-agent Rules for {project_name}
+    """JetBrains AI Assistant (PhpStorm, WebStorm, PyCharm) — .aiassistant/rules/bro-skills.md"""
+    return f"""# bro-skills Rules for {project_name}
 
 {_core_rules_content(project_name, use_docker, is_soft_rules)}
 """
+
+
+def doc_kiro_mcp_template():
+    """Kiro IDE (AWS) — .kiro/settings/mcp.json (scaffold mặc định, merge-safe).
+
+    Trả về dict; generator sẽ MERGE vào file hiện có (không ghi đè server đã có).
+    Server scaffold để disabled=true để user tự bật khi cần.
+    """
+    return {
+        "mcpServers": {
+            "fetch": {
+                "command": "uvx",
+                "args": ["mcp-server-fetch"],
+                "env": {"FASTMCP_LOG_LEVEL": "ERROR"},
+                "disabled": True,
+                "autoApprove": [],
+            }
+        }
+    }
 
 
 def doc_kiro_steering_template(project_name="Project"):
@@ -485,7 +504,7 @@ def doc_kiro_steering_template(project_name="Project"):
 
 Project: {project_name}
 Build System: Docker (docker compose)
-Port Range: 9000-9999
+Port Range: 8900-8999
 Shell: PowerShell 5.1+ (Windows)
 
 ## Development Protocol

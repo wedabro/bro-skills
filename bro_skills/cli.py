@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 """
-⚡ bro-agent - Spec-Driven Development CLI
-Entry point cho console script `bro-agent`.
+⚡ bro-skills - Spec-Driven Development CLI
+Entry point cho console script `bro-skills`.
 
 Cài đặt global:
-    pip install bro-agent
-    bro-agent init --name "My Project"
+    pip install bro-skills
+    bro-skills init --name "My Project"
 
 Hoặc chạy trực tiếp:
-    python -m bro_agent init --name "My Project"
+    python -m bro_skills init --name "My Project"
 """
 
 import argparse
 import sys
 import os
 
-from bro_agent import __version__
-from bro_agent.generator import ProjectGenerator
-from bro_agent.scanner import ProjectScanner
-from bro_agent.validators import validate_agent_structure
-from bro_agent.registry import (
+from bro_skills import __version__
+from bro_skills.generator import ProjectGenerator
+from bro_skills.scanner import ProjectScanner
+from bro_skills.validators import validate_agent_structure
+from bro_skills.registry import (
     SKILLS_REGISTRY, WORKFLOWS_REGISTRY, PROJECT_TYPES,
     get_skills_for_project_type, get_workflows_for_project_type,
 )
@@ -53,7 +53,7 @@ def cmd_init(args):
     project_type = getattr(args, 'type', None)
     agent_dir = os.path.join(target, ".agent")
 
-    print(f"\n⚡ bro-agent v{__version__} - Spec-Driven Development")
+    print(f"\n⚡ bro-skills v{__version__} - Spec-Driven Development")
     print(f"{'─' * 50}")
     print(f"  📁 Target:  {target}")
     print(f"  📛 Project: {name}")
@@ -73,7 +73,7 @@ def cmd_init(args):
                 print(f"  {item['name']:<25} {item['status']:<15} {item['action']}")
 
             print("\n💡 Đề xuất tối ưu:")
-            print("  - Nâng cấp core skills & workflows lên bản v1.0.0 (chuẩn ASF 3.3)")
+            print(f"  - Nâng cấp core skills & workflows lên bản v{__version__} (chuẩn ASF 3.3)")
             print("  - Thiết lập tầng Identity & Knowledge Base để 'gắn não' AI")
             print("  - Di chuyển hiến pháp cũ vào memory/constitution.md")
 
@@ -188,7 +188,7 @@ def _audit_existing_agent(agent_dir):
 
 def cmd_list_skills(args):
     """Liệt kê tất cả skills."""
-    print(f"\n🧠 bro-agent - Skills Registry ({len(SKILLS_REGISTRY)} skills)")
+    print(f"\n🧠 bro-skills - Skills Registry ({len(SKILLS_REGISTRY)} skills)")
     print(f"{'─' * 85}")
     print(f"  {'Skill':<25} {'Type':<12} {'Description'}")
     print(f"  {'─' * 23}   {'─' * 10}   {'─' * 45}")
@@ -203,7 +203,7 @@ def cmd_list_skills(args):
 
 def cmd_list_workflows(args):
     """Liệt kê tất cả workflows."""
-    print(f"\n🔄 bro-agent - Workflows Registry ({len(WORKFLOWS_REGISTRY)} workflows)")
+    print(f"\n🔄 bro-skills - Workflows Registry ({len(WORKFLOWS_REGISTRY)} workflows)")
     print(f"{'─' * 70}")
     print(f"  {'Command':<35} {'Description'}")
     print(f"  {'─' * 33}   {'─' * 33}")
@@ -224,7 +224,7 @@ def cmd_validate(args):
 
     if not os.path.exists(agent_dir):
         print("❌ Không tìm thấy thư mục .agent/")
-        print("💡 Chạy: bro-agent init để khởi tạo\n")
+        print("💡 Chạy: bro-skills init để khởi tạo\n")
         return
 
     results = validate_agent_structure(agent_dir)
@@ -247,25 +247,25 @@ def cmd_validate(args):
 
 def cmd_version(args):
     """Hiển thị version."""
-    print(f"bro-agent v{__version__}")
+    print(f"bro-skills v{__version__}")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="bro-agent",
-        description="⚡ bro-agent - Spec-Driven Development CLI",
+        prog="bro-skills",
+        description="⚡ bro-skills - Spec-Driven Development CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Ví dụ:
-    bro-agent init                              # Init tại thư mục hiện tại
-    bro-agent init --target /path/to/project    # Init tại thư mục chỉ định
-    bro-agent init --name "My Project"          # Init với tên project
-    bro-agent init --type web_public            # Init cho Web B2C (bật SEO/GEO)
-    bro-agent init --force                      # Init và ghi đè không hỏi
-    bro-agent list-skills                       # Xem danh sách skills
-    bro-agent list-workflows                    # Xem danh sách workflows
-    bro-agent validate                          # Validate cấu trúc .agent/
-    bro-agent version                           # Xem phiên bản
+    bro-skills init                              # Init tại thư mục hiện tại
+    bro-skills init --target /path/to/project    # Init tại thư mục chỉ định
+    bro-skills init --name "My Project"          # Init với tên project
+    bro-skills init --type web_public            # Init cho Web B2C (bật SEO/GEO)
+    bro-skills init --force                      # Init và ghi đè không hỏi
+    bro-skills list-skills                       # Xem danh sách skills
+    bro-skills list-workflows                    # Xem danh sách workflows
+    bro-skills validate                          # Validate cấu trúc .agent/
+    bro-skills version                           # Xem phiên bản
 
 Loại dự án:
   web_public  — Blog, E-commerce, Landing Page (SEO + GEO + Content)
@@ -273,12 +273,15 @@ Loại dự án:
   mobile_app  — iOS/Android (Không cần SEO)
   desktop_cli — Electron, WPF, CLI Tool (Không cần SEO)
   fullstack   — Frontend Public + Backend API (SEO + GEO + DevOps)
+  game        — Game Dev (Unity/Unreal/Godot/Phaser) — gamedev + uiux
+  simple_script — Script/automation nhỏ (soft rules, không ép Docker)
+  custom_infra  — Hạ tầng riêng (soft rules, không ép port chuẩn)
 
 Quy trình dự án MỚI:
-    bro-agent init → /01-speckit.constitution → /02-speckit.specify → /04-speckit.plan → /07-speckit.implement
+    bro-skills init → /01-speckit.constitution → /02-speckit.specify → /04-speckit.plan → /07-speckit.implement
 
 Quy trình dự án CÓ SẴN:
-    bro-agent init → /01-speckit.constitution → /util-speckit.migrate → /02-speckit.specify → /07-speckit.implement
+    bro-skills init → /01-speckit.constitution → /util-speckit.migrate → /02-speckit.specify → /07-speckit.implement
         """
     )
 
@@ -294,7 +297,11 @@ Quy trình dự án CÓ SẴN:
     init_parser = subparsers.add_parser("init", help="Khởi tạo cấu trúc .agent/ cho project")
     init_parser.add_argument("--target", "-t", help="Thư mục đích (mặc định: thư mục hiện tại)")
     init_parser.add_argument("--name", "-n", help="Tên project (mặc định: tên thư mục)")
-    init_parser.add_argument("--type", help="Loại dự án: web_public, web_saas, mobile_app, desktop_cli, fullstack")
+    init_parser.add_argument(
+        "--type",
+        choices=PROJECT_TYPES.keys(),
+        help="Loại dự án: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra",
+    )
     init_parser.add_argument("--force", "-f", action="store_true", help="Ghi đè .agent/ nếu đã tồn tại")
 
     # list-skills

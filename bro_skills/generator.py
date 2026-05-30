@@ -11,6 +11,7 @@ from datetime import datetime
 from .registry import (
     SKILLS_REGISTRY, WORKFLOWS_REGISTRY, PROJECT_TYPES,
     get_skills_for_project_type, get_workflows_for_project_type,
+    BASE_BUILDERS_BY_TYPE, MODIFIERS, resolve_builder_skills,
 )
 from .templates import (
     SKILL_TEMPLATE_MAP,
@@ -26,6 +27,7 @@ from .templates import (
     doc_vscode_copilot_template,
     doc_jetbrains_rules_template,
     doc_kiro_steering_template,
+    doc_kiro_mcp_template,
     doc_claude_md_template,
     doc_agents_md_template,
 )
@@ -35,15 +37,16 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Sinh cấu trúc .agent/ cho project theo chuẩn Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
         self.scan_profile = scan_profile  # Kết quả từ ProjectScanner
+        self.attributes = attributes or {}  # Multi-agent attributes (architecture/platforms/flags)
         self.agent_dir = os.path.join(target_dir, ".agent")
 
-        # Lọc skills/workflows theo project type
-        self.filtered_skills = get_skills_for_project_type(project_type)
+        # Lọc skills/workflows theo project type + attributes (multi-agent v2)
+        self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
         self.filtered_workflows = get_workflows_for_project_type(project_type)
 
         self.stats = {
@@ -74,11 +77,11 @@ class ProjectGenerator:
              ports = self._find_available_ports()
              if ports:
                  self.assigned_ports = ports
-                 print(f"📡 Port assigned (9XXX): Public:{ports[0]}, Admin:{ports[1]}, API:{ports[2]}")
+                 print(f"📡 Port assigned (8900-8999): Public:{ports[0]}, Admin:{ports[1]}, API:{ports[2]}")
                  self._save_ports_to_env(ports)
              else:
-                 print("⚠️  Không tìm thấy dải port 9xxx trống. Vui lòng kiểm tra lại hệ thống.")
-                 self.assigned_ports = (9000, 9001, 9002) # Fallback an toàn
+                 print("⚠️  Không tìm thấy dải port 8900-8999 trống. Vui lòng kiểm tra lại hệ thống.")
+                 self.assigned_ports = (8900, 8901, 8902) # Fallback an toàn
         else:
              self.assigned_ports = None
 
@@ -93,6 +96,9 @@ class ProjectGenerator:
 
         print("🔄 Tạo Workflows (/commands)...")
         self._create_workflows()
+
+        print("🧭 Tạo Multi-Agent (registry + orchestrator)...")
+        self._create_agents()
 
         print("📄 Tạo Templates & Memory...")
         self._create_templates()
@@ -113,32 +119,32 @@ class ProjectGenerator:
         name = self.project_name
 
         # ─── 1. Antigravity (Google) ────────────────────────
-        # Path: .agent/rules/bro-agent.md
+        # Path: .agent/rules/bro-skills.md
         self._write_file(
-            os.path.join(self.agent_dir, "rules", "bro-agent.md"),
+            os.path.join(self.agent_dir, "rules", "bro-skills.md"),
             doc_antigravity_rules_template(name, self.use_docker, self.is_soft_rules)
         )
-        print("  ✅ Antigravity  → .agent/rules/bro-agent.md")
+        print("  ✅ Antigravity  → .agent/rules/bro-skills.md")
 
         # ─── 2. Cursor ──────────────────────────────────────
-        # Path: .cursor/rules/bro-agent.mdc (YAML frontmatter, .mdc extension)
+        # Path: .cursor/rules/bro-skills.mdc (YAML frontmatter, .mdc extension)
         cursor_dir = os.path.join(self.target_dir, ".cursor", "rules")
         os.makedirs(cursor_dir, exist_ok=True)
         self._write_file(
-            os.path.join(cursor_dir, "bro-agent.mdc"),
+            os.path.join(cursor_dir, "bro-skills.mdc"),
             doc_cursor_rules_template(name, self.use_docker, self.is_soft_rules)
         )
-        print("  ✅ Cursor       → .cursor/rules/bro-agent.mdc")
+        print("  ✅ Cursor       → .cursor/rules/bro-skills.mdc")
 
         # ─── 3. Windsurf (Codeium) ──────────────────────────
-        # Path: .windsurf/rules/bro-agent.md
+        # Path: .windsurf/rules/bro-skills.md
         windsurf_dir = os.path.join(self.target_dir, ".windsurf", "rules")
         os.makedirs(windsurf_dir, exist_ok=True)
         self._write_file(
-            os.path.join(windsurf_dir, "bro-agent.md"),
+            os.path.join(windsurf_dir, "bro-skills.md"),
             doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules)
         )
-        print("  ✅ Windsurf     → .windsurf/rules/bro-agent.md")
+        print("  ✅ Windsurf     → .windsurf/rules/bro-skills.md")
 
         # ─── 4. VS Code (GitHub Copilot) ────────────────────
         # Path: .github/copilot-instructions.md
@@ -151,14 +157,14 @@ class ProjectGenerator:
         print("  ✅ VS Code      → .github/copilot-instructions.md")
 
         # ─── 5. JetBrains (PhpStorm, WebStorm, PyCharm) ────
-        # Path: .aiassistant/rules/bro-agent.md
+        # Path: .aiassistant/rules/bro-skills.md
         jb_dir = os.path.join(self.target_dir, ".aiassistant", "rules")
         os.makedirs(jb_dir, exist_ok=True)
         self._write_file(
-            os.path.join(jb_dir, "bro-agent.md"),
+            os.path.join(jb_dir, "bro-skills.md"),
             doc_jetbrains_rules_template(name, self.use_docker, self.is_soft_rules)
         )
-        print("  ✅ JetBrains    → .aiassistant/rules/bro-agent.md")
+        print("  ✅ JetBrains    → .aiassistant/rules/bro-skills.md")
 
         # ─── 6. Kiro (AWS) ──────────────────────────────────
         # Path: .kiro/steering/tech.md
@@ -169,6 +175,12 @@ class ProjectGenerator:
             doc_kiro_steering_template(name) # Kiro keeps original for now
         )
         print("  ✅ Kiro         → .kiro/steering/tech.md")
+
+        # MCP config cho Kiro (merge-safe, không ghi đè server đã có)
+        self._create_kiro_mcp()
+
+        # Bridge skills cho Kiro auto-load (.kiro/skills → .agent/skills)
+        self._create_kiro_skills_bridge()
 
         # ─── 7. Claude Code ─────────────────────────────────
         # Path: CLAUDE.md (root)
@@ -187,6 +199,93 @@ class ProjectGenerator:
         print("  ✅ GitHub Agent → AGENTS.md")
 
 
+    def _create_kiro_mcp(self):
+        """Tạo/merge .kiro/settings/mcp.json (merge-safe).
+
+        - File chưa có → tạo mới với scaffold mặc định.
+        - File đã có → CHỈ thêm server còn thiếu, KHÔNG ghi đè server/config hiện có.
+        """
+        import json
+
+        mcp_path = os.path.join(self.target_dir, ".kiro", "settings", "mcp.json")
+        os.makedirs(os.path.dirname(mcp_path), exist_ok=True)
+
+        scaffold = doc_kiro_mcp_template()
+
+        existing = {}
+        if os.path.exists(mcp_path):
+            try:
+                with open(mcp_path, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+            except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+                existing = {}
+
+        existing.setdefault("mcpServers", {})
+        added = []
+        for name, cfg in scaffold["mcpServers"].items():
+            if name not in existing["mcpServers"]:
+                existing["mcpServers"][name] = cfg
+                added.append(name)
+
+        self._write_file(mcp_path, json.dumps(existing, indent=2, ensure_ascii=False))
+        if added:
+            print(f"  ✅ Kiro MCP     → .kiro/settings/mcp.json (+{', '.join(added)})")
+        else:
+            print("  ✅ Kiro MCP     → .kiro/settings/mcp.json (giữ nguyên server hiện có)")
+
+    def _create_kiro_skills_bridge(self):
+        """Bridge .agent/skills → .kiro/skills để Kiro (AWS) auto-load skills.
+
+        Format SKILL.md của bro-skills (frontmatter name + description) trùng
+        chuẩn Kiro skill nên dùng trực tiếp. Ưu tiên symlink/junction (sync 2
+        chiều, không nhân bản); fail thì fallback sang copy.
+        """
+        import shutil
+
+        src = os.path.join(self.agent_dir, "skills")
+        dst = os.path.join(self.target_dir, ".kiro", "skills")
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+        # Dọn link/dir cũ để tái tạo sạch
+        if os.path.islink(dst) or os.path.isfile(dst):
+            os.unlink(dst)
+        elif os.path.isdir(dst):
+            if os.name == "nt":
+                # Junction được nhận diện là dir; xoá an toàn
+                try:
+                    os.rmdir(dst)
+                except OSError:
+                    shutil.rmtree(dst, ignore_errors=True)
+            else:
+                shutil.rmtree(dst, ignore_errors=True)
+
+        rel_src = os.path.relpath(src, os.path.dirname(dst))
+
+        # 1) POSIX: symlink tương đối
+        if os.name != "nt":
+            try:
+                os.symlink(rel_src, dst, target_is_directory=True)
+                print("  🔗 Kiro Skills  → .kiro/skills (symlink → .agent/skills)")
+                return
+            except (OSError, NotImplementedError):
+                pass
+        else:
+            # 2) Windows: junction (không cần quyền admin)
+            try:
+                import subprocess
+                subprocess.run(
+                    ["cmd", "/c", "mklink", "/J", dst, src],
+                    check=True, capture_output=True, text=True,
+                )
+                print("  🔗 Kiro Skills  → .kiro/skills (junction → .agent/skills)")
+                return
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
+
+        # 3) Fallback: copy (mất sync 2 chiều)
+        shutil.copytree(src, dst)
+        print("  📄 Kiro Skills  → .kiro/skills (copy — symlink không khả dụng)")
+
     def _create_directories(self):
         """Tạo cấu trúc thư mục .agent/ theo chuẩn ASF 3.3."""
         dirs = [
@@ -200,6 +299,7 @@ class ProjectGenerator:
             ".agent/rules",          # Tầng Rules cho Antigravity
             ".agent/codebase",       # Tầng bản đồ cấu trúc (speckit.map)
             ".agent/specs",          # Tầng Specification & Planning
+            ".agent/agents",         # Tầng Multi-Agent (registry + orchestrator)
         ]
 
         for d in dirs:
@@ -337,6 +437,103 @@ Bạn là **{skill['role']}**.
             self._write_file(filepath, content)
             self.stats["workflows"] += 1
 
+    def _create_agents(self):
+        """Sinh .agent/agents/: registry.json + orchestrator.md (Multi-Agent v2)."""
+        import json
+
+        agents_dir = os.path.join(self.agent_dir, "agents")
+        os.makedirs(agents_dir, exist_ok=True)
+
+        active_skill_names = [s["name"] for s in self.filtered_skills]
+        builder_names = resolve_builder_skills(self.project_type, self.attributes)
+
+        registry = {
+            "registry_version": "2.0.0",
+            "asf_version": "3.3",
+            "description": "Agent Registry v2 - Attribute-based. active = core + base[type] + modifiers[attr].",
+            "project_type": self.project_type,
+            "attributes": self.attributes,
+            "active_agents": active_skill_names,
+            "builder_agents": builder_names,
+            "base_by_type": BASE_BUILDERS_BY_TYPE,
+            "modifiers": MODIFIERS,
+            "orchestration": {
+                "entry": ".agent/agents/orchestrator.md",
+                "selection_rule": "active = core + base_by_type[type] + flatten(modifiers[attr] for attr in attributes)",
+                "fallback_project_type": "fullstack",
+            },
+        }
+        self._write_file(
+            os.path.join(agents_dir, "registry.json"),
+            json.dumps(registry, indent=2, ensure_ascii=False),
+        )
+        self._write_file(
+            os.path.join(agents_dir, "orchestrator.md"),
+            self._orchestrator_content(active_skill_names, builder_names),
+        )
+
+    def _orchestrator_content(self, active_skill_names, builder_names):
+        active_list = ", ".join(active_skill_names) if active_skill_names else "(none)"
+        builder_list = ", ".join(builder_names) if builder_names else "(none)"
+        return f"""---
+name: orchestrator
+description: Multi-Agent Orchestrator - Dieu phoi agent theo project_type + attributes va pipeline Specify->Plan->Tasks->Implement.
+role: Lead Orchestrator
+trigger: always_on
+---
+
+# 🧭 Multi-Agent Orchestrator
+
+## 🎯 Mission
+Điều phối nhiều agent chuyên biệt trong dự án **{self.project_name}** (`{self.project_type}`).
+Quyết định agent nào xử lý task nào dựa trên `project_type` + `attributes` và giai đoạn pipeline.
+
+## 📥 Input
+- `.agent/project.json` → `project_type` + `attributes`
+- `.agent/agents/registry.json` → base + modifiers
+- `.agent/memory/constitution.md` → ràng buộc (Docker-First, Port 8900-8999, ENV)
+
+## 🎛️ Resolved Agent Set (auto-generated)
+- **Active agents**: {active_list}
+- **Builder agents**: {builder_list}
+
+## 📋 Protocol
+
+### 1. Resolve Agent Set (Attribute-based)
+```
+active = core_agents
+       + base_by_type[project_type]
+       + modifiers.architecture[attributes.architecture]
+       + modifiers.platforms[p] for p in attributes.platforms
+       + modifiers.flags[f] for f in attributes.flags
+active = unique(active)
+```
+Cùng `project_type` nhưng `attributes` khác → tập agent KHÁC nhau.
+
+### 2. Routing theo Pipeline Phase
+| Phase | Agent điều phối | Domain agents |
+|---|---|---|
+| Specify | speckit.specify | review scope |
+| Plan | speckit.plan | speckit.devops + builders |
+| Tasks | speckit.tasks | — |
+| Implement | speckit.implement | builder theo task tag |
+| Verify | speckit.tester / reviewer / validate | — |
+
+### 3. Task Tagging
+Mỗi task trong `tasks.md` PHẢI có tag `@agent:<name>` để route đúng.
+Không có tag → suy luận từ keyword + project_type.
+
+### 4. Conflict Resolution
+- Constitution > Orchestrator > Domain Agent.
+- 2 agent tranh chấp 1 file → owner theo Task Tag, agent còn lại review.
+
+## 🚫 Guard Rails
+- KHÔNG bỏ qua core agents trong pipeline.
+- KHÔNG để 2 agent ghi cùng 1 file song song.
+- KHÔNG vi phạm Constitution dù domain agent yêu cầu.
+- Phản hồi bằng Tiếng Việt.
+"""
+
     def _create_templates(self):
         for filename, template_fn in DOCUMENT_TEMPLATE_MAP.items():
             # Skip internal templates
@@ -374,11 +571,14 @@ Bạn là **{skill['role']}**.
         config = {
             "project_name": self.project_name,
             "project_type": self.project_type,
+            "attributes": self.attributes,
             "asf_version": "3.3",
-            "bro_agent_version": "1.2.0",
+            "bro_skills_version": "1.2.0",
             "created_at": datetime.now().isoformat(),
             "skills_count": self.stats["skills"],
             "workflows_count": self.stats["workflows"],
+            "multi_agent": True,
+            "agent_registry": ".agent/agents/registry.json",
         }
         filepath = os.path.join(self.agent_dir, "project.json")
         self._write_file(filepath, json.dumps(config, indent=2, ensure_ascii=False))
@@ -398,7 +598,7 @@ Bạn là **{skill['role']}**.
 - `knowledge_base/seo_standards.md`: Checklist & JSON-LD templates
 """
 
-        content = f"""# 🤖 bro-agent Configuration (ASF 3.3)
+        content = f"""# 🤖 bro-skills Configuration (ASF 3.3)
 
 > **Project**: {self.project_name}
 > **Type**: {type_label}
@@ -424,29 +624,22 @@ Bạn là **{skill['role']}**.
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
 
-    def _find_available_ports(self, start_port=9000, end_port=9999):
-        """Tìm 3 port liên tiếp còn trống trong dải 9000-9999 (Windows)."""
-        import subprocess
-        try:
-            # Chạy lệnh netstat để tìm các port đang bận (quét dải :9)
-            output = subprocess.check_output("netstat -ano | findstr :9", shell=True).decode()
-            used_ports = set()
-            for line in output.splitlines():
-                parts = line.split()
-                if len(parts) > 1:
-                    port_part = parts[1].split(':')[-1]
-                    try:
-                        p_val = int(port_part)
-                        if start_port <= p_val <= end_port:
-                            used_ports.add(p_val)
-                    except: continue
-            
-            # Tìm 3 port liên tiếp (từ thấp đến cao)
-            for p in range(start_port, end_port - 1):
-                if p not in used_ports and (p+1) not in used_ports and (p+2) not in used_ports:
-                    return (p, p+1, p+2)
-        except Exception:
-            pass
+    def _find_available_ports(self, start_port=8900, end_port=8999):
+        """Tìm 3 port liên tiếp còn trống trong dải 8900-8999."""
+        import socket
+
+        def is_port_available(port):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+                    sock.bind(("127.0.0.1", port))
+                except OSError:
+                    return False
+                return True
+
+        for p in range(start_port, end_port - 1):
+            if all(is_port_available(port) for port in (p, p + 1, p + 2)):
+                return (p, p + 1, p + 2)
         return None
 
     def _save_ports_to_env(self, ports):
@@ -475,7 +668,7 @@ Bạn là **{skill['role']}**.
             with open(env_path, "a" if existing_content else "w", encoding="utf-8") as f:
                 if existing_content and not existing_content.endswith("\n"):
                     f.write("\n")
-                f.write("\n# bro-agent Port Configuration (Auto-generated)\n")
+                f.write("\n# bro-skills Port Configuration (Auto-generated)\n")
                 f.write("\n".join(new_lines) + "\n")
             print("  🔐 Ports saved to .env")
 

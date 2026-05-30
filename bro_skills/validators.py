@@ -3,13 +3,32 @@ Validators - Validate cấu trúc .agent/ đã tạo.
 """
 
 import os
-from .registry import SKILLS_REGISTRY, WORKFLOWS_REGISTRY
+import json
+from .registry import (
+    SKILLS_REGISTRY, WORKFLOWS_REGISTRY,
+    get_skills_for_project_type, get_workflows_for_project_type,
+)
+
+
+def _load_project_config(agent_dir):
+    """Đọc project.json để biết project_type + attributes (nếu có)."""
+    cfg_path = os.path.join(agent_dir, "project.json")
+    if not os.path.isfile(cfg_path):
+        return None
+    try:
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+        return None
 
 
 def validate_agent_structure(agent_dir: str) -> list:
     """
     Validate cấu trúc .agent/ directory.
     Returns list of check results: [{name, passed, details}]
+
+    Validate đúng tập skill/workflow theo project_type + attributes trong
+    project.json. Nếu không có project.json → fallback validate toàn bộ registry.
     """
     results = []
 
@@ -22,6 +41,17 @@ def validate_agent_structure(agent_dir: str) -> list:
 
     if not os.path.isdir(agent_dir):
         return results
+
+    # Xác định tập skill/workflow kỳ vọng theo project config
+    cfg = _load_project_config(agent_dir)
+    if cfg and cfg.get("project_type"):
+        ptype = cfg["project_type"]
+        attrs = cfg.get("attributes") or None
+        expected_skills = get_skills_for_project_type(ptype, attrs)
+        expected_workflows = get_workflows_for_project_type(ptype)
+    else:
+        expected_skills = SKILLS_REGISTRY
+        expected_workflows = WORKFLOWS_REGISTRY
 
     # Check 2: Core directories
     core_dirs = ["skills", "workflows", "templates", "scripts", "memory"]
@@ -39,7 +69,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     # Check 3: Skills directories & SKILL.md
     missing_skills = []
     incomplete_skills = []
-    for skill in SKILLS_REGISTRY:
+    for skill in expected_skills:
         skill_dir = os.path.join(agent_dir, "skills", skill["name"])
         skill_file = os.path.join(skill_dir, "SKILL.md")
 
@@ -49,7 +79,7 @@ def validate_agent_structure(agent_dir: str) -> list:
             incomplete_skills.append(skill["name"])
 
     results.append({
-        "name": f"Skills ({len(SKILLS_REGISTRY)} skills)",
+        "name": f"Skills ({len(expected_skills)} skills)",
         "passed": len(missing_skills) == 0 and len(incomplete_skills) == 0,
         "details": (
             [f"Thiếu thư mục: {s}" for s in missing_skills] +
@@ -59,13 +89,13 @@ def validate_agent_structure(agent_dir: str) -> list:
 
     # Check 4: Workflow files
     missing_workflows = []
-    for wf in WORKFLOWS_REGISTRY:
+    for wf in expected_workflows:
         wf_file = os.path.join(agent_dir, "workflows", f"{wf['command']}.md")
         if not os.path.isfile(wf_file):
             missing_workflows.append(wf["command"])
 
     results.append({
-        "name": f"Workflows ({len(WORKFLOWS_REGISTRY)} workflows)",
+        "name": f"Workflows ({len(expected_workflows)} workflows)",
         "passed": len(missing_workflows) == 0,
         "details": [f"Thiếu: {w}.md" for w in missing_workflows],
     })

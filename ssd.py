@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-⚡ bro-agent - Spec-Driven Development CLI (ASF 3.3)
+⚡ bro-skills - Spec-Driven Development CLI (ASF 3.3)
 
 Backward compatibility wrapper.
-Nếu đã pip install, dùng lệnh `bro-agent` trực tiếp.
+Nếu đã pip install, dùng lệnh `bro-skills` trực tiếp.
 """
 import sys
 import os
 
-# Đảm bảo package bro_agent có thể import
+# Đảm bảo package bro_skills có thể import
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from bro_agent.cli import main
+    from bro_skills.cli import main
 except ImportError:
     # Fallback nếu ai đó vẫn dùng tên cũ
     from antigravity_ssd.cli import main

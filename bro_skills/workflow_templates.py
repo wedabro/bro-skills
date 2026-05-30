@@ -1,5 +1,5 @@
 """
-Workflow Templates - Nội dung chi tiết cho 22 workflows.
+Workflow Templates - Nội dung chi tiết cho 31 workflows.
 Mỗi workflow có: Pre-conditions, Steps với gate checks, Success criteria.
 """
 
@@ -45,7 +45,7 @@ description: Thiết lập/cập nhật Constitution (Source of Law)
 # 📜 Constitution Setup
 
 ## Pre-conditions
-- `.agent/` directory đã tồn tại (chạy `bro-agent init` trước)
+- `.agent/` directory đã tồn tại (chạy `bro-skills init` trước)
 
 ## Steps
 
@@ -429,7 +429,7 @@ description: Tạo/cập nhật Master Identity cho AI Agent
 # 🆔 Identity Setup
 
 ## Pre-conditions
-- `.agent/project.json` tồn tại (chạy `bro-agent init` trước)
+- `.agent/project.json` tồn tại (chạy `bro-skills init` trước)
 - `.agent/memory/constitution.md` tồn tại (khuyến nghị)
 
 ## Steps
@@ -440,7 +440,7 @@ description: Tạo/cập nhật Master Identity cho AI Agent
    - Scan codebase → patterns, conventions hiện có
 2. Tạo/cập nhật `.agent/identity/master-identity.md`:
    - Persona + Core Capabilities
-   - Soul (Core Beliefs): "bro-agent First", "Docker is the Law"
+   - Soul (Core Beliefs): "bro-skills First", "Docker is the Law"
    - Project Context (auto-detected)
 3. Nếu `web_public`/`fullstack` → thêm SEO & GEO Awareness section
 
@@ -481,7 +481,7 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 
 | Môi trường | Docker đã chạy? | Hành động |
 |---|---|---|
-| **Local** | ❌ Chưa (lần đầu) | Quét `netstat -ano \| findstr 89` → chọn 3 ports trống liên tiếp |
+| **Local** | ❌ Chưa (lần đầu) | Quét dải `8900-8999` bằng socket/helper → chọn 3 ports trống liên tiếp |
 | **Local** | ✅ Đã chạy | **BỎ QUA** quét — dùng ports hiện tại từ `.env` / docker |
 | **Staging/Beta/Prod** | Bất kỳ | **LUÔN** quét lần đầu để cấu hình → ghi vào `.env` |
 
@@ -493,8 +493,8 @@ docker compose ps --format json 2>$null
 ```
 
 **Port scan khi cần:**
-```bash
-netstat -ano | findstr 89
+```text
+Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
 ```
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
 - Ghi luôn vào `.env`:
@@ -807,6 +807,80 @@ description: WordPress Theme & Plugin Development Workflow
 """
 
 
+def wf_orchestrate():
+    return """---
+description: Multi-Agent Orchestration - Chọn và điều phối agent theo project_type + attributes
+---
+
+# 🧭 Multi-Agent Orchestration
+
+## Pre-conditions
+- `.agent/project.json` tồn tại (có `project_type` + `attributes`)
+- `.agent/agents/registry.json` tồn tại
+- `.agent/memory/constitution.md` tồn tại
+
+## Steps
+
+1. **@orchestrator** — Resolve agent set:
+   - Đọc `project.json.project_type` + `attributes`
+   - `active = core + base[type] + modifiers[architecture|platforms|flags]`
+   - Log danh sách agent được kích hoạt (loại trùng)
+
+2. Chạy pipeline với agent đã chọn:
+   - Specify → Clarify → Plan → Tasks → Implement → Verify
+   - Mỗi task gắn tag `@agent:<name>` để route
+
+3. **Routing**: Orchestrator giao task cho domain agent theo tag.
+   - VD project_type=`game` → task gameplay route tới `@speckit.gamedev`
+   - VD `platforms:[ios]` → task mobile route tới `@speckit.ios`
+
+4. **Conflict resolution**: Constitution > Orchestrator > Domain Agent.
+
+## Success Criteria
+- ✅ Đúng tập agent kích hoạt theo project_type + attributes
+- ✅ Mỗi task có owner agent rõ ràng
+- ✅ Không vi phạm Constitution
+"""
+
+
+def wf_gamedev():
+    return """---
+description: Game Development Pipeline - Engine setup, game loop, performance, asset pipeline
+---
+
+# 🎮 Game Development
+
+## Pre-conditions
+- `project.json.project_type` = `game`
+- Engine target đã xác định (Unity/Unreal/Godot/Phaser/PixiJS/custom)
+
+## Steps
+
+1. **@speckit.gamedev** — Engine & Project Setup
+   - Xác định engine, cấu trúc thư mục, Docker env (web game) hoặc CI build (native)
+
+2. **@speckit.gamedev** — Core Architecture
+   - Game loop (fixed/variable timestep), ECS/Component, State Machine, Event Bus
+
+3. **@speckit.gamedev** — Performance Budget
+   - Frame budget (16.6ms@60fps), object pooling, profiling
+
+4. **@speckit.uiux** — HUD & Menu
+   - UI states (Menu/Pause/GameOver), responsive HUD
+
+5. **@speckit.gamedev** — Asset Pipeline + Netcode (nếu multiplayer)
+   - Atlas/LOD, naming convention, server-authoritative netcode
+
+6. **@speckit.tester** — Game logic tests + playtest checklist
+
+## Success Criteria
+- ✅ Game loop ổn định, đạt frame budget
+- ✅ Không hard-code balance/asset/URL (dùng config/ENV)
+- ✅ Object pooling cho hot objects
+- ✅ Multiplayer (nếu có): server validate
+"""
+
+
 # =============================================================================
 # WORKFLOW TEMPLATE MAP — Complete mapping cho tất cả các workflows
 # =============================================================================
@@ -842,5 +916,7 @@ WORKFLOW_TEMPLATE_MAP = {
     "speckit.map": wf_map,
     "speckit.uat": wf_uat,
     "speckit.wordpress": wf_wordpress,
+    "speckit.orchestrate": wf_orchestrate,
+    "speckit.gamedev": wf_gamedev,
 }
 
