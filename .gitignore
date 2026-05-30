@@ -71,3 +71,6 @@ pip-log.txt
 
 # Distribution
 *.tar.gz
+
+# CodeGraph index
+.codegraph/
