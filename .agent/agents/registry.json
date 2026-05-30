@@ -57,6 +57,18 @@
   },
 
   "agent_roles": {
+    "speckit.constitution": { "role": "Governance Architect" },
+    "speckit.identity": { "role": "Persona Architect" },
+    "speckit.specify": { "role": "Domain Scribe" },
+    "speckit.clarify": { "role": "Clarity Engineer" },
+    "speckit.plan": { "role": "System Architect" },
+    "speckit.tasks": { "role": "Execution Strategist" },
+    "speckit.analyze": { "role": "Consistency Analyst" },
+    "speckit.implement": { "role": "Master Builder" },
+    "speckit.tester": { "role": "Test Engineer" },
+    "speckit.reviewer": { "role": "Code Reviewer" },
+    "speckit.validate": { "role": "Validation Oracle" },
+    "speckit.map": { "role": "Technical Lead" },
     "speckit.frontend": { "role": "Frontend Engineer" },
     "speckit.backend": { "role": "Backend Engineer" },
     "speckit.ios": { "role": "iOS Engineer (native Swift)" },
@@ -66,7 +78,12 @@
     "speckit.database": { "role": "Database Architect" },
     "speckit.security": { "role": "Security Auditor" },
     "speckit.devops": { "role": "DevOps Architect" },
-    "speckit.gamedev": { "role": "Game Developer" }
+    "speckit.gamedev": { "role": "Game Developer" },
+    "speckit.uiux": { "role": "UI/UX Architect" },
+    "speckit.seo": { "role": "SEO Technical Lead" },
+    "speckit.geo": { "role": "GEO Strategist" },
+    "speckit.content": { "role": "Content Strategist" },
+    "speckit.wordpress": { "role": "WordPress Expert" }
   },
 
   "examples": {
