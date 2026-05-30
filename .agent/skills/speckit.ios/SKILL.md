@@ -1,7 +1,7 @@
 ---
 name: speckit.ios
 description: iOS Developer - Native iOS (Swift/SwiftUI/UIKit), lifecycle, App Store compliance, Keychain.
-role: iOS Engineer
+role: iOS Engineer (native Swift)
 ---
 
 ## 🎯 Mission

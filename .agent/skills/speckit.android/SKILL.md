@@ -1,7 +1,7 @@
 ---
 name: speckit.android
 description: Android Developer - Native Android (Kotlin/Jetpack Compose), lifecycle, Play Store compliance, Keystore.
-role: Android Engineer
+role: Android Engineer (native Kotlin)
 ---
 
 ## 🎯 Mission
