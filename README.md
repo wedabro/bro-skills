@@ -1,4 +1,4 @@
-# ⚡ bro-agent - Spec-Driven Development CLI
+# ⚡ bro-skills - Spec-Driven Development CLI
 
 > **Python CLI tool** để khởi tạo bất kỳ project nào theo chuẩn Spec-Driven Development (SDD) của Antigravity.
 
@@ -6,50 +6,71 @@
 
 Tool này tự động tạo cấu trúc `.agent/` chuẩn cho Antigravity IDE, bao gồm:
 
-- **Skills** (23 skills) — Khả năng AI tự trị cho từng phase SDLC, thêm **UI/UX Pro Max Architect**
-- **Workflows** (25 workflows) — Orchestration commands với pre-conditions, gate checks, success criteria
+- **Skills** (29 skills) — Khả năng AI tự trị cho từng phase SDLC, thêm Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
+- **Workflows** (31 workflows) — Orchestration commands với pre-conditions, gate checks, success criteria
 - **Templates** — Spec, Plan, Tasks, Constitution, Infrastructure, SEO, **UI/UX Standards** templates
 - **Scripts** — 4 bash utilities (create-feature, setup-plan, check-prerequisites, update-context)
 
 ## 📋 Requirements
 
 - Python 3.9+ (Windows, Linux, macOS)
+- Node.js 16+ nếu muốn chạy bằng `npx`
 - Không cần thêm thư viện ngoài (Pure Python stdlib)
 
 ---
 
-## 📦 Cài đặt (Global - Mọi OS)
+## 📦 Cài đặt / chạy CLI (Mọi OS)
 
-### Cách 1: `pip install` từ GitHub (Khuyến nghị)
+### Cách 1: Chạy bằng `npx` (không cài global)
 
 ```bash
-# Windows / Linux / macOS — Cài global, lệnh `bro-agent` dùng được ở mọi nơi
-pip install git+https://github.com/wedabro/bro-agent.git
+# Chạy trực tiếp từ GitHub qua npm/npx
+npx github:wedabro/bro-skills version
+npx github:wedabro/bro-skills init --target /path/to/project
 
-# Kiểm tra
-bro-agent version
-# → bro-agent v1.1.0
+# Truyền tham số như CLI bình thường
+npx github:wedabro/bro-skills init --name "My Project" --type fullstack
+
+# Sau khi package được publish lên npm registry
+npx bro-skills version
+npx bro-skills init --target /path/to/project
 ```
 
-### Cách 2: `pipx install` (Isolated - Không ảnh hưởng system Python)
+Ghi chú:
+- `npx` cần Node.js/npm và Python 3.9+ có trong PATH.
+- Wrapper npm chỉ gọi lại Python CLI gốc, không cài dependency npm riêng.
+- Nếu muốn cố định Python executable, đặt ENV `PYTHON=/path/to/python`.
+
+### Cách 2: `pip install` từ GitHub (Khuyến nghị cho dùng lâu dài)
+
+```bash
+# Windows / Linux / macOS — Cài global, lệnh `bro-skills` dùng được ở mọi nơi
+pip install git+https://github.com/wedabro/bro-skills.git
+
+# Kiểm tra
+bro-skills version
+# → bro-skills v1.2.0
+```
+
+### Cách 3: `pipx install` (Isolated - Không ảnh hưởng system Python)
 
 ```bash
 # Cài pipx nếu chưa có
 pip install pipx
 pipx ensurepath
 
-# Cài bro-agent
-pipx install git+https://github.com/wedabro/bro-agent.git
+# Cài bro-skills
+pipx install git+https://github.com/wedabro/bro-skills.git
 
 # Kiểm tra
-bro-agent version
+bro-skills version
 ```
 
-### Cách 3: Clone + Install (Development)
+### Cách 4: Clone + Install (Development)
 
 ```bash
-git clone https://github.com/wedabro/bro-agent.git
-cd bro-agent
+git clone https://github.com/wedabro/bro-skills.git
+cd bro-skills
 
 # Cài editable mode (thay đổi code tự động có hiệu lực)
 pip install -e .
@@ -58,20 +79,22 @@ pip install -e .
 python ssd.py init
 ```
 
-### Cách 4: Chạy trực tiếp (Không cài)
+### Cách 5: Chạy trực tiếp (Không cài)
 
 ```bash
 # Clone về và chạy trực tiếp
-git clone https://github.com/wedabro/bro-agent.git
-python bro-agent/ssd.py init --target /path/to/project
+git clone https://github.com/wedabro/bro-skills.git
+python bro-skills/ssd.py init --target /path/to/project
 ```
 
 ### Gỡ cài đặt
 
 ```bash
-pip uninstall bro-agent
+pip uninstall bro-skills
 # hoặc
-pipx uninstall bro-agent
+pipx uninstall bro-skills
+# hoặc nếu cài global bằng npm từ GitHub
+npm uninstall -g bro-skills
 ```
 
 ---
@@ -80,30 +103,45 @@ pipx uninstall bro-agent
 
 ```bash
 # Init project mới
-bro-agent init
+bro-skills init
 
 # Init tại thư mục cụ thể
-bro-agent init --target /path/to/project
+bro-skills init --target /path/to/project
 
 # Init với project name
-bro-agent init --name "My Awesome Project"
+bro-skills init --name "My Awesome Project"
 
 # Init và ghi đè không hỏi
-bro-agent init --force
+bro-skills init --force
 
 # Xem danh sách skills
-bro-agent list-skills
+bro-skills list-skills
 
 # Xem danh sách workflows
-bro-agent list-workflows
+bro-skills list-workflows
 
 # Validate cấu trúc .agent
-bro-agent validate --target /path/to/project
+bro-skills validate --target /path/to/project
 
 # Xem version
-bro-agent version
-bro-agent -v
+bro-skills version
+bro-skills -v
 ```
+
+### Chọn nhanh skill/workflow cho AI
+
+| Nhu cầu | Dùng workflow/skill |
+|---|---|
+| Thiết lập luật dự án, tech stack, nguyên tắc bắt buộc | `/01-speckit.constitution` |
+| Viết spec từ mô tả tự nhiên | `/02-speckit.specify` |
+| Làm rõ yêu cầu mơ hồ trước khi code | `/03-speckit.clarify` |
+| Tạo kiến trúc, data model, API contracts | `/04-speckit.plan` |
+| Chia task atomic theo 15-Minute Rule | `/05-speckit.tasks` |
+| Implement có kiểm soát blast radius và test | `/07-speckit.implement` |
+| Review, static check, test, validate sau implement | `/08-speckit.checker`, `/09-speckit.tester`, `/10-speckit.reviewer`, `/11-speckit.validate` |
+| Migration dự án có sẵn | `/util-speckit.migrate` |
+| Debug sự cố, quản lý backlog/roadmap, map codebase, UAT | `/speckit.debug`, `/speckit.backlog`, `/speckit.roadmap`, `/speckit.map`, `/speckit.uat` |
+| Web SEO/GEO/Content/UIUX/WordPress | `/12-speckit.seo`, `/13-speckit.geo`, `/util-speckit.content`, `/util-speckit.uiux`, `/speckit.wordpress` |
 
 ---
 
@@ -124,8 +162,8 @@ bro-agent -v
 ### Pipeline (7 bước)
 
 ```
-Bước 0: Init         →  bro-agent init --name "My Project"
-    ↓                    Tạo 46 files trong .agent/
+Bước 0: Init         →  bro-skills init --name "My Project"
+    ↓                    Tạo ~70 files trong .agent/
     ↓
 Bước 1: Constitution  →  /01-speckit.constitution
     ↓                    Thiết lập "luật" cho project (tech stack, principles)
@@ -166,13 +204,13 @@ Bước 6: Implement     →  /07-speckit.implement
 
 ### Chi tiết từng bước
 
-#### Bước 0 — `bro-agent init`
+#### Bước 0 — `bro-skills init`
 
 ```bash
-bro-agent init --target /path/to/project --name "My Project"
+bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` (~60 files: 23 skills, 25 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
+- Tạo cấu trúc `.agent/` (~70 files: 29 skills, 31 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
 - Mở project trong Antigravity IDE — agent tự động nhận diện `.agent/` folder
 
 #### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
@@ -268,7 +306,7 @@ bro-agent init --target /path/to/project --name "My Project"
 ### Pipeline (7 bước)
 
 ```
-Bước 0: Init          →  bro-agent init --target /path/to/existing --name "Legacy Project"
+Bước 0: Init          →  bro-skills init --target /path/to/existing --name "Legacy Project"
     ↓                     Tạo .agent/ BÊN TRONG project hiện tại
     ↓
 Bước 1: Constitution   →  /01-speckit.constitution
@@ -301,7 +339,7 @@ Bước 5: Implement      →  /07-speckit.implement
 
 ```bash
 # 1. Init — tạo .agent/ trong project hiện tại
-bro-agent init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
+bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 # 2. Constitution — khai báo stack hiện tại
 /01-speckit.constitution
@@ -349,7 +387,7 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── business_logic.md      # Domain rules, source structure
 │   └── seo_standards.md       # SEO/GEO checklist (web projects only)
 │
-├── skills/                    # @ Mentions — 22 Agentic Capabilities
+├── skills/                    # @ Mentions — 29 Agentic Capabilities
 │   ├── speckit.identity/      # Persona Architect
 │   ├── speckit.devops/        # DevOps & Docker Architect
 │   ├── speckit.analyze/       # Consistency Checker
@@ -372,11 +410,19 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── speckit.seo/           # Technical SEO (web projects)
 │   ├── speckit.geo/           # Generative Engine Optimization (web projects)
 │   ├── speckit.content/       # Content Architect (web_public projects)
-│   └── speckit.uiux/          # UI/UX Architect (web projects) - Pro Max Standard
+│   ├── speckit.uiux/          # UI/UX Architect (web projects) - Pro Max Standard
+│   ├── speckit.debug/         # Systematic Debugger
+│   ├── speckit.backlog/       # Backlog Manager
+│   ├── speckit.roadmap/       # Roadmap Strategist
+│   ├── speckit.map/           # Codebase Mapper
+│   ├── speckit.uat/           # UAT Analyzer
+│   └── speckit.wordpress/     # WordPress Theme Architect
 │
-├── workflows/                 # / Slash Commands — 25 Orchestrations
+├── workflows/                 # / Slash Commands — 31 Orchestrations
 │   ├── 00-speckit.all.md           # Full Pipeline (Specify→Clarify→Plan→Tasks→Analyze)
 │   ├── 01-speckit.constitution.md  # Constitution Setup
+│   ├── speckit.identity.md         # Master Identity Setup
+│   ├── speckit.devops.md           # Docker Infrastructure & Port Allocation
 │   ├── 02-speckit.specify.md       # Feature Specification
 │   ├── 03-speckit.clarify.md       # Ambiguity Resolution
 │   ├── 04-speckit.plan.md          # Technical Planning
@@ -397,7 +443,13 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── util-speckit.migrate.md     # Legacy Migration
 │   ├── util-speckit.quizme.md      # Red Team Quiz
 │   ├── util-speckit.status.md      # Progress Dashboard
-│   └── util-speckit.taskstoissues.md # Issue Sync
+│   ├── util-speckit.taskstoissues.md # Issue Sync
+│   ├── speckit.debug.md            # Systematic Debugging
+│   ├── speckit.backlog.md          # Backlog Management
+│   ├── speckit.roadmap.md          # Roadmap Management
+│   ├── speckit.map.md              # Codebase Mapping
+│   ├── speckit.uat.md              # UAT Gap Analysis
+│   └── speckit.wordpress.md        # WordPress Development
 │
 ├── templates/                 # Document Templates
 │   ├── spec-template.md       # Feature Specification
@@ -426,19 +478,22 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 ## 🏗️ Architecture (Tool)
 
 ```
-bro-agent/
+bro-skills/
 ├── ssd.py                    # Backward-compat wrapper (python ssd.py)
 ├── pyproject.toml            # Package config (PEP 621)
 ├── README.md                 # This file
 ├── LICENSE                   # MIT License
+├── package.json              # npm/npx wrapper metadata
+├── npm/
+│   └── bro-skills.cjs        # npx entry point → python -m bro_skills
 ├── .gitignore
-└── bro_agent/                 # Python package
-    ├── __init__.py            # Version: __version__ = "1.0.0"
-    ├── __main__.py            # python -m bro_agent
-    ├── cli.py                 # Console script entry point → `bro-agent` command
-    ├── registry.py            # Single Source of Truth — 22 skills + 22 workflows + 5 project types
-    ├── skill_templates.py     # 22 SKILL.md templates (Mission, Protocol, Guard Rails)
-    ├── workflow_templates.py  # 22 workflow templates (Pre-conditions, Gates, Success Criteria)
+└── bro_skills/                 # Python package
+    ├── __init__.py            # Version: __version__ = "1.2.0"
+    ├── __main__.py            # python -m bro_skills
+    ├── cli.py                 # Console script entry point → `bro-skills` command
+    ├── registry.py            # Single Source of Truth — 29 skills + 31 workflows + 7 project types
+    ├── skill_templates.py     # SKILL.md templates (Mission, Protocol, Guard Rails)
+    ├── workflow_templates.py  # Workflow templates (Pre-conditions, Gates, Success Criteria)
     ├── templates.py           # Document + Script templates aggregator
     ├── scanner.py             # Codebase scanner — auto-detect tech stack, DB, Docker, API
     ├── generator.py           # Generator engine — orchestrates .agent/ creation
@@ -448,15 +503,15 @@ bro-agent/
 ## 🧪 Validation (10 Checks)
 
 ```bash
-bro-agent validate --target /path/to/project
+bro-skills validate --target /path/to/project
 ```
 
 | # | Check | Mô tả |
 |---|-------|-------|
 | 1 | Thư mục .agent/ | Tồn tại |
 | 2 | Core directories | skills/, workflows/, templates/, scripts/, memory/ |
-| 3 | Skills | 17 thư mục + SKILL.md |
-| 4 | Workflows | 19 .md files |
+| 3 | Skills | 29 thư mục + SKILL.md |
+| 4 | Workflows | 31 .md files |
 | 5 | Templates | 4 document templates |
 | 6 | Scripts | 4 bash scripts |
 | 7 | Constitution | memory/constitution.md |

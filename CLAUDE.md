@@ -1,13 +1,13 @@
-# bro-agent
+# bro-skills
 
-Dự án: bro-agent
+Dự án: bro-skills
 
 ## 1. PHÁP LỆNH TỐI CAO
 - Tuân thủ nghiêm ngặt file `.agent/memory/constitution.md`.
 - Docker-First: Mọi hoạt động code và chạy app phải diễn ra trong container. KHÔNG chạy node/python trên host.
 - Ports: Chỉ sử dụng dải port 8900-8999.
 
-## 2. bro-agent PROTOCOL
+## 2. bro-skills PROTOCOL
 - Mọi task phải đi qua quy trình: Specify → Plan → Tasks → Implement.
 - Sử dụng Workflows trong `.agent/workflows/` và Skills trong `.agent/skills/`.
 
