@@ -1,0 +1,105 @@
+{
+  "registry_version": "2.0.0",
+  "asf_version": "3.3",
+  "description": "Agent Registry v2 - Attribute-based selection. active = core + base[project_type] + sum(modifiers[attr]). Orchestrator hop nhat va loai trung.",
+
+  "core_agents": [
+    "speckit.constitution",
+    "speckit.identity",
+    "speckit.specify",
+    "speckit.clarify",
+    "speckit.plan",
+    "speckit.tasks",
+    "speckit.analyze",
+    "speckit.implement",
+    "speckit.tester",
+    "speckit.reviewer",
+    "speckit.validate",
+    "speckit.security",
+    "speckit.debug",
+    "speckit.map"
+  ],
+
+  "base_by_type": {
+    "fullstack": ["speckit.frontend", "speckit.backend", "speckit.database", "speckit.uiux"],
+    "web_public": ["speckit.frontend", "speckit.uiux"],
+    "api_service": ["speckit.backend", "speckit.database"],
+    "wordpress": ["speckit.wordpress"],
+    "game": ["speckit.gamedev"],
+    "mobile": [],
+    "data_pipeline": ["speckit.data", "speckit.database"]
+  },
+
+  "modifiers_description": "Bat dau tu attributes trong project.json.attributes; moi attribute add them agent. Vi du: microservice -> devops; public_facing -> seo/geo/content; platforms.ios -> ios.",
+
+  "modifiers": {
+    "architecture": {
+      "monolith": [],
+      "microservice": ["speckit.devops", "speckit.database", "speckit.backend"],
+      "serverless": ["speckit.devops", "speckit.backend"]
+    },
+    "platforms": {
+      "web": ["speckit.frontend", "speckit.uiux"],
+      "ios": ["speckit.ios"],
+      "android": ["speckit.android"],
+      "cross_platform": ["speckit.mobile"],
+      "desktop": ["speckit.frontend"]
+    },
+    "flags": {
+      "public_facing": ["speckit.seo", "speckit.geo", "speckit.content"],
+      "has_backend": ["speckit.backend", "speckit.database"],
+      "has_persistence": ["speckit.database"],
+      "containerized": ["speckit.devops"],
+      "multiplayer": ["speckit.backend", "speckit.devops"],
+      "has_pii": ["speckit.security", "speckit.database"],
+      "ml": ["speckit.data"]
+    }
+  },
+
+  "agent_roles": {
+    "speckit.frontend": { "role": "Frontend Engineer" },
+    "speckit.backend": { "role": "Backend Engineer" },
+    "speckit.ios": { "role": "iOS Engineer (native Swift)" },
+    "speckit.android": { "role": "Android Engineer (native Kotlin)" },
+    "speckit.mobile": { "role": "Mobile Engineer (cross-platform RN/Flutter)" },
+    "speckit.data": { "role": "Data/ML Engineer" },
+    "speckit.database": { "role": "Database Architect" },
+    "speckit.security": { "role": "Security Auditor" },
+    "speckit.devops": { "role": "DevOps Architect" },
+    "speckit.gamedev": { "role": "Game Developer" }
+  },
+
+  "examples": {
+    "webapp_simple": {
+      "project_type": "web_public",
+      "attributes": { "platforms": ["web"], "flags": ["public_facing"] },
+      "resolved": "core + frontend + uiux + seo + geo + content  (KHONG co ios/android)"
+    },
+    "microservice_api": {
+      "project_type": "api_service",
+      "attributes": { "architecture": "microservice", "flags": ["containerized", "has_pii"] },
+      "resolved": "core + backend + database + devops  (devops THEM do microservice)"
+    },
+    "mobile_ios_only": {
+      "project_type": "mobile",
+      "attributes": { "platforms": ["ios"], "flags": ["has_backend"] },
+      "resolved": "core + ios + backend + database  (KHONG add android)"
+    },
+    "mobile_both_native": {
+      "project_type": "mobile",
+      "attributes": { "platforms": ["ios", "android"] },
+      "resolved": "core + ios + android"
+    },
+    "mobile_cross_platform": {
+      "project_type": "mobile",
+      "attributes": { "platforms": ["cross_platform"] },
+      "resolved": "core + mobile (1 codebase RN/Flutter)"
+    }
+  },
+
+  "orchestration": {
+    "entry": ".agent/agents/orchestrator.md",
+    "selection_rule": "active = unique(core_agents + base_by_type[type] + flatten(modifiers[attr] for attr in attributes))",
+    "fallback_project_type": "fullstack"
+  }
+}
