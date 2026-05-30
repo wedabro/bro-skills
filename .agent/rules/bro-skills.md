@@ -1,12 +1,12 @@
 ---
 trigger: always_on
 glob: "**/*"
-description: bro-agent Workspace Rules cho bro-agent - ASF 3.3 Standard
+description: bro-skills Workspace Rules cho bro-skills - ASF 3.3 Standard
 ---
 
-# 🛡️ bro-agent Workspace Rules
+# 🛡️ bro-skills Workspace Rules
 
-Dự án: bro-agent
+Dự án: bro-skills
 
 ## 1. PHÁP LỆNH TỐI CAO
 
@@ -14,7 +14,7 @@ Dự án: bro-agent
 - Docker-First: Mọi hoạt động code và chạy app phải diễn ra trong container. KHÔNG chạy node/python trên host.
 - Ports: Chỉ sử dụng dải port 8900-8999.
 
-## 2. bro-agent PROTOCOL
+## 2. bro-skills PROTOCOL
 
 - Mọi task phải đi qua quy trình: Specify → Plan → Tasks → Implement.
 - Sử dụng Workflows trong `.agent/workflows/` và Skills trong `.agent/skills/`.
@@ -32,9 +32,8 @@ Dự án: bro-agent
 - Tạo script tự động (`.agent/scripts/`) cho lỗi lặp lại.
 - Kiểm tra logs ngay khi lỗi: `docker compose logs -f <service>`.
 
-+## 5. AGENTIC MODE SYNC (Antigravity Only)
-+- **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
-+- **Planning Artifacts**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 files).
-+- **Verification**: Sau khi hoàn thành task, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
-+
+## 5. AGENTIC MODE SYNC (Antigravity Only)
+- **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
+- **Planning Artifacts**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 files).
+- **Verification**: Sau khi hoàn thành task, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
 

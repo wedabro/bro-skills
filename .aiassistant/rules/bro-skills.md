@@ -1,19 +1,13 @@
-﻿---
-description: bro-agent project rules for bro-agent
-globs:
-alwaysApply: true
----
+# bro-skills Rules for bro-skills
 
-# bro-agent Rules
-
-Dá»± Ã¡n: bro-agent
+Dá»± Ã¡n: bro-skills
 
 ## 1. PHÃP Lá»†NH Tá»I CAO
 - TuÃ¢n thá»§ nghiÃªm ngáº·t file `.agent/memory/constitution.md`.
 - Docker-First: Má»i hoáº¡t Ä‘á»™ng code vÃ  cháº¡y app pháº£i diá»…n ra trong container. KHÃ”NG cháº¡y node/python trÃªn host.
 - Ports: Chá»‰ sá»­ dá»¥ng dáº£i port 8900-8999.
 
-## 2. bro-agent PROTOCOL
+## 2. bro-skills PROTOCOL
 - Má»i task pháº£i Ä‘i qua quy trÃ¬nh: Specify â†’ Plan â†’ Tasks â†’ Implement.
 - Sá»­ dá»¥ng Workflows trong `.agent/workflows/` vÃ  Skills trong `.agent/skills/`.
 
