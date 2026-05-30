@@ -1,0 +1,35 @@
+{
+  "name": "bro-skills",
+  "version": "1.2.0",
+  "description": "Spec-Driven Development CLI for initializing .agent skill/workflow packs.",
+  "license": "MIT",
+  "homepage": "https://github.com/wedabro/bro-skills#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wedabro/bro-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wedabro/bro-skills/issues"
+  },
+  "keywords": [
+    "spec-driven-development",
+    "ai-agent",
+    "agent-skills",
+    "cli",
+    "scaffolding"
+  ],
+  "bin": {
+    "bro-skills": "npm/bro-skills.cjs"
+  },
+  "files": [
+    "bro_skills/**/*.py",
+    "ssd.py",
+    "pyproject.toml",
+    "README.md",
+    "LICENSE",
+    "npm/bro-skills.cjs"
+  ],
+  "engines": {
+    "node": ">=16"
+  }
+}
