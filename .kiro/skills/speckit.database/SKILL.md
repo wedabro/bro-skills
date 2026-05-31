@@ -47,3 +47,32 @@ Thiết kế và tối ưu tầng dữ liệu: schema chuẩn hóa hợp lý, in
 - KHÔNG bỏ index trên FK / cột query nóng.
 - KHÔNG lưu password plaintext (phải hash).
 - Phản hồi bằng Tiếng Việt.
+
+## When to Use
+- Khi thiết kế schema, index, migration, tối ưu query, đảm bảo data integrity.
+- Khi có vấn đề performance DB (N+1, full scan, slow query).
+- **KHÔNG dùng cho**: business logic/API (→ `@speckit.backend`), ETL/ML pipeline (→ `@speckit.data`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Thêm index sau khi chậm cũng được" | Query pattern nên có index từ thiết kế. Vá sau tốn downtime. |
+| "Migration này nhỏ, chạy thẳng prod" | Mọi destructive change cần backup + reversible. Mất data không undo được. |
+| "Constraint để app lo, DB khỏi cần" | App có bug; DB là lớp bảo vệ cuối. Đặt NOT NULL/UNIQUE/FK tại DB. |
+| "Denormalize cho nhanh" | Denormalize không kiểm soát gây data lệch. Chỉ làm có chủ đích + ghi lý do. |
+| "Dùng user admin cho tiện" | Least-privilege giảm thiệt hại khi bị xâm nhập. App không dùng root. |
+
+## Red Flags
+- Migration destructive không có `down`/backup.
+- FK hoặc cột query nóng thiếu index; hoặc over-index làm chậm write.
+- Password lưu plaintext thay vì hash.
+- Credential hard-code thay vì ENV (`DB_*`).
+- PII không mask/encrypt at-rest.
+
+## Verification
+- [ ] Schema có PK/FK + constraint (NOT NULL/UNIQUE/CHECK) tại DB.
+- [ ] Index khớp query pattern thực tế; đã kiểm N+1/full scan.
+- [ ] Migration versioned + reversible; prod có backup trước khi chạy.
+- [ ] App dùng DB user least-privilege, không phải root/admin.
+- [ ] PII được mask/encrypt; password đã hash.
+- [ ] `data_schema.md` cập nhật (ERD + index list).

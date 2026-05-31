@@ -42,3 +42,30 @@ Thiết lập và quản lý tiêu chuẩn UI/UX "Pro Max" cho dự án, đảm 
 - KHÔNG sử dụng màu mặc định của trình duyệt.
 - KHÔNG thiết kế quá phức tạp gây chậm performance.
 - PHẢI ưu tiên Mobile-first design.
+
+## When to Use
+- Khi thiết lập/cập nhật Design System: color, typography, spacing, component spec.
+- Trước khi `@speckit.frontend` code UI cho tính năng mới.
+- **KHÔNG dùng cho**: implement component thành code (→ `@speckit.frontend`), nội dung chữ (→ `@speckit.content`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Dùng màu mặc định trình duyệt cho nhanh" | Màu generic làm UI rẻ tiền, thiếu nhận diện. Dùng palette HSL bài bản. |
+| "Spacing tùy chỗ, miễn đẹp là được" | Spacing tùy tiện gây rối thị giác. Dùng scale chuẩn (4/8/16/24/32). |
+| "Component states để frontend tự lo" | Thiếu spec hover/active/disabled gây UI không nhất quán. Định nghĩa đủ. |
+| "Mobile tính sau, desktop trước" | Mobile-first ép ưu tiên nội dung cốt lõi. Thiết kế responsive từ đầu. |
+
+## Red Flags
+- Dùng màu nguyên bản (red/blue/green) thay vì palette.
+- Spacing không theo scale thống nhất.
+- Component thiếu định nghĩa đủ trạng thái (hover/active/disabled/focus).
+- Hiệu ứng nặng làm chậm render.
+- Thiết kế desktop-only, bỏ qua mobile.
+
+## Verification
+- [ ] `ui_ux_standards.md` có đủ color palette + typography + spacing scale.
+- [ ] Core component (button/card/form/badge) có spec đủ trạng thái + focus ring.
+- [ ] Responsive breakpoint định nghĩa rõ (mobile/tablet/desktop), mobile-first.
+- [ ] Contrast màu đạt WCAG AA.
+- [ ] Có `ui-specs.md` cho tính năng đang làm.

@@ -47,3 +47,32 @@ Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logi
 - KHÔNG bỏ qua authz check trên endpoint nhạy cảm.
 - KHÔNG để endpoint public không auth mà không cảnh báo.
 - Phản hồi bằng Tiếng Việt.
+
+## When to Use
+- Khi tạo/sửa endpoint, business logic, auth, integration với service ngoài.
+- Khi thiết kế API contract (REST/GraphQL), error envelope, pagination.
+- **KHÔNG dùng cho**: thuần schema/migration DB (→ `@speckit.database`), UI (→ `@speckit.frontend`), hạ tầng Docker/CI (→ `@speckit.devops`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Validate ở frontend rồi, backend khỏi cần" | Client có thể bị bypass. Validation ở biên backend là bắt buộc. |
+| "Endpoint này nội bộ, khỏi authz" | Nội bộ vẫn bị lộ qua SSRF/lateral movement. Authz mọi endpoint nhạy cảm. |
+| "Nối chuỗi SQL cho nhanh, sau parameterize" | SQLi là lỗ hổng #1. Parameterized query ngay từ đầu. |
+| "Trả nguyên error cho dễ debug" | Stacktrace lộ cấu trúc nội bộ. Log nội bộ, trả error envelope chuẩn. |
+| "Transaction sau thêm cũng được" | Lỗi giữa chừng để lại data bẩn. Transaction boundary từ đầu. |
+
+## Red Flags
+- Business logic nằm trong controller.
+- Endpoint nhạy cảm không có authz check.
+- SQL nối chuỗi string thay vì parameterized.
+- Secret/URL hard-code thay vì ENV (`API_*`, `DB_*`).
+- Async/list endpoint thiếu pagination hoặc nuốt exception.
+
+## Verification
+- [ ] Mọi endpoint nhạy cảm có AuthN + AuthZ, đã test cả case từ chối.
+- [ ] Input validate ở biên; trả 4xx với message rõ khi sai.
+- [ ] Không còn SQL nối chuỗi; query đều parameterized.
+- [ ] Không hard-code secret/URL/port; dùng ENV + có `.env.example`.
+- [ ] Có OpenAPI/GraphQL schema khớp implementation.
+- [ ] Health check + structured logging (request id) hoạt động.
