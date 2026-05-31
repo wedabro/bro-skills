@@ -32,3 +32,28 @@ Review implementation code → đảm bảo đúng spec, bảo mật, hiệu nă
 ## 🚫 Guard Rails
 - KHÔNG tự fix code — chỉ review và đề xuất.
 - Mỗi finding PHẢI có file:line cụ thể.
+
+## When to Use
+- Sau khi implement, trước khi merge: review spec compliance, security, performance, Constitution.
+- **KHÔNG dùng cho**: tự sửa code (chỉ review + đề xuất), viết test (→ `@speckit.tester`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Code chạy được là ổn" | Chạy được ≠ đúng spec/an toàn. Review đủ 5 trục. |
+| "Sửa luôn cho nhanh" | Reviewer tự sửa làm mất ranh giới review/implement. Chỉ đề xuất, để owner fix. |
+| "Finding chung chung là đủ" | Không file:line thì không actionable. Mỗi finding chỉ rõ vị trí. |
+| "Bỏ qua nit cho nhanh merge" | Cần phân loại severity rõ; không trộn nit với critical. |
+
+## Red Flags
+- Finding không có file:line.
+- Reviewer tự sửa code thay vì đề xuất.
+- Bỏ qua kiểm tra security/Constitution.
+- Verdict không rõ ràng (không APPROVE/REQUEST CHANGES).
+
+## Verification
+- [ ] Đã review đủ 5 trục: spec compliance, error handling, security, performance, Constitution.
+- [ ] Mỗi finding có file:line + severity + suggestion.
+- [ ] Không tự sửa code; chỉ report.
+- [ ] Verdict rõ ràng: APPROVE hoặc REQUEST CHANGES (kèm danh sách fix).
+- [ ] `review-report.md` hoàn chỉnh.

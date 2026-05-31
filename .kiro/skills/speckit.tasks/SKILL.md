@@ -40,3 +40,28 @@ Chuyển plan.md thành danh sách tasks atomic, có thứ tự dependency, mỗ
 - KHÔNG tạo task quá lớn (>3 files hoặc >15 phút).
 - KHÔNG tạo task trùng lặp.
 - Mỗi task PHẢI có file path cụ thể.
+
+## When to Use
+- Sau khi có `plan.md`, cần breakdown thành tasks atomic có thứ tự dependency.
+- **KHÔNG dùng cho**: thiết kế kiến trúc (→ `@speckit.plan`), thực thi task (→ `@speckit.implement`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Gộp nhiều việc vào 1 task cho gọn" | Task lớn khó verify + rollback. Giữ ≤15 phút, ≤3 files. |
+| "Verify để khi implement tính" | Task không có lệnh verify thì không biết khi nào xong. Mỗi task có Verify tự động. |
+| "Thứ tự task không quan trọng" | Sai thứ tự dependency gây block. Foundation ở Phase 2, task phụ thuộc đặt sau. |
+| "File path ghi chung chung" | Task thiếu path cụ thể dễ làm sai chỗ. Luôn ghi đường dẫn rõ. |
+
+## Red Flags
+- Task >3 files hoặc >15 phút.
+- Task thiếu 1 trong 4 phần: Files / Action / Verify / Done.
+- Task không có file path cụ thể; Action mơ hồ.
+- Task phụ thuộc đặt trước task nó cần.
+
+## Verification
+- [ ] Mọi task ≤15 phút, ảnh hưởng ≤3 files.
+- [ ] Mỗi task đủ 4 phần (Files/Action/Verify/Done) với Verify là lệnh tự động.
+- [ ] Phase structure đúng: Setup → Foundation → mỗi User Story 1 phase → Polish.
+- [ ] Dependency hợp lệ: task phụ thuộc đặt sau; không trùng lặp.
+- [ ] `tasks.md` link task ↔ User Scenario.

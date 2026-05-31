@@ -65,3 +65,28 @@ Chuyển spec.md (WHAT) thành plan.md (HOW) — kiến trúc kỹ thuật chi t
 - KHÔNG viết code trong bước planning — chỉ kiến trúc.
 - Mọi tech choice PHẢI justify lý do (không dùng tech vì "thích").
 - PHẢI check constitution compliance trước khi output.
+
+## When to Use
+- Sau khi có `spec.md`, cần chuyển WHAT → HOW: data model, API contract, kiến trúc.
+- **KHÔNG dùng cho**: viết spec (→ `@speckit.specify`), chia task (→ `@speckit.tasks`), viết code (→ `@speckit.implement`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Vừa code vừa thiết kế cho nhanh" | Không có plan → kiến trúc chắp vá, sửa lớn về sau. Plan trước. |
+| "Dùng tech này vì quen" | Tech choice không justify dễ sai bài toán. Mỗi lựa chọn ghi lý do. |
+| "Unknown để code rồi tính" | Unknown chưa research thành rủi ro ẩn. Ghi NEEDS CLARIFICATION + research.md. |
+| "Constitution check sau" | Plan vi phạm Constitution kéo cả implement sai. Gate check trước khi output. |
+
+## Red Flags
+- Plan chứa code thật thay vì kiến trúc.
+- Tech choice không có lý do.
+- Thiếu data-model.md hoặc contracts khi spec có entity/endpoint.
+- Không có section must_haves (truths/artifacts/key_links).
+
+## Verification
+- [ ] `plan.md` có folder structure, component hierarchy, auth flow, Docker topology.
+- [ ] `data-model.md` + `contracts/*.md` khớp entity/scenario trong spec.
+- [ ] Mọi tech choice có justify; unknown ghi trong research.md.
+- [ ] Section must_haves đầy đủ truths/artifacts/key_links.
+- [ ] Gate check Constitution pass; không có code trong plan.
