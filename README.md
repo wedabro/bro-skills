@@ -6,8 +6,8 @@
 
 Tool này tự động tạo cấu trúc `.agent/` chuẩn cho Antigravity IDE, bao gồm:
 
-- **Skills** (29 skills) — Khả năng AI tự trị cho từng phase SDLC, thêm Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
-- **Workflows** (31 workflows) — Orchestration commands với pre-conditions, gate checks, success criteria
+- **Skills** (38 skills) — Khả năng AI tự trị cho từng phase SDLC + builder theo domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) và Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
+- **Workflows** (33 workflows) — Orchestration commands với pre-conditions, gate checks, success criteria
 - **Templates** — Spec, Plan, Tasks, Constitution, Infrastructure, SEO, **UI/UX Standards** templates
 - **Scripts** — 4 bash utilities (create-feature, setup-plan, check-prerequisites, update-context)
 
@@ -49,7 +49,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Kiểm tra
 bro-skills version
-# → bro-skills v1.2.0
+# → bro-skills v1.3.0
 ```
 
 ### Cách 3: `pipx install` (Isolated - Không ảnh hưởng system Python)
@@ -163,7 +163,7 @@ bro-skills -v
 
 ```
 Bước 0: Init         →  bro-skills init --name "My Project"
-    ↓                    Tạo ~70 files trong .agent/
+    ↓                    Tạo ~90 files trong .agent/
     ↓
 Bước 1: Constitution  →  /01-speckit.constitution
     ↓                    Thiết lập "luật" cho project (tech stack, principles)
@@ -210,7 +210,7 @@ Bước 6: Implement     →  /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` (~70 files: 29 skills, 31 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
+- Tạo cấu trúc `.agent/` (~90 files: 38 skills, 33 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
 - Mở project trong Antigravity IDE — agent tự động nhận diện `.agent/` folder
 
 #### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
@@ -387,7 +387,7 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── business_logic.md      # Domain rules, source structure
 │   └── seo_standards.md       # SEO/GEO checklist (web projects only)
 │
-├── skills/                    # @ Mentions — 29 Agentic Capabilities
+├── skills/                    # @ Mentions — 38 Agentic Capabilities
 │   ├── speckit.identity/      # Persona Architect
 │   ├── speckit.devops/        # DevOps & Docker Architect
 │   ├── speckit.analyze/       # Consistency Checker
@@ -407,6 +407,15 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── speckit.taskstoissues/ # Issue Tracker Syncer
 │   ├── speckit.tester/        # Test Runner & Coverage
 │   ├── speckit.validate/      # Implementation Validator
+│   ├── speckit.frontend/      # Frontend Engineer (builder)
+│   ├── speckit.backend/       # Backend Engineer (builder)
+│   ├── speckit.database/      # Database Architect (builder)
+│   ├── speckit.security/      # Security Auditor (core)
+│   ├── speckit.ios/           # iOS Engineer — native Swift (builder)
+│   ├── speckit.android/       # Android Engineer — native Kotlin (builder)
+│   ├── speckit.mobile/        # Mobile Engineer — cross-platform (builder)
+│   ├── speckit.data/          # Data/ML Engineer (builder)
+│   ├── speckit.gamedev/       # Game Developer (builder)
 │   ├── speckit.seo/           # Technical SEO (web projects)
 │   ├── speckit.geo/           # Generative Engine Optimization (web projects)
 │   ├── speckit.content/       # Content Architect (web_public projects)
@@ -418,7 +427,7 @@ Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc
 │   ├── speckit.uat/           # UAT Analyzer
 │   └── speckit.wordpress/     # WordPress Theme Architect
 │
-├── workflows/                 # / Slash Commands — 31 Orchestrations
+├── workflows/                 # / Slash Commands — 33 Orchestrations
 │   ├── 00-speckit.all.md           # Full Pipeline (Specify→Clarify→Plan→Tasks→Analyze)
 │   ├── 01-speckit.constitution.md  # Constitution Setup
 │   ├── speckit.identity.md         # Master Identity Setup
@@ -488,10 +497,10 @@ bro-skills/
 │   └── bro-skills.cjs        # npx entry point → python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Python package
-    ├── __init__.py            # Version: __version__ = "1.2.0"
+    ├── __init__.py            # Version: __version__ = "1.3.0"
     ├── __main__.py            # python -m bro_skills
     ├── cli.py                 # Console script entry point → `bro-skills` command
-    ├── registry.py            # Single Source of Truth — 29 skills + 31 workflows + 7 project types
+    ├── registry.py            # Single Source of Truth — 38 skills + 33 workflows + 8 project types
     ├── skill_templates.py     # SKILL.md templates (Mission, Protocol, Guard Rails)
     ├── workflow_templates.py  # Workflow templates (Pre-conditions, Gates, Success Criteria)
     ├── templates.py           # Document + Script templates aggregator
@@ -510,8 +519,8 @@ bro-skills validate --target /path/to/project
 |---|-------|-------|
 | 1 | Thư mục .agent/ | Tồn tại |
 | 2 | Core directories | skills/, workflows/, templates/, scripts/, memory/ |
-| 3 | Skills | 29 thư mục + SKILL.md |
-| 4 | Workflows | 31 .md files |
+| 3 | Skills | 38 thư mục + SKILL.md |
+| 4 | Workflows | 33 .md files |
 | 5 | Templates | 4 document templates |
 | 6 | Scripts | 4 bash scripts |
 | 7 | Constitution | memory/constitution.md |
