@@ -61,20 +61,15 @@ Copy any `SKILL.md` into `.cursor/rules/`, or reference the full `skills/` direc
 </details>
 
 <details>
-<summary><b>Gemini CLI</b></summary>
+<summary><b>Antigravity CLI</b></summary>
 
-Install as native skills for auto-discovery, or add to `GEMINI.md` for persistent context. See [docs/gemini-cli-setup.md](docs/gemini-cli-setup.md).
+Google's agentic CLI (formerly Gemini CLI) is now Antigravity CLI. Install as native skills for auto-discovery, or add to `AGENTS.md` for persistent context. See [docs/antigravity-cli-setup.md](docs/antigravity-cli-setup.md).
 
 **Install from the repo:**
 
 ```bash
-gemini skills install https://github.com/addyosmani/agent-skills.git --path skills
-```
-
-**Install from a local clone:**
-
-```bash
-gemini skills install ./agent-skills/skills/
+bro-skills init --target /path/to/project
+antigravity skills install /path/to/bro-skills/.agent/skills/
 ```
 
 </details>
@@ -104,7 +99,7 @@ Use agent definitions from `agents/` as Copilot personas and skill content in `.
 
 <details>
   <summary><b>Kiro IDE & CLI </b></summary>
-  Skills for Kiro reside under ".kiro/skills/" and can be stored under Project or Global level. Kiro also supports Agents.md. See Kiro docs at https://kiro.dev/docs/skills/
+  Skills for Kiro reside under ".kiro/skills/" and can be stored under Project or Global level. Kiro also supports AGENTS.md, steering files, agent hooks, and MCP. See [docs/kiro-setup.md](docs/kiro-setup.md) and the Kiro docs at https://kiro.dev/docs/skills/
 </details>
 
 <details>
@@ -270,7 +265,7 @@ agent-skills/
 ├── references/                        # 4 supplementary checklists
 ├── hooks/                             # Session lifecycle hooks
 ├── .claude/commands/                  # 7 slash commands (Claude Code)
-├── .gemini/commands/                  # 7 slash commands (Gemini CLI)
+├── .antigravity/commands/             # 7 slash commands (Antigravity CLI)
 └── docs/                              # Setup guides per tool
 ```
 
