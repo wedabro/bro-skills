@@ -43,3 +43,30 @@ Report tại `.agent/memory/seo-audit-report.md`:
 ## 🔗 Handoffs
 - `@speckit.geo`: Sau khi Technical SEO đạt → chuyển sang GEO audit
 - `@speckit.implement`: Fix các issues được phát hiện
+
+## When to Use
+- Khi audit/tối ưu Technical SEO: meta tags, sitemap, canonical, Core Web Vitals, Schema.org.
+- Với mọi page public (`public_facing`) trước khi ship.
+- **KHÔNG dùng cho**: tối ưu trích dẫn AI Search (→ `@speckit.geo`), viết/sửa nội dung chữ (→ `@speckit.content`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "SEO làm sau khi launch" | Retrofit SEO mất thứ hạng giai đoạn vàng. Làm trước khi ship. |
+| "Title/description copy chung được" | Trùng meta làm loãng index. Mỗi page unique title ≤60, desc ≤160. |
+| "CWV để frontend lo" | CWV là tiêu chí xếp hạng. SEO phải verify LCP/INP/CLS đạt ngưỡng. |
+| "JSON-LD thừa, Google tự hiểu" | Structured data tăng rich result + GEO. Thêm đúng schema. |
+
+## Red Flags
+- Page thiếu `<title>`/`<meta description>` hoặc bị trùng.
+- Nhiều `<h1>` hoặc heading nhảy cấp.
+- Thiếu canonical, sitemap.xml, hoặc robots.txt block CSS/JS.
+- Ảnh không width/height (gây CLS), không lazy load.
+- LCP > 2.5s, INP > 200ms, hoặc CLS > 0.1.
+
+## Verification
+- [ ] Mỗi page có title unique (≤60) + meta description (≤160) + canonical.
+- [ ] Heading hierarchy đúng (1 h1/page, không nhảy cấp).
+- [ ] JSON-LD đúng schema; sitemap.xml auto-gen; robots.txt không block CSS/JS.
+- [ ] CWV đạt: LCP < 2.5s, INP < 200ms, CLS < 0.1.
+- [ ] `seo-audit-report.md` có issue phân loại + score + fix suggestion.
