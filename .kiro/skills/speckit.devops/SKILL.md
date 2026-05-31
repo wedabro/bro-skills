@@ -72,3 +72,32 @@ docker compose ps --format json 2>$null
 - KHÔNG chạy `docker compose down -v` trên production.
 - KHÔNG hard-code credentials vào Dockerfile.
 - KHÔNG quét port khi Docker local đã chạy (có containers).
+
+## When to Use
+- Khi viết/sửa Dockerfile, docker-compose, cấp phát port, production hardening, CI/CD.
+- Khi setup môi trường chạy app (local/staging/prod) theo Docker-First.
+- **KHÔNG dùng cho**: business logic/API (→ `@speckit.backend`), schema DB (→ `@speckit.database`).
+
+## Common Rationalizations
+| Lý do bao biện | Sự thật |
+|---|---|
+| "Hard-code port cho nhanh, sau đổi" | Port phải qua ENV để không xung đột giữa môi trường. ENV-first từ đầu. |
+| "Chạy root trong container cho đỡ lỗi quyền" | Root container = leo thang đặc quyền khi bị thoát. Dùng USER non-root. |
+| "Quét port lại cho chắc" | Docker local đang chạy thì giữ port hiện tại, quét lại gây đổi vô ích. |
+| "Để devDependencies trong image cho tiện" | Image phình + tăng attack surface. Multi-stage, loại dev deps. |
+| "down -v cho sạch" | Trên prod, `down -v` xóa volume = mất data. Cấm tuyệt đối. |
+
+## Red Flags
+- Port number hard-code trong compose/Dockerfile thay vì `${VAR:-default}`.
+- Container chạy root; image dùng base nặng, còn devDependencies.
+- `.dockerignore` không block `.env`/`.git`/`node_modules`.
+- Port nằm ngoài dải 8900-8999.
+- Quét lại port khi local đã có container chạy.
+
+## Verification
+- [ ] Mọi port đọc từ ENV; nằm trong dải 8900-8999, thứ tự Public/Admin/API.
+- [ ] `docker-compose.prod.yml` multi-stage + USER non-root + loại dev deps.
+- [ ] `.dockerignore` block `.env`, `.git`, `node_modules`; không secret trong Dockerfile.
+- [ ] Health check cho mỗi service; chỉ EXPOSE port cần thiết.
+- [ ] `infrastructure.md` + `.env.example` cập nhật đầy đủ port vars.
+- [ ] Không có lệnh `down -v` nhắm vào prod.
