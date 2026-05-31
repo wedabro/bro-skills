@@ -1,24 +1,24 @@
 ---
 name: speckit.plan
-description: Technical Planner - Tạo plan.md từ spec (data model, API contracts, research).
+description: Technical Planner - Táº¡o plan.md tá»« spec (data model, API contracts, research).
 role: System Architect
 ---
 
-## 🎯 Mission
-Chuyển spec.md (WHAT) thành plan.md (HOW) — kiến trúc kỹ thuật chi tiết.
+## ðŸŽ¯ Mission
+Chuyá»ƒn spec.md (WHAT) thÃ nh plan.md (HOW) â€” kiáº¿n trÃºc ká»¹ thuáº­t chi tiáº¿t.
 
-## 📥 Input
+## ðŸ“¥ Input
 - `.agent/specs/[feature]/spec.md`
 - `.agent/memory/constitution.md`
 
-## 📋 Protocol
+## ðŸ“‹ Protocol
 
 ### Phase 0: Research
-- Scan spec → liệt kê unknowns ("NEEDS CLARIFICATION").
-- Nghiên cứu giải pháp → ghi vào `research.md`.
+- Scan spec â†’ liá»‡t kÃª unknowns ("NEEDS CLARIFICATION").
+- NghiÃªn cá»©u giáº£i phÃ¡p â†’ ghi vÃ o `research.md`.
 
 ### Phase 1: Data Model
-- Từ entities trong spec → tạo `data-model.md`:
+- Tá»« entities trong spec â†’ táº¡o `data-model.md`:
   ```prisma
   model User {
     id    String @id @default(cuid())
@@ -26,10 +26,10 @@ Chuyển spec.md (WHAT) thành plan.md (HOW) — kiến trúc kỹ thuật chi t
     // ...
   }
   ```
-- Xác định relationships (1:N, N:N).
+- XÃ¡c Ä‘á»‹nh relationships (1:N, N:N).
 
 ### Phase 2: API Contracts
-- Từ User Scenarios → tạo `contracts/[entity].md`:
+- Tá»« User Scenarios â†’ táº¡o `contracts/[entity].md`:
   ```
   POST /api/v1/users
   Body: { email, password }
@@ -38,7 +38,7 @@ Chuyển spec.md (WHAT) thành plan.md (HOW) — kiến trúc kỹ thuật chi t
   ```
 
 ### Phase 3: Architecture
-- Tạo `plan.md` với:
+- Táº¡o `plan.md` vá»›i:
   - Folder structure
   - Component hierarchy
   - State management approach
@@ -46,47 +46,47 @@ Chuyển spec.md (WHAT) thành plan.md (HOW) — kiến trúc kỹ thuật chi t
   - Docker service topology
 
 ### Phase 4: Must-Haves (Goal-Backward)
-- Xác định những thứ bắt buộc phải diễn ra để hoàn thành mục tiêu.
-- Thêm section `must_haves` vào `plan.md`:
-  - `truths`: Các kết quả người dùng phải thấy được (vd: "User can see existing messages").
-  - `artifacts`: Các tài nguyên/file phải được tạo (vd: Component A, file B, Endpoint C).
-  - `key_links`: Sự kết nối quan trọng tránh đứt gãy (vd: UI -> API gọi bằng `fetch` -> model `findMany`).
+- XÃ¡c Ä‘á»‹nh nhá»¯ng thá»© báº¯t buá»™c pháº£i diá»…n ra Ä‘á»ƒ hoÃ n thÃ nh má»¥c tiÃªu.
+- ThÃªm section `must_haves` vÃ o `plan.md`:
+  - `truths`: CÃ¡c káº¿t quáº£ ngÆ°á»i dÃ¹ng pháº£i tháº¥y Ä‘Æ°á»£c (vd: "User can see existing messages").
+  - `artifacts`: CÃ¡c tÃ i nguyÃªn/file pháº£i Ä‘Æ°á»£c táº¡o (vd: Component A, file B, Endpoint C).
+  - `key_links`: Sá»± káº¿t ná»‘i quan trá»ng trÃ¡nh Ä‘á»©t gÃ£y (vd: UI -> API gá»i báº±ng `fetch` -> model `findMany`).
 
 ### Gate Check
-- So sánh plan vs constitution → BÁO LỖI nếu vi phạm rules.
+- So sÃ¡nh plan vs constitution â†’ BÃO Lá»–I náº¿u vi pháº¡m rules.
 
-## 📤 Output
+## ðŸ“¤ Output
 - `.agent/specs/[feature]/plan.md`
 - `.agent/specs/[feature]/data-model.md`
 - `.agent/specs/[feature]/contracts/*.md`
-- `.agent/specs/[feature]/research.md` (nếu có unknowns)
+- `.agent/specs/[feature]/research.md` (náº¿u cÃ³ unknowns)
 
-## 🚫 Guard Rails
-- KHÔNG viết code trong bước planning — chỉ kiến trúc.
-- Mọi tech choice PHẢI justify lý do (không dùng tech vì "thích").
-- PHẢI check constitution compliance trước khi output.
+## ðŸš« Guard Rails
+- KHÃ”NG viáº¿t code trong bÆ°á»›c planning â€” chá»‰ kiáº¿n trÃºc.
+- Má»i tech choice PHáº¢I justify lÃ½ do (khÃ´ng dÃ¹ng tech vÃ¬ "thÃ­ch").
+- PHáº¢I check constitution compliance trÆ°á»›c khi output.
 
 ## When to Use
-- Sau khi có `spec.md`, cần chuyển WHAT → HOW: data model, API contract, kiến trúc.
-- **KHÔNG dùng cho**: viết spec (→ `@speckit.specify`), chia task (→ `@speckit.tasks`), viết code (→ `@speckit.implement`).
+- Sau khi cÃ³ `spec.md`, cáº§n chuyá»ƒn WHAT â†’ HOW: data model, API contract, kiáº¿n trÃºc.
+- **KHÃ”NG dÃ¹ng cho**: viáº¿t spec (â†’ `@speckit.specify`), chia task (â†’ `@speckit.tasks`), viáº¿t code (â†’ `@speckit.implement`).
 
 ## Common Rationalizations
-| Lý do bao biện | Sự thật |
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
 |---|---|
-| "Vừa code vừa thiết kế cho nhanh" | Không có plan → kiến trúc chắp vá, sửa lớn về sau. Plan trước. |
-| "Dùng tech này vì quen" | Tech choice không justify dễ sai bài toán. Mỗi lựa chọn ghi lý do. |
-| "Unknown để code rồi tính" | Unknown chưa research thành rủi ro ẩn. Ghi NEEDS CLARIFICATION + research.md. |
-| "Constitution check sau" | Plan vi phạm Constitution kéo cả implement sai. Gate check trước khi output. |
+| "Vá»«a code vá»«a thiáº¿t káº¿ cho nhanh" | KhÃ´ng cÃ³ plan â†’ kiáº¿n trÃºc cháº¯p vÃ¡, sá»­a lá»›n vá» sau. Plan trÆ°á»›c. |
+| "DÃ¹ng tech nÃ y vÃ¬ quen" | Tech choice khÃ´ng justify dá»… sai bÃ i toÃ¡n. Má»—i lá»±a chá»n ghi lÃ½ do. |
+| "Unknown Ä‘á»ƒ code rá»“i tÃ­nh" | Unknown chÆ°a research thÃ nh rá»§i ro áº©n. Ghi NEEDS CLARIFICATION + research.md. |
+| "Constitution check sau" | Plan vi pháº¡m Constitution kÃ©o cáº£ implement sai. Gate check trÆ°á»›c khi output. |
 
 ## Red Flags
-- Plan chứa code thật thay vì kiến trúc.
-- Tech choice không có lý do.
-- Thiếu data-model.md hoặc contracts khi spec có entity/endpoint.
-- Không có section must_haves (truths/artifacts/key_links).
+- Plan chá»©a code tháº­t thay vÃ¬ kiáº¿n trÃºc.
+- Tech choice khÃ´ng cÃ³ lÃ½ do.
+- Thiáº¿u data-model.md hoáº·c contracts khi spec cÃ³ entity/endpoint.
+- KhÃ´ng cÃ³ section must_haves (truths/artifacts/key_links).
 
 ## Verification
-- [ ] `plan.md` có folder structure, component hierarchy, auth flow, Docker topology.
-- [ ] `data-model.md` + `contracts/*.md` khớp entity/scenario trong spec.
-- [ ] Mọi tech choice có justify; unknown ghi trong research.md.
-- [ ] Section must_haves đầy đủ truths/artifacts/key_links.
-- [ ] Gate check Constitution pass; không có code trong plan.
+- [ ] `plan.md` cÃ³ folder structure, component hierarchy, auth flow, Docker topology.
+- [ ] `data-model.md` + `contracts/*.md` khá»›p entity/scenario trong spec.
+- [ ] Má»i tech choice cÃ³ justify; unknown ghi trong research.md.
+- [ ] Section must_haves Ä‘áº§y Ä‘á»§ truths/artifacts/key_links.
+- [ ] Gate check Constitution pass; khÃ´ng cÃ³ code trong plan.

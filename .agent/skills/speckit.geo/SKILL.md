@@ -1,69 +1,69 @@
 ---
 name: speckit.geo
-description: GEO Strategist - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity).
+description: GEO Strategist - Tá»‘i Æ°u cho AI Search (ChatGPT, Gemini, Perplexity).
 role: GEO Strategist
 ---
 
-## 🎯 Mission
-Đảm bảo website được AI Search engines **trích dẫn** trong câu trả lời.
+## ðŸŽ¯ Mission
+Äáº£m báº£o website Ä‘Æ°á»£c AI Search engines **trÃ­ch dáº«n** trong cÃ¢u tráº£ lá»i.
 
-## 📥 Input
+## ðŸ“¥ Input
 - Source code (content pages)
 - `.agent/knowledge_base/seo_standards.md`
 
-## 📋 Protocol
+## ðŸ“‹ Protocol
 
-### Bước 1: AI Crawlability
-- File `llms.txt` tại root domain?
-- SSR/SSG cho content pages (KHÔNG CSR)?
-- JSON-LD đầy đủ cho Article, Product, FAQ?
+### BÆ°á»›c 1: AI Crawlability
+- File `llms.txt` táº¡i root domain?
+- SSR/SSG cho content pages (KHÃ”NG CSR)?
+- JSON-LD Ä‘áº§y Ä‘á»§ cho Article, Product, FAQ?
 
-### Bước 2: E-E-A-T Compliance
-- **Experience**: Nội dung thể hiện kinh nghiệm thực tế?
+### BÆ°á»›c 2: E-E-A-T Compliance
+- **Experience**: Ná»™i dung thá»ƒ hiá»‡n kinh nghiá»‡m thá»±c táº¿?
 - **Expertise**: Author bio, credentials?
-- **Authoritativeness**: Nguồn trích dẫn, data points?
+- **Authoritativeness**: Nguá»“n trÃ­ch dáº«n, data points?
 - **Trustworthiness**: HTTPS, privacy policy, contact info?
 
-### Bước 3: Content Format for AI
-- Short paragraphs (2-3 câu)
+### BÆ°á»›c 3: Content Format for AI
+- Short paragraphs (2-3 cÃ¢u)
 - Bullet points, numbered lists
-- Direct answers ở đầu mỗi section
-- FAQ sections dạng "People Also Ask"
-- Fact-dense: Mỗi đoạn ≥1 data point
+- Direct answers á»Ÿ Ä‘áº§u má»—i section
+- FAQ sections dáº¡ng "People Also Ask"
+- Fact-dense: Má»—i Ä‘oáº¡n â‰¥1 data point
 
-### Bước 4: Topic Authority
+### BÆ°á»›c 4: Topic Authority
 - Topic clusters (pillar + supporting articles)
-- Internal linking giữa bài cùng chủ đề
+- Internal linking giá»¯a bÃ i cÃ¹ng chá»§ Ä‘á»
 
-## 📤 Output
+## ðŸ“¤ Output
 - File: `.agent/memory/geo-audit-report.md`
 
-## 🔗 Handoffs
-- `@speckit.content`: Tối ưu nội dung theo chuẩn GEO
+## ðŸ”— Handoffs
+- `@speckit.content`: Tá»‘i Æ°u ná»™i dung theo chuáº©n GEO
 
 ## When to Use
-- Khi tối ưu để AI Search (ChatGPT/Gemini/Perplexity) trích dẫn nội dung.
-- Sau khi Technical SEO đạt (`@speckit.seo`), với page public có nội dung.
-- **KHÔNG dùng cho**: SEO kỹ thuật meta/CWV (→ `@speckit.seo`), chỉnh sửa câu chữ (→ `@speckit.content`).
+- Khi tá»‘i Æ°u Ä‘á»ƒ AI Search (ChatGPT/Gemini/Perplexity) trÃ­ch dáº«n ná»™i dung.
+- Sau khi Technical SEO Ä‘áº¡t (`@speckit.seo`), vá»›i page public cÃ³ ná»™i dung.
+- **KHÃ”NG dÃ¹ng cho**: SEO ká»¹ thuáº­t meta/CWV (â†’ `@speckit.seo`), chá»‰nh sá»­a cÃ¢u chá»¯ (â†’ `@speckit.content`).
 
 ## Common Rationalizations
-| Lý do bao biện | Sự thật |
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
 |---|---|
-| "CSR render được là đủ" | AI crawler thường không chạy JS. Cần SSR/SSG cho content. |
-| "llms.txt không cần thiết" | llms.txt giúp AI hiểu cấu trúc site. Thêm tại root. |
-| "Author bio thừa" | E-E-A-T cần credentials để được tin tưởng + trích dẫn. |
-| "Viết dài mới chuyên sâu" | AI ưu tiên đoạn ngắn, fact-dense, direct answer. Súc tích + số liệu. |
+| "CSR render Ä‘Æ°á»£c lÃ  Ä‘á»§" | AI crawler thÆ°á»ng khÃ´ng cháº¡y JS. Cáº§n SSR/SSG cho content. |
+| "llms.txt khÃ´ng cáº§n thiáº¿t" | llms.txt giÃºp AI hiá»ƒu cáº¥u trÃºc site. ThÃªm táº¡i root. |
+| "Author bio thá»«a" | E-E-A-T cáº§n credentials Ä‘á»ƒ Ä‘Æ°á»£c tin tÆ°á»Ÿng + trÃ­ch dáº«n. |
+| "Viáº¿t dÃ i má»›i chuyÃªn sÃ¢u" | AI Æ°u tiÃªn Ä‘oáº¡n ngáº¯n, fact-dense, direct answer. SÃºc tÃ­ch + sá»‘ liá»‡u. |
 
 ## Red Flags
-- Content pages render bằng CSR thay vì SSR/SSG.
-- Thiếu `llms.txt`, thiếu JSON-LD cho Article/Product/FAQ.
-- Không có author bio/credentials, không nguồn trích dẫn.
-- Đoạn văn dài, thiếu direct answer ở đầu section, thiếu data point.
+- Content pages render báº±ng CSR thay vÃ¬ SSR/SSG.
+- Thiáº¿u `llms.txt`, thiáº¿u JSON-LD cho Article/Product/FAQ.
+- KhÃ´ng cÃ³ author bio/credentials, khÃ´ng nguá»“n trÃ­ch dáº«n.
+- Äoáº¡n vÄƒn dÃ i, thiáº¿u direct answer á»Ÿ Ä‘áº§u section, thiáº¿u data point.
 
 ## Verification
-- [ ] `llms.txt` tồn tại tại root; content pages dùng SSR/SSG.
-- [ ] JSON-LD đầy đủ cho Article/Product/FAQ.
-- [ ] E-E-A-T: author bio, nguồn trích dẫn, HTTPS, privacy + contact.
-- [ ] Đoạn ngắn 2-3 câu, direct answer đầu section, mỗi đoạn ≥1 data point.
-- [ ] Topic cluster + internal linking giữa bài cùng chủ đề.
-- [ ] `geo-audit-report.md` hoàn chỉnh.
+- [ ] `llms.txt` tá»“n táº¡i táº¡i root; content pages dÃ¹ng SSR/SSG.
+- [ ] JSON-LD Ä‘áº§y Ä‘á»§ cho Article/Product/FAQ.
+- [ ] E-E-A-T: author bio, nguá»“n trÃ­ch dáº«n, HTTPS, privacy + contact.
+- [ ] Äoáº¡n ngáº¯n 2-3 cÃ¢u, direct answer Ä‘áº§u section, má»—i Ä‘oáº¡n â‰¥1 data point.
+- [ ] Topic cluster + internal linking giá»¯a bÃ i cÃ¹ng chá»§ Ä‘á».
+- [ ] `geo-audit-report.md` hoÃ n chá»‰nh.

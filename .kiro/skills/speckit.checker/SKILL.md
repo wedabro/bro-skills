@@ -1,85 +1,110 @@
 ---
 name: speckit.checker
-description: Static Analysis Aggregator - Chạy static analysis trên codebase.
+description: Static Analysis Aggregator - Cháº¡y static analysis trÃªn codebase.
 role: Static Analyst
 ---
 
-## 🎯 Mission
-Quét codebase phát hiện vi phạm coding standards, security issues, performance anti-patterns.
-**PHẢI chạy actual commands** — không chỉ scan bằng mắt.
+## ðŸŽ¯ Mission
+QuÃ©t codebase phÃ¡t hiá»‡n vi pháº¡m coding standards, security issues, performance anti-patterns.
+**PHáº¢I cháº¡y actual commands** â€” khÃ´ng chá»‰ scan báº±ng máº¯t.
 
-## 📥 Input
-- Source code (toàn bộ `src/`, `app/`, `pages/`)
+## ðŸ“¥ Input
+- Source code (toÃ n bá»™ `src/`, `app/`, `pages/`)
 - `.agent/memory/constitution.md` (coding standards)
 - `Dockerfile`, `docker-compose*.yml`
 
-## 📋 Protocol
+## ðŸ“‹ Protocol
 
 ### Phase 1: TypeScript Compile Check (CRITICAL)
-Đây là bước quan trọng nhất, PHẢI chạy trước mọi deploy:
+ÄÃ¢y lÃ  bÆ°á»›c quan trá»ng nháº¥t, PHáº¢I cháº¡y trÆ°á»›c má»i deploy:
 ```bash
-# Trong Docker container hoặc local:
+# Trong Docker container hoáº·c local:
 docker compose exec <service> npx tsc --noEmit
-# Hoặc build thử:
+# Hoáº·c build thá»­:
 docker compose build 2>&1 | grep -i "error\|fail"
 ```
-- Bắt: type mismatch, missing props, sai tên thuộc tính, import lỗi
-- Mọi lỗi TS đều là 🔴 CRITICAL
+- Báº¯t: type mismatch, missing props, sai tÃªn thuá»™c tÃ­nh, import lá»—i
+- Má»i lá»—i TS Ä‘á»u lÃ  ðŸ”´ CRITICAL
 
 ### Phase 2: Dockerfile & Docker Compose Lint
 ```bash
-# Kiểm tra mọi COPY source tồn tại
-# Kiểm tra docker compose syntax:
+# Kiá»ƒm tra má»i COPY source tá»“n táº¡i
+# Kiá»ƒm tra docker compose syntax:
 docker compose -f docker-compose*.yml config --quiet
-# Kiểm tra volume shadowing (CẤM dùng volumes cho production):
-grep -A 5 "volumes:" docker-compose.prod.yml  # Phải KHÔNG có `. :/app`
+# Kiá»ƒm tra volume shadowing (Cáº¤M dÃ¹ng volumes cho production):
+grep -A 5 "volumes:" docker-compose.prod.yml  # Pháº£i KHÃ”NG cÃ³ `. :/app`
 ```
-- Volume mount `- .:/app` trong production → 🔴 CRITICAL
-- COPY path không tồn tại → 🔴 CRITICAL
-- Port ngoài 8900-8999 → 🟡 WARNING
+- Volume mount `- .:/app` trong production â†’ ðŸ”´ CRITICAL
+- COPY path khÃ´ng tá»“n táº¡i â†’ ðŸ”´ CRITICAL
+- Port ngoÃ i 8900-8999 â†’ ðŸŸ¡ WARNING
 
 ### Phase 3: ENV Compliance
 ```bash
-# Tìm hard-coded URLs/tokens:
+# TÃ¬m hard-coded URLs/tokens:
 grep -rn "http://localhost\|http://127.0.0.1\|https://" apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules\|.next\|schema.org"
-# Tìm default text fallback:
+# TÃ¬m default text fallback:
 grep -rn '|| "' apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules"
 ```
 
 ### Phase 4: Import Hygiene
-- Tìm unused imports, circular dependencies
+- TÃ¬m unused imports, circular dependencies
 - Verify shared package exports match actual usage
 
 ### Phase 5: Build-time Safety (Next.js specific)
 ```bash
-# Tìm SSG/SSR pages gọi API mà không có try-catch:
+# TÃ¬m SSG/SSR pages gá»i API mÃ  khÃ´ng cÃ³ try-catch:
 grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
-# Mỗi kết quả phải nằm trong try-catch block
+# Má»—i káº¿t quáº£ pháº£i náº±m trong try-catch block
 ```
-- API call trong `generateStaticParams` / `sitemap()` không có try-catch → 🔴 CRITICAL
+- API call trong `generateStaticParams` / `sitemap()` khÃ´ng cÃ³ try-catch â†’ ðŸ”´ CRITICAL
 
 ### Phase 6: Security Scan
-- Tìm `eval()`, `dangerouslySetInnerHTML` (cần sanitize), SQL concatenation
-- Tìm secrets/keys trong source code
+- TÃ¬m `eval()`, `dangerouslySetInnerHTML` (cáº§n sanitize), SQL concatenation
+- TÃ¬m secrets/keys trong source code
 
 ### Phase 7: Monorepo Integrity
-- Verify shared package exports khớp với imports
-- Cross-reference types: mọi `entity.X` phải tồn tại trong interface
+- Verify shared package exports khá»›p vá»›i imports
+- Cross-reference types: má»i `entity.X` pháº£i tá»“n táº¡i trong interface
 
-## 📤 Output
+## ðŸ“¤ Output
 - File: `.agent/memory/checker-report.md`
 - Format:
   ```
-  ## 🔴 CRITICAL (N issues)
-  - `apps/web/src/app/page.tsx:65` — Property 'category' does not exist on type 'Article'
-  ## 🟡 WARNING (N issues)
-  - `docker-compose.beta.yml:40` — Volume mount `.:/app` sẽ override built code
-  ## 🟢 INFO (N issues)
+  ## ðŸ”´ CRITICAL (N issues)
+  - `apps/web/src/app/page.tsx:65` â€” Property 'category' does not exist on type 'Article'
+  ## ðŸŸ¡ WARNING (N issues)
+  - `docker-compose.beta.yml:40` â€” Volume mount `.:/app` sáº½ override built code
+  ## ðŸŸ¢ INFO (N issues)
   - ...
   ```
 
-## 🚫 Guard Rails
-- CHỈ báo cáo — KHÔNG tự sửa code.
-- Mỗi finding phải có file path + line number cụ thể.
-- **PHẢI chạy `tsc --noEmit` hoặc `docker compose build`** — scan bằng mắt KHÔNG ĐỦ.
-- Nếu có 🔴 CRITICAL → kết luận FAIL, deploy KHÔNG được phép.
+## ðŸš« Guard Rails
+- CHá»ˆ bÃ¡o cÃ¡o â€” KHÃ”NG tá»± sá»­a code.
+- Má»—i finding pháº£i cÃ³ file path + line number cá»¥ thá»ƒ.
+- **PHáº¢I cháº¡y `tsc --noEmit` hoáº·c `docker compose build`** â€” scan báº±ng máº¯t KHÃ”NG Äá»¦.
+- Náº¿u cÃ³ ðŸ”´ CRITICAL â†’ káº¿t luáº­n FAIL, deploy KHÃ”NG Ä‘Æ°á»£c phÃ©p.
+
+## When to Use
+- Khi cáº§n cháº¡y static analysis trÃªn codebase trÆ°á»›c deploy (tsc, docker config, ENV, security).
+- **KHÃ”NG dÃ¹ng cho**: review thá»§ cÃ´ng theo spec (â†’ `@speckit.reviewer`), validate runtime (â†’ `@speckit.validate`).
+
+## Common Rationalizations
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
+|---|---|
+| "Scan báº±ng máº¯t lÃ  Ä‘á»§" | Máº¯t bá» sÃ³t type error. PHáº¢I cháº¡y tsc --noEmit/docker build. |
+| "Lá»—i TS nhá» bá» qua" | Má»i lá»—i TS lÃ  CRITICAL, cháº·n deploy. |
+| "Tá»± sá»­a luÃ´n cho nhanh" | Checker chá»‰ bÃ¡o cÃ¡o, khÃ´ng sá»­a. |
+| "Volume mount prod tiá»‡n hot-reload" | `.:/app` á»Ÿ prod override built code â†’ CRITICAL. |
+
+## Red Flags
+- Káº¿t luáº­n mÃ  khÃ´ng cháº¡y actual command.
+- Volume mount `.:/app` trong production.
+- API call trong SSG/sitemap khÃ´ng try-catch.
+- Hard-code URL/secret; eval()/dangerouslySetInnerHTML chÆ°a sanitize.
+
+## Verification
+- [ ] ÄÃ£ cháº¡y `tsc --noEmit` hoáº·c `docker compose build` thá»±c táº¿.
+- [ ] Docker config validated; khÃ´ng volume shadowing á»Ÿ prod.
+- [ ] ENV compliance: khÃ´ng hard-code URL/token/default text.
+- [ ] Má»—i finding cÃ³ file:line + severity.
+- [ ] CÃ³ CRITICAL â†’ káº¿t luáº­n FAIL, cháº·n deploy.

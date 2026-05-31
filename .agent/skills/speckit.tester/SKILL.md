@@ -1,66 +1,66 @@
 ---
 name: speckit.tester
-description: Test Runner & Coverage - Tạo test plan, viết tests, báo cáo coverage.
+description: Test Runner & Coverage - Táº¡o test plan, viáº¿t tests, bÃ¡o cÃ¡o coverage.
 role: Test Engineer
 ---
 
-## 🎯 Mission
-Đảm bảo implementation có test coverage đầy đủ, chạy pass 100%.
+## ðŸŽ¯ Mission
+Äáº£m báº£o implementation cÃ³ test coverage Ä‘áº§y Ä‘á»§, cháº¡y pass 100%.
 
-## 📥 Input
+## ðŸ“¥ Input
 - Source code (implemented files)
 - `.agent/specs/[feature]/tasks.md` (completed tasks)
 - `.agent/specs/[feature]/spec.md` (success criteria)
 
-## 📋 Protocol
-1. **Test Plan**: Từ tasks.md (completed) → list functions/routes cần test.
-2. **Write Tests**: Cho mỗi function/route:
-   - Happy path (input hợp lệ → output đúng)
-   - Error path (input lỗi → error handling đúng)
+## ðŸ“‹ Protocol
+1. **Test Plan**: Tá»« tasks.md (completed) â†’ list functions/routes cáº§n test.
+2. **Write Tests**: Cho má»—i function/route:
+   - Happy path (input há»£p lá»‡ â†’ output Ä‘Ãºng)
+   - Error path (input lá»—i â†’ error handling Ä‘Ãºng)
    - Edge case (boundary values, empty, null)
-3. **Run Tests**: `docker compose exec [service] npm test` hoặc tương đương.
+3. **Run Tests**: `docker compose exec [service] npm test` hoáº·c tÆ°Æ¡ng Ä‘Æ°Æ¡ng.
 4. **Coverage Report**:
    ```
-   📊 Test Coverage Report
-   ═══════════════════════
+   ðŸ“Š Test Coverage Report
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    Files Tested:    12/15 (80%)
    Tests Passed:    45/48 (93.7%)
    Tests Failed:    3
-   ───────────────────────
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    Untested: src/api/payment.ts, src/utils/cache.ts, src/hooks/useAuth.ts
    ```
-5. Liệt kê tests failed với error details.
+5. Liá»‡t kÃª tests failed vá»›i error details.
 
-## 📤 Output
+## ðŸ“¤ Output
 - Test files (theo convention: `*.test.ts`, `*.spec.ts`)
 - File: `.agent/memory/test-report.md`
 
-## 🚫 Guard Rails
-- KHÔNG skip error path tests — phải test cả failing cases.
-- KHÔNG mock quá nhiều — prefer integration tests cho API routes.
+## ðŸš« Guard Rails
+- KHÃ”NG skip error path tests â€” pháº£i test cáº£ failing cases.
+- KHÃ”NG mock quÃ¡ nhiá»u â€” prefer integration tests cho API routes.
 
 ## When to Use
-- Sau khi implement xong task/feature, cần viết test + báo cáo coverage.
-- Khi sửa bug (viết test tái hiện trước khi fix).
-- **KHÔNG dùng cho**: review code thủ công (→ `@speckit.reviewer`), debug lỗi runtime (→ `@speckit.debug`).
+- Sau khi implement xong task/feature, cáº§n viáº¿t test + bÃ¡o cÃ¡o coverage.
+- Khi sá»­a bug (viáº¿t test tÃ¡i hiá»‡n trÆ°á»›c khi fix).
+- **KHÃ”NG dÃ¹ng cho**: review code thá»§ cÃ´ng (â†’ `@speckit.reviewer`), debug lá»—i runtime (â†’ `@speckit.debug`).
 
 ## Common Rationalizations
-| Lý do bao biện | Sự thật |
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
 |---|---|
-| "Happy path pass là đủ" | Bug thường nằm ở error/edge case. Test cả 3: happy/error/edge. |
-| "Mock hết cho nhanh" | Mock quá nhiều test không phản ánh thực tế. Ưu tiên integration cho API route. |
-| "Test sau khi ship" | Không test = không bằng chứng đúng. Viết test trước khi đánh dấu xong. |
-| "Coverage thấp không sao" | Vùng untested là vùng mù. Báo cáo rõ file chưa test + lý do. |
+| "Happy path pass lÃ  Ä‘á»§" | Bug thÆ°á»ng náº±m á»Ÿ error/edge case. Test cáº£ 3: happy/error/edge. |
+| "Mock háº¿t cho nhanh" | Mock quÃ¡ nhiá»u test khÃ´ng pháº£n Ã¡nh thá»±c táº¿. Æ¯u tiÃªn integration cho API route. |
+| "Test sau khi ship" | KhÃ´ng test = khÃ´ng báº±ng chá»©ng Ä‘Ãºng. Viáº¿t test trÆ°á»›c khi Ä‘Ã¡nh dáº¥u xong. |
+| "Coverage tháº¥p khÃ´ng sao" | VÃ¹ng untested lÃ  vÃ¹ng mÃ¹. BÃ¡o cÃ¡o rÃµ file chÆ°a test + lÃ½ do. |
 
 ## Red Flags
-- Chỉ có happy path test, thiếu error/edge case.
-- Mock cả những thứ nên integration test.
-- Test chạy ngoài Docker (vi phạm Docker-First).
-- Có test fail mà vẫn coi là xong.
+- Chá»‰ cÃ³ happy path test, thiáº¿u error/edge case.
+- Mock cáº£ nhá»¯ng thá»© nÃªn integration test.
+- Test cháº¡y ngoÃ i Docker (vi pháº¡m Docker-First).
+- CÃ³ test fail mÃ  váº«n coi lÃ  xong.
 
 ## Verification
-- [ ] Mỗi function/route có test happy + error + edge.
-- [ ] Test chạy trong container (`docker compose exec ... test`), pass 100%.
-- [ ] API route ưu tiên integration test thay vì mock toàn bộ.
-- [ ] `test-report.md` có coverage + danh sách file chưa test.
-- [ ] Test fail (nếu có) được liệt kê kèm error detail.
+- [ ] Má»—i function/route cÃ³ test happy + error + edge.
+- [ ] Test cháº¡y trong container (`docker compose exec ... test`), pass 100%.
+- [ ] API route Æ°u tiÃªn integration test thay vÃ¬ mock toÃ n bá»™.
+- [ ] `test-report.md` cÃ³ coverage + danh sÃ¡ch file chÆ°a test.
+- [ ] Test fail (náº¿u cÃ³) Ä‘Æ°á»£c liá»‡t kÃª kÃ¨m error detail.

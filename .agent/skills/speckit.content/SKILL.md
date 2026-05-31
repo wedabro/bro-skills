@@ -4,63 +4,63 @@ description: Content Architect - Heading Structure, Readability, Multimodal, Fac
 role: Content Strategist
 ---
 
-## 🎯 Mission
-Đảm bảo nội dung website đạt chuẩn cho cả người đọc VÀ AI search engines.
+## ðŸŽ¯ Mission
+Äáº£m báº£o ná»™i dung website Ä‘áº¡t chuáº©n cho cáº£ ngÆ°á»i Ä‘á»c VÃ€ AI search engines.
 
-## 📥 Input
-- Content pages (bài viết, sản phẩm, landing pages)
+## ðŸ“¥ Input
+- Content pages (bÃ i viáº¿t, sáº£n pháº©m, landing pages)
 - `.agent/knowledge_base/seo_standards.md`
 
-## 📋 Protocol
+## ðŸ“‹ Protocol
 
-### Bước 1: Heading Structure
-- Mỗi page chỉ 1 `<h1>` duy nhất
-- Hierarchy: H1→H2→H3 (không nhảy cấp)
-- Heading mô tả nội dung section cụ thể
+### BÆ°á»›c 1: Heading Structure
+- Má»—i page chá»‰ 1 `<h1>` duy nháº¥t
+- Hierarchy: H1â†’H2â†’H3 (khÃ´ng nháº£y cáº¥p)
+- Heading mÃ´ táº£ ná»™i dung section cá»¥ thá»ƒ
 
-### Bước 2: Readability
-- Đoạn văn: Tối đa 3-4 câu
-- Bullet points thay cho đoạn dài
+### BÆ°á»›c 2: Readability
+- Äoáº¡n vÄƒn: Tá»‘i Ä‘a 3-4 cÃ¢u
+- Bullet points thay cho Ä‘oáº¡n dÃ i
 - Highlight key terms (bold/italic)
 
-### Bước 3: Multimodal Content
-- Image: `alt` text mô tả chi tiết
-- Video: Transcript hoặc description
-- Tables: Responsive, có caption
+### BÆ°á»›c 3: Multimodal Content
+- Image: `alt` text mÃ´ táº£ chi tiáº¿t
+- Video: Transcript hoáº·c description
+- Tables: Responsive, cÃ³ caption
 
-### Bước 4: Fact-density
-- Mỗi section ≥1 statistic/data point
-- Trích dẫn nguồn khi đưa claims
-- Quotes từ experts khi phù hợp
+### BÆ°á»›c 4: Fact-density
+- Má»—i section â‰¥1 statistic/data point
+- TrÃ­ch dáº«n nguá»“n khi Ä‘Æ°a claims
+- Quotes tá»« experts khi phÃ¹ há»£p
 
-## 📤 Output
+## ðŸ“¤ Output
 - File: `.agent/memory/content-guidelines.md`
 
-## 🔗 Handoffs
+## ðŸ”— Handoffs
 - `@speckit.seo`: Validate SEO compliance sau khi optimize
 
 ## When to Use
-- Khi viết/biên tập nội dung: heading structure, readability, multimodal, fact-density.
-- Cho bài viết, trang sản phẩm, landing page trước khi publish.
-- **KHÔNG dùng cho**: SEO kỹ thuật (→ `@speckit.seo`), tối ưu AI Search (→ `@speckit.geo`).
+- Khi viáº¿t/biÃªn táº­p ná»™i dung: heading structure, readability, multimodal, fact-density.
+- Cho bÃ i viáº¿t, trang sáº£n pháº©m, landing page trÆ°á»›c khi publish.
+- **KHÃ”NG dÃ¹ng cho**: SEO ká»¹ thuáº­t (â†’ `@speckit.seo`), tá»‘i Æ°u AI Search (â†’ `@speckit.geo`).
 
 ## Common Rationalizations
-| Lý do bao biện | Sự thật |
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
 |---|---|
-| "Viết liền mạch cho tự nhiên" | Đoạn dài khó đọc + khó cho AI trích. Tách 3-4 câu, dùng bullet. |
-| "Alt text điền sau" | Thiếu alt làm mất a11y + image SEO. Viết alt mô tả ngay. |
-| "Claim ai cũng biết, khỏi nguồn" | Claim không nguồn giảm độ tin. Mỗi claim cần data/nguồn. |
-| "Heading đặt sao cũng được" | Heading lộn xộn phá cấu trúc đọc + crawl. 1 h1, không nhảy cấp. |
+| "Viáº¿t liá»n máº¡ch cho tá»± nhiÃªn" | Äoáº¡n dÃ i khÃ³ Ä‘á»c + khÃ³ cho AI trÃ­ch. TÃ¡ch 3-4 cÃ¢u, dÃ¹ng bullet. |
+| "Alt text Ä‘iá»n sau" | Thiáº¿u alt lÃ m máº¥t a11y + image SEO. Viáº¿t alt mÃ´ táº£ ngay. |
+| "Claim ai cÅ©ng biáº¿t, khá»i nguá»“n" | Claim khÃ´ng nguá»“n giáº£m Ä‘á»™ tin. Má»—i claim cáº§n data/nguá»“n. |
+| "Heading Ä‘áº·t sao cÅ©ng Ä‘Æ°á»£c" | Heading lá»™n xá»™n phÃ¡ cáº¥u trÃºc Ä‘á»c + crawl. 1 h1, khÃ´ng nháº£y cáº¥p. |
 
 ## Red Flags
-- Nhiều h1 hoặc heading nhảy cấp; heading mơ hồ.
-- Đoạn văn dài, không bullet, không highlight key term.
-- Ảnh thiếu alt, video thiếu transcript, table thiếu caption.
-- Section không có statistic/data point hoặc claim không nguồn.
+- Nhiá»u h1 hoáº·c heading nháº£y cáº¥p; heading mÆ¡ há»“.
+- Äoáº¡n vÄƒn dÃ i, khÃ´ng bullet, khÃ´ng highlight key term.
+- áº¢nh thiáº¿u alt, video thiáº¿u transcript, table thiáº¿u caption.
+- Section khÃ´ng cÃ³ statistic/data point hoáº·c claim khÃ´ng nguá»“n.
 
 ## Verification
-- [ ] Mỗi page 1 h1; hierarchy H1→H2→H3 không nhảy cấp; heading mô tả rõ.
-- [ ] Đoạn ≤3-4 câu; dùng bullet; key term được highlight.
-- [ ] Ảnh có alt mô tả; video có transcript; table responsive + caption.
-- [ ] Mỗi section ≥1 data point; claim có nguồn trích dẫn.
-- [ ] `content-guidelines.md` cập nhật.
+- [ ] Má»—i page 1 h1; hierarchy H1â†’H2â†’H3 khÃ´ng nháº£y cáº¥p; heading mÃ´ táº£ rÃµ.
+- [ ] Äoáº¡n â‰¤3-4 cÃ¢u; dÃ¹ng bullet; key term Ä‘Æ°á»£c highlight.
+- [ ] áº¢nh cÃ³ alt mÃ´ táº£; video cÃ³ transcript; table responsive + caption.
+- [ ] Má»—i section â‰¥1 data point; claim cÃ³ nguá»“n trÃ­ch dáº«n.
+- [ ] `content-guidelines.md` cáº­p nháº­t.

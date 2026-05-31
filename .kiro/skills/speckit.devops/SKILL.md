@@ -1,103 +1,103 @@
 ---
 name: speckit.devops
-description: Chuyên gia hạ tầng Docker & Security Hardening — Port ENV-first, dải 8900-8999.
+description: ChuyÃªn gia háº¡ táº§ng Docker & Security Hardening â€” Port ENV-first, dáº£i 8900-8999.
 role: DevOps Architect
 ---
 
-## 🎯 Mission
-Thiết lập và quản lý hệ thống Docker chuẩn hóa, bảo mật cho dự án.
-Port PHẢI luôn cấu hình qua ENV vars — KHÔNG BAO GIỜ hard-code.
+## ðŸŽ¯ Mission
+Thiáº¿t láº­p vÃ  quáº£n lÃ½ há»‡ thá»‘ng Docker chuáº©n hÃ³a, báº£o máº­t cho dá»± Ã¡n.
+Port PHáº¢I luÃ´n cáº¥u hÃ¬nh qua ENV vars â€” KHÃ”NG BAO GIá»œ hard-code.
 
-## 📥 Input
+## ðŸ“¥ Input
 - `.agent/memory/constitution.md` (port range, security rules)
-- Existing `Dockerfile`, `docker-compose.yml` (nếu có)
+- Existing `Dockerfile`, `docker-compose.yml` (náº¿u cÃ³)
 - `.env.example`
 
-## 📋 Protocol
+## ðŸ“‹ Protocol
 
-### 1. Port Allocation (ENV-first) ⭐
+### 1. Port Allocation (ENV-first) â­
 
-**LUÔN cấu hình port qua ENV:**
-- `.env` file (local) hoặc server ENV (production)
-- `docker-compose.yml` đọc: `"${PUBLIC_PORT:-8920}:3000"`
-- KHÔNG hard-code port number trong bất kỳ file nào
+**LUÃ”N cáº¥u hÃ¬nh port qua ENV:**
+- `.env` file (local) hoáº·c server ENV (production)
+- `docker-compose.yml` Ä‘á»c: `"${PUBLIC_PORT:-8920}:3000"`
+- KHÃ”NG hard-code port number trong báº¥t ká»³ file nÃ o
 
-**Quy tắc quét port theo môi trường:**
+**Quy táº¯c quÃ©t port theo mÃ´i trÆ°á»ng:**
 
-| Môi trường | Docker đã chạy? | Hành động |
+| MÃ´i trÆ°á»ng | Docker Ä‘Ã£ cháº¡y? | HÃ nh Ä‘á»™ng |
 |---|---|---|
-| **Local** | ❌ Chưa (lần đầu) | Quét `netstat -ano \| findstr 89` → chọn 3 ports trống liên tiếp |
-| **Local** | ✅ Đã chạy | **BỎ QUA** quét — dùng ports hiện tại từ `.env` / docker |
-| **Staging/Beta/Prod** | Bất kỳ | **LUÔN** quét lần đầu để cấu hình → ghi vào `.env` |
+| **Local** | âŒ ChÆ°a (láº§n Ä‘áº§u) | QuÃ©t `netstat -ano \| findstr 89` â†’ chá»n 3 ports trá»‘ng liÃªn tiáº¿p |
+| **Local** | âœ… ÄÃ£ cháº¡y | **Bá»Ž QUA** quÃ©t â€” dÃ¹ng ports hiá»‡n táº¡i tá»« `.env` / docker |
+| **Staging/Beta/Prod** | Báº¥t ká»³ | **LUÃ”N** quÃ©t láº§n Ä‘áº§u Ä‘á»ƒ cáº¥u hÃ¬nh â†’ ghi vÃ o `.env` |
 
-**Check Docker đã chạy (Local):**
+**Check Docker Ä‘Ã£ cháº¡y (Local):**
 ```bash
 docker compose ps --format json 2>$null
-# Có containers → SKIP port scan
-# Trống/error → RUN port scan
+# CÃ³ containers â†’ SKIP port scan
+# Trá»‘ng/error â†’ RUN port scan
 ```
 
-- Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
+- Pattern: Public FE `N` â†’ Admin FE `N+1` â†’ Backend API `N+2`
 
 ### 2. Local Docker (`docker-compose.yml`):
-- Ports đọc từ ENV: `"${PUBLIC_PORT:-8920}:3000"`
+- Ports Ä‘á»c tá»« ENV: `"${PUBLIC_PORT:-8920}:3000"`
 - Volume mounts cho hot-reload code
-- Named volumes cho `node_modules` (tránh host-container lock)
-- Health checks cho mỗi service
+- Named volumes cho `node_modules` (trÃ¡nh host-container lock)
+- Health checks cho má»—i service
 
 ### 3. Production Docker (`docker-compose.prod.yml`):
-- Multi-stage builds (builder → runner)
-- `USER node` hoặc `USER appuser` (KHÔNG chạy root)
-- Loại bỏ devDependencies trong image final
+- Multi-stage builds (builder â†’ runner)
+- `USER node` hoáº·c `USER appuser` (KHÃ”NG cháº¡y root)
+- Loáº¡i bá» devDependencies trong image final
 - Alpine/Slim base images
-- Ports đọc từ ENV (KHÔNG hard-code)
+- Ports Ä‘á»c tá»« ENV (KHÃ”NG hard-code)
 
 ### 4. Security Checklist:
 - `.dockerignore`: block `.env`, `.git`, `node_modules`
-- Không hard-code secrets trong Dockerfile
-- Chỉ EXPOSE ports cần thiết
+- KhÃ´ng hard-code secrets trong Dockerfile
+- Chá»‰ EXPOSE ports cáº§n thiáº¿t
 
 ### 5. Documentation:
-- Cập nhật `.agent/knowledge_base/infrastructure.md` với kết quả
-- Cập nhật `.env.example` với tất cả port vars
+- Cáº­p nháº­t `.agent/knowledge_base/infrastructure.md` vá»›i káº¿t quáº£
+- Cáº­p nháº­t `.env.example` vá»›i táº¥t cáº£ port vars
 
-## 📤 Output
+## ðŸ“¤ Output
 - Files: `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`
 - Config: `.env` (ports), `.env.example` (documented)
 - Doc: `.agent/knowledge_base/infrastructure.md` (updated)
 
-## 🚫 Guard Rails
-- KHÔNG dùng port ngoài dải 8900-8999.
-- KHÔNG hard-code port number — LUÔN dùng ENV vars.
-- KHÔNG chạy `docker compose down -v` trên production.
-- KHÔNG hard-code credentials vào Dockerfile.
-- KHÔNG quét port khi Docker local đã chạy (có containers).
+## ðŸš« Guard Rails
+- KHÃ”NG dÃ¹ng port ngoÃ i dáº£i 8900-8999.
+- KHÃ”NG hard-code port number â€” LUÃ”N dÃ¹ng ENV vars.
+- KHÃ”NG cháº¡y `docker compose down -v` trÃªn production.
+- KHÃ”NG hard-code credentials vÃ o Dockerfile.
+- KHÃ”NG quÃ©t port khi Docker local Ä‘Ã£ cháº¡y (cÃ³ containers).
 
 ## When to Use
-- Khi viết/sửa Dockerfile, docker-compose, cấp phát port, production hardening, CI/CD.
-- Khi setup môi trường chạy app (local/staging/prod) theo Docker-First.
-- **KHÔNG dùng cho**: business logic/API (→ `@speckit.backend`), schema DB (→ `@speckit.database`).
+- Khi viáº¿t/sá»­a Dockerfile, docker-compose, cáº¥p phÃ¡t port, production hardening, CI/CD.
+- Khi setup mÃ´i trÆ°á»ng cháº¡y app (local/staging/prod) theo Docker-First.
+- **KHÃ”NG dÃ¹ng cho**: business logic/API (â†’ `@speckit.backend`), schema DB (â†’ `@speckit.database`).
 
 ## Common Rationalizations
-| Lý do bao biện | Sự thật |
+| LÃ½ do bao biá»‡n | Sá»± tháº­t |
 |---|---|
-| "Hard-code port cho nhanh, sau đổi" | Port phải qua ENV để không xung đột giữa môi trường. ENV-first từ đầu. |
-| "Chạy root trong container cho đỡ lỗi quyền" | Root container = leo thang đặc quyền khi bị thoát. Dùng USER non-root. |
-| "Quét port lại cho chắc" | Docker local đang chạy thì giữ port hiện tại, quét lại gây đổi vô ích. |
-| "Để devDependencies trong image cho tiện" | Image phình + tăng attack surface. Multi-stage, loại dev deps. |
-| "down -v cho sạch" | Trên prod, `down -v` xóa volume = mất data. Cấm tuyệt đối. |
+| "Hard-code port cho nhanh, sau Ä‘á»•i" | Port pháº£i qua ENV Ä‘á»ƒ khÃ´ng xung Ä‘á»™t giá»¯a mÃ´i trÆ°á»ng. ENV-first tá»« Ä‘áº§u. |
+| "Cháº¡y root trong container cho Ä‘á»¡ lá»—i quyá»n" | Root container = leo thang Ä‘áº·c quyá»n khi bá»‹ thoÃ¡t. DÃ¹ng USER non-root. |
+| "QuÃ©t port láº¡i cho cháº¯c" | Docker local Ä‘ang cháº¡y thÃ¬ giá»¯ port hiá»‡n táº¡i, quÃ©t láº¡i gÃ¢y Ä‘á»•i vÃ´ Ã­ch. |
+| "Äá»ƒ devDependencies trong image cho tiá»‡n" | Image phÃ¬nh + tÄƒng attack surface. Multi-stage, loáº¡i dev deps. |
+| "down -v cho sáº¡ch" | TrÃªn prod, `down -v` xÃ³a volume = máº¥t data. Cáº¥m tuyá»‡t Ä‘á»‘i. |
 
 ## Red Flags
-- Port number hard-code trong compose/Dockerfile thay vì `${VAR:-default}`.
-- Container chạy root; image dùng base nặng, còn devDependencies.
-- `.dockerignore` không block `.env`/`.git`/`node_modules`.
-- Port nằm ngoài dải 8900-8999.
-- Quét lại port khi local đã có container chạy.
+- Port number hard-code trong compose/Dockerfile thay vÃ¬ `${VAR:-default}`.
+- Container cháº¡y root; image dÃ¹ng base náº·ng, cÃ²n devDependencies.
+- `.dockerignore` khÃ´ng block `.env`/`.git`/`node_modules`.
+- Port náº±m ngoÃ i dáº£i 8900-8999.
+- QuÃ©t láº¡i port khi local Ä‘Ã£ cÃ³ container cháº¡y.
 
 ## Verification
-- [ ] Mọi port đọc từ ENV; nằm trong dải 8900-8999, thứ tự Public/Admin/API.
-- [ ] `docker-compose.prod.yml` multi-stage + USER non-root + loại dev deps.
-- [ ] `.dockerignore` block `.env`, `.git`, `node_modules`; không secret trong Dockerfile.
-- [ ] Health check cho mỗi service; chỉ EXPOSE port cần thiết.
-- [ ] `infrastructure.md` + `.env.example` cập nhật đầy đủ port vars.
-- [ ] Không có lệnh `down -v` nhắm vào prod.
+- [ ] Má»i port Ä‘á»c tá»« ENV; náº±m trong dáº£i 8900-8999, thá»© tá»± Public/Admin/API.
+- [ ] `docker-compose.prod.yml` multi-stage + USER non-root + loáº¡i dev deps.
+- [ ] `.dockerignore` block `.env`, `.git`, `node_modules`; khÃ´ng secret trong Dockerfile.
+- [ ] Health check cho má»—i service; chá»‰ EXPOSE port cáº§n thiáº¿t.
+- [ ] `infrastructure.md` + `.env.example` cáº­p nháº­t Ä‘áº§y Ä‘á»§ port vars.
+- [ ] KhÃ´ng cÃ³ lá»‡nh `down -v` nháº¯m vÃ o prod.
