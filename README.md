@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/img/logo.png" alt="bro-skills logo" width="320" />
+</p>
+
 # ⚡ bro-skills - Spec-Driven Development CLI
 
 > **Python CLI tool** để khởi tạo bất kỳ project nào theo chuẩn Spec-Driven Development (SDD) của Antigravity.
