@@ -33,3 +33,9 @@
 - **Git**: Lưu script vào `.agent/scripts`, commit vào hệ thống version control.
 - **Update**: Cập nhật workflow tương ứng sau khi tạo script mới.
 
+## §5 Anti-Slop Design Law (MANDATORY)
+- **Bắt buộc**: Mọi giao diện và thiết kế UI/UX PHẢI tuân thủ các chỉ dẫn chống rập khuôn từ bộ `taste-skill`.
+- **Cấm mặc định**: Không sử dụng các mẫu AI mặc định: font Inter làm display font, hiệu ứng tím phát sáng (AI-purple), bố cục 3 thẻ bằng nhau đơn điệu, hay bảng màu beige/brass mặc định cho dòng sản phẩm cao cấp (premium consumer).
+- **Design Read**: Trước khi code giao diện, Agent PHẢI xuất ra một dòng phân tích thiết kế "Design Read" định rõ Page Kind, Vibe, Audience và bộ 3 Dial cấu hình (`DESIGN_VARIANCE`, `MOTION_INTENSITY`, `VISUAL_DENSITY`).
+- **Chất lượng chi tiết**: Đảm bảo a11y (độ tương phản WCAG AA cho nút bấm và form), bắt buộc hỗ trợ reduced-motion, và cấm các quote sáo rỗng chứa dấu gạch ngang (em-dash).
+
