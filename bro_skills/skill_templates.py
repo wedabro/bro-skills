@@ -1019,39 +1019,42 @@ role: Content Strategist
 def skill_uiux():
     return """---
 name: speckit.uiux
-description: UI/UX Architect - Định nghĩa Design System, UI Components, Spacing, Typography, Responsive Patterns.
+description: UI/UX Architect - Định nghĩa Design System Anti-Slop, UI Components, Spacing, Typography, Responsive Patterns.
 role: UI/UX Architect
 ---
 
 ## 🎯 Mission
-Thiết lập và quản lý tiêu chuẩn UI/UX "Pro Max" cho dự án, đảm bảo giao diện premium, chuyên nghiệp và nhất quán.
+Thiết lập và quản lý tiêu chuẩn UI/UX "Pro Max" cho dự án, đảm bảo giao diện premium, chuyên nghiệp, độc đáo và TUYỆT ĐỐI không bị "AI slop" (tránh các thiết kế mặc định nhàm chán của AI).
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md` (chứa User Scenarios)
 - `.agent/memory/constitution.md` (tech stack constraints)
-- Brand guidelines (logo, màu sắc từ developer)
+- Brand guidelines (nếu có)
 
 ## 📋 Protocol
 
-### Phase 1: Brand Identity & Colors
-- Định nghĩa bảng màu (Primary, Secondary, Accent, State Colors).
-- Định nghĩa Typography (Font families, Font sizes cho Heading/Body).
-- **Tránh màu generic** (red, blue, green nguyên bản). Dùng HSL hoặc palette bài bản.
+### Phase 0: Brief Inference (Read the Room)
+- Phân tích dự án (SaaS, portfolio, public-sector) để định hình vibe.
+- Xác định 3 thông số: `DESIGN_VARIANCE` (1-10), `MOTION_INTENSITY` (1-10), `VISUAL_DENSITY` (1-10).
 
-### Phase 2: Spacing & Layout
-- Định nghĩa Container max-width (7xl, 1280px, v.v.).
-- Spacing system (Padding/Margin chuẩn: 4, 8, 16, 24, 32px).
-- Responsive Grid system cho Mobile/Tablet/Desktop.
+### Phase 1: Brand Identity & Colors (Anti-Default)
+- **Màu sắc**: CẤM dùng các màu mặc định (red, blue, green). CẤM lạm dụng "AI Purple / Blue glow". Dùng palette tinh tế như Cold Luxury, Forest, Black & Tan.
+- **Typography**: CẤM dùng `Inter` và Serif làm mặc định cho mọi thứ. Dùng `Geist`, `Satoshi`, `Cabinet Grotesk` hoặc font sans-serif có gu.
+
+### Phase 2: Spacing, Layout & Rhythm
+- Hạn chế top padding của Hero (max `pt-24`). Hero tối đa 2 dòng tiêu đề.
+- Áp dụng Anti-Center Bias: Tránh căn giữa Hero một cách nhàm chán.
+- CẤM lạm dụng "eyebrow" (tiêu đề in hoa siêu nhỏ). Tối đa 1 eyebrow trên 3 sections.
+- Bento Grid phải có nhịp điệu, không để ô trống, đa dạng hoá background của các ô (hình, gradient tinh tế, chữ).
 
 ### Phase 3: Core Components Design
-- **Buttons**: Các trạng thái default, hover, active, disabled.
-- **Cards**: Shadow, border-radius, hover transitions.
-- **Forms**: Input styles, error states, focus rings.
-- **Badges/Tags**: Trạng thái Sale, Hot, New, v.v.
+- **Buttons**: Text không wrap dòng trên desktop. Contrast WCAG AA.
+- **Cards**: Hạn chế shadow đen thui trên nền sáng. Không lồng card trong card.
+- **Forms**: Label trên input, không dùng placeholder thay label.
 
 ### Phase 4: Rich Aesthetics Directive
-- Sử dụng Glassmorphism, Vibrancy, Gradients nếu phù hợp.
-- Định nghĩa Micro-animations (framer-motion, CSS transitions).
+- Tránh gradient AI rẻ tiền. Sử dụng Glassmorphism thực tế (backdrop-filter + 1px inner border) nếu hợp vibe.
+- Interactive States: Skeletal loading (không dùng spinner chung chung), tactile feedback khi bấm (scale-98).
 
 ## 📤 Output
 - File: `.agent/knowledge_base/ui_ux_standards.md`
@@ -1059,8 +1062,9 @@ Thiết lập và quản lý tiêu chuẩn UI/UX "Pro Max" cho dự án, đảm 
 
 ## 🚫 Guard Rails
 - KHÔNG sử dụng màu mặc định của trình duyệt.
-- KHÔNG thiết kế quá phức tạp gây chậm performance.
-- PHẢI ưu tiên Mobile-first design.
+- KHÔNG dùng mix Serif và Sans-serif trong cùng một headline.
+- KHÔNG dùng 2 CTA có cùng mục đích (cùng intent) trên cùng một trang.
+- BẮT BUỘC ưu tiên Mobile-first design.
 """
 
 
@@ -1120,12 +1124,12 @@ Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logi
 def skill_frontend():
     return """---
 name: speckit.frontend
-description: Frontend Developer - Xay dung UI components, state management, data fetching, accessibility, performance.
+description: Frontend Developer - Xay dung UI components, state management, data fetching, accessibility, performance (Anti-Slop).
 role: Frontend Engineer
 ---
 
 ## 🎯 Mission
-Hiện thực hóa Design System (từ `@speckit.uiux`) thành code production: component tái sử dụng, state quản lý sạch, data fetching tối ưu, accessible & nhanh.
+Hiện thực hóa Design System (từ `@speckit.uiux`) thành code production: component tái sử dụng, state quản lý sạch, data fetching tối ưu, accessible & animation mượt mà chuẩn taste-skill.
 
 ## 📥 Input
 - `.agent/knowledge_base/ui_ux_standards.md` (Design System)
@@ -1136,23 +1140,22 @@ Hiện thực hóa Design System (từ `@speckit.uiux`) thành code production: 
 ## 📋 Protocol
 
 ### 1. Component Architecture
-- Component nhỏ, tái sử dụng, single responsibility.
-- Tách presentational vs container; props rõ type.
-- Theo Design System: spacing/typography/color tokens từ `ui_ux_standards.md`.
+- Component nhỏ, tái sử dụng, single responsibility. Viewport dùng `100dvh` thay vì `100vh` để tránh layout jump trên mobile.
+- Theo Design System: spacing/typography/color tokens. Tuyệt đối không hardcode inline style trừ phi bắt buộc.
 
 ### 2. State & Data
-- State tối thiểu, đặt gần nơi dùng. Server state tách khỏi UI state.
-- Data fetching: loading/error/empty states BẮT BUỘC cho mọi async.
-- Cache + invalidation hợp lý; tránh refetch thừa.
+- CẤM dùng `useState` cho các continuous values (vị trí chuột, scroll progress). Dùng `useMotionValue` / `useTransform` của Framer Motion / GSAP.
+- Data fetching: BẮT BUỘC có Skeletal loader states (match với hình dáng UI cuối), không dùng circular spinner chung chung.
 
-### 3. Accessibility (a11y)
-- Semantic HTML, ARIA khi cần, keyboard navigation, focus management.
-- Contrast ratio đạt WCAG AA; alt text cho ảnh.
+### 3. Accessibility (a11y) & UI Rules
+- Semantic HTML, ARIA. BẮT BUỘC test contrast ratio (WCAG AA). Button CTA text phải dễ đọc trên nền button.
+- Button text KHÔNG được rớt dòng (wrap) trên desktop. Label button ngắn gọn (max 3 từ).
+- Tactile Feedback: thêm `active:scale-[0.98]` hoặc `-translate-y-[1px]` để tạo cảm giác bấm vật lý.
 
-### 4. Performance
-- Code splitting, lazy load, memo hóa hợp lý.
-- Tối ưu Core Web Vitals (LCP, CLS, INP) — phối hợp `@speckit.seo`.
-- Image optimization, tránh re-render thừa.
+### 4. Motion & Performance
+- Animate `transform` và `opacity` (hỗ trợ hardware acceleration). CẤM animate top/left/width/height liên tục.
+- BẮT BUỘC tôn trọng `prefers-reduced-motion` nếu thêm animation phức tạp.
+- GSAP / Framer Motion phải được clearup đúng lúc (tránh memory leak).
 
 ### 5. ENV & Config
 - Dùng `NEXT_PUBLIC_*` cho client config. KHÔNG hard-code endpoint.
@@ -1162,9 +1165,8 @@ Hiện thực hóa Design System (từ `@speckit.uiux`) thành code production: 
 
 ## 🚫 Guard Rails
 - KHÔNG hard-code text/URL/màu → dùng i18n/tokens/ENV.
-- KHÔNG bỏ loading/error/empty state.
-- KHÔNG vi phạm a11y (thiếu label, contrast kém).
-- KHÔNG đặt secret trong client bundle.
+- KHÔNG dùng 2 button CTA trùng mục đích trên một màn hình.
+- KHÔNG vi phạm a11y (thiếu label, button chữ trắng trên nền sáng).
 - Phản hồi bằng Tiếng Việt.
 """
 
