@@ -573,7 +573,7 @@ Không có tag → suy luận từ keyword + project_type.
             "project_type": self.project_type,
             "attributes": self.attributes,
             "asf_version": "3.3",
-            "bro_skills_version": "1.2.0",
+            "bro_skills_version": "1.3.1",
             "created_at": datetime.now().isoformat(),
             "skills_count": self.stats["skills"],
             "workflows_count": self.stats["workflows"],
