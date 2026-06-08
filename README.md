@@ -130,6 +130,9 @@ bro-skills validate --target /path/to/project
 # Xem version
 bro-skills version
 bro-skills -v
+
+# Cập nhật lên phiên bản mới nhất (tự động phát hiện cài đặt qua pip hay npm)
+bro-skills update
 ```
 
 ### Chọn nhanh skill/workflow cho AI
