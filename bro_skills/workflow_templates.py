@@ -198,6 +198,7 @@ Cho MỖI task `- [ ]` trong tasks.md:
    - P5: Build Gate (tsc/build).
    - P6: **Deviation Rules** (Auto-fix bugs/missing).
 2. Mark `- [X]` khi task pass **VÀ build gate pass**.
+3. **Auto-Map**: Khi TẤT CẢ các task đã hoàn thành, tự động chạy **@speckit.map** để cập nhật tài liệu kiến trúc.
 """
 
 
