@@ -188,6 +188,11 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False):
 - **Git**: Lưu script vào `.agent/scripts`, commit vào hệ thống version control.
 - **Git Auto-Commit**: {shall_label} thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
 - **Update**: Cập nhật workflow tương ứng sau khi tạo script mới.
+
+## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)
+- **{must_label}**: Khi thiết kế giao diện, {shall_label} sử dụng skill `design-taste-frontend` hoặc `/util-speckit.uiux`.
+- **{forbidden_label}**: Sử dụng UI patterns rập khuôn, template có sẵn, màu sắc mặc định của trình duyệt, hoặc lạm dụng gradient/shadow AI.
+- **Design System**: {shall_label} tuân thủ quy tắc Anti-Slop (Asymmetric layout, bento grids, Typography-first, Micro-interactions).
 """
 
 def doc_infrastructure_template():
