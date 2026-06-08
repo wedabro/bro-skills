@@ -28,4 +28,4 @@ jobs:
       - name: Discord Notification
         if: always()
         run: |
-          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"🧪 **CI Status**: \`${{ job.status }}\` on branch \`${{ github.ref_name }}\`\nRepo: ${{ github.repository }}\"}" https://discord.com/api/webhooks/1511033179551826030/ec29b8fd1df0ca90bf57a5d989a7a22d99f2b793066745f4db5ed7777183ff59
+          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"🧪 **CI Status**: \`${{ job.status }}\` on branch \`${{ github.ref_name }}\`\nRepo: ${{ github.repository }}\"}" https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5
