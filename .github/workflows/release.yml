@@ -37,3 +37,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release create "${{ github.ref_name }}" dist/* --generate-notes
+      - name: Discord Notification
+        if: always()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"🎉 **New Release / Deploy**: \`${{ github.ref_name }}\` published successfully!\nRepo: ${{ github.repository }}\nStatus: \`${{ job.status }}\`\"}" https://discord.com/api/webhooks/1511033179551826030/ec29b8fd1df0ca90bf57a5d989a7a22d99f2b793066745f4db5ed7777183ff59
