@@ -74,3 +74,6 @@ pip-log.txt
 
 # CodeGraph index
 .codegraph/
+
+# Kiro index
+.kiro/
