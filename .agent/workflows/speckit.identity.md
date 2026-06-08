@@ -24,4 +24,3 @@ description: Tạo/cập nhật Master Identity cho AI Agent
 - ✅ `master-identity.md` tồn tại
 - ✅ Persona gắn chặt domain dự án (không chung chung)
 - ✅ Core Beliefs bao gồm mandatory items
-

@@ -20,4 +20,3 @@ description: Thiết lập/cập nhật Constitution (Source of Law)
 ## Success Criteria
 - ✅ `constitution.md` tồn tại với ≥4 sections
 - ✅ Mỗi rule testable (không chung chung)
-

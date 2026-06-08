@@ -5,7 +5,7 @@ Dự án: bro-skills
 ## 1. PHÁP LỆNH TỐI CAO
 - Tuân thủ nghiêm ngặt file `.agent/memory/constitution.md`.
 - Docker-First: Mọi hoạt động code và chạy app phải diễn ra trong container. KHÔNG chạy node/python trên host.
-- Ports: Chỉ sử dụng dải port 8900-8999.
+- Ports: Sử dụng dải port 8900-8999. Tuân thủ lấy port từ biến môi trường (.env).
 
 ## 2. bro-skills PROTOCOL
 - Mọi task phải đi qua quy trình: Specify → Plan → Tasks → Implement.
@@ -21,6 +21,12 @@ Dự án: bro-skills
 - KHÔNG chạy `docker compose down -v` trên Production.
 - Tạo script tự động (`.agent/scripts/`) cho lỗi lặp lại.
 - Kiểm tra logs ngay khi lỗi: `docker compose logs -f <service>`.
+- **Auto-Commit**: PHẢI thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
+
+## 5. AGENTIC MODE SYNC (Antigravity Only)
+- **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
+- **Planning Artifacts**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 files).
+- **Verification**: Sau khi hoàn thành task, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
 
 
 ## Project Structure
@@ -30,4 +36,3 @@ Dự án: bro-skills
 - `.agent/skills/` — AI skills (@mentions)
 - `.agent/workflows/` — Automation workflows (/commands)
 - `.agent/specs/` — Feature specifications
-

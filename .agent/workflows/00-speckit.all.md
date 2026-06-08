@@ -4,9 +4,6 @@ description: Full Pipeline (Specify → Clarify → Plan → Tasks → Analyze)
 
 # 🚀 Full Pipeline
 
-## Pre-conditions
-- `.agent/memory/constitution.md` đã tồn tại (chạy `/01-speckit.constitution` trước)
-
 ## Steps
 
 1. **@speckit.map** — (NẾU dự án cũ) Quét cấu trúc và hiểu codebase hiện tại.
@@ -29,5 +26,4 @@ description: Full Pipeline (Specify → Clarify → Plan → Tasks → Analyze)
 
 ## Success Criteria
 - ✅ spec.md, plan.md, tasks.md tồn tại và nhất quán
-- ✅ Coverage score ≥ 90%
 - ✅ Không vi phạm Constitution

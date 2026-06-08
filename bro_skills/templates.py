@@ -186,6 +186,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False):
 ## §4 Workflow & Scripting
 - **Tự động hóa**: Tạo script khi gặp lỗi hoặc task lặp lại.
 - **Git**: Lưu script vào `.agent/scripts`, commit vào hệ thống version control.
+- **Git Auto-Commit**: {shall_label} thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
 - **Update**: Cập nhật workflow tương ứng sau khi tạo script mới.
 """
 
@@ -390,6 +391,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 - {forbidden_label} chạy `docker compose down -v` trên Production.
 - Tạo script tự động (`.agent/scripts/`) cho lỗi lặp lại.
 - Kiểm tra logs ngay khi lỗi: `docker compose logs -f <service>`.
+- **Auto-Commit**: PHẢI thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
 - **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).

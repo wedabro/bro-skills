@@ -27,7 +27,7 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 
 | Môi trường | Docker đã chạy? | Hành động |
 |---|---|---|
-| **Local** | ❌ Chưa (lần đầu) | Quét `netstat -ano \| findstr 89` → chọn 3 ports trống liên tiếp |
+| **Local** | ❌ Chưa (lần đầu) | Quét dải `8900-8999` bằng socket/helper → chọn 3 ports trống liên tiếp |
 | **Local** | ✅ Đã chạy | **BỎ QUA** quét — dùng ports hiện tại từ `.env` / docker |
 | **Staging/Beta/Prod** | Bất kỳ | **LUÔN** quét lần đầu để cấu hình → ghi vào `.env` |
 
@@ -39,8 +39,8 @@ docker compose ps --format json 2>$null
 ```
 
 **Port scan khi cần:**
-```bash
-netstat -ano | findstr 89
+```text
+Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
 ```
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
 - Ghi luôn vào `.env`:
