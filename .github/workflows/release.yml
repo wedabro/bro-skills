@@ -25,7 +25,7 @@ jobs:
       - name: Discord Notification
         if: always()
         run: |
-          python -c "import urllib.request, json; req = urllib.request.Request('https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5', data=json.dumps({'content': '🧪 **Release Tests Status**: \`${{ job.status }}\` on tag \`${{ github.ref_name }}\`\nRepo: ${{ github.repository }}'}).encode('utf-8'), headers={'Content-Type': 'application/json'}); urllib.request.urlopen(req)"
+          python -c "import urllib.request, json; req = urllib.request.Request('https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5', data=json.dumps({'content': '🧪 **Release Tests Status**: \`${{ job.status }}\` on tag \`${{ github.ref_name }}\`\nRepo: ${{ github.repository }}'}).encode('utf-8'), headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'}); urllib.request.urlopen(req)"
 
   release:
     runs-on: ubuntu-latest
@@ -44,4 +44,4 @@ jobs:
       - name: Discord Notification
         if: always()
         run: |
-          python -c "import urllib.request, json; req = urllib.request.Request('https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5', data=json.dumps({'content': '🎉 **New Release / Deploy**: \`${{ github.ref_name }}\` published successfully!\nRepo: ${{ github.repository }}\nStatus: \`${{ job.status }}\`'}).encode('utf-8'), headers={'Content-Type': 'application/json'}); urllib.request.urlopen(req)"
+          python -c "import urllib.request, json; req = urllib.request.Request('https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5', data=json.dumps({'content': '🎉 **New Release / Deploy**: \`${{ github.ref_name }}\` published successfully!\nRepo: ${{ github.repository }}\nStatus: \`${{ job.status }}\`'}).encode('utf-8'), headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'}); urllib.request.urlopen(req)"
