@@ -250,7 +250,48 @@ def cmd_version(args):
     print(f"bro-skills v{__version__}")
 
 
+def cmd_update(args):
+    """Nâng cấp bro-skills lên phiên bản mới nhất."""
+    import subprocess
+    import shutil
+
+    install_method = os.environ.get("BRO_SKILLS_INSTALL_METHOD", "pip")
+
+    print("\n⚡ bro-skills - Đang nâng cấp lên phiên bản mới nhất...")
+    print(f"Phương thức cài đặt: {install_method.upper()}")
+
+    if install_method == "npm":
+        cmd = ["npm", "install", "-g", "bro-skills"]
+    else:
+        pip_cmd = "pip"
+        if not shutil.which("pip") and shutil.which("pip3"):
+            pip_cmd = "pip3"
+        cmd = [sys.executable, "-m", pip_cmd, "install", "--upgrade", "bro-skills"]
+
+    print(f"Đang chạy lệnh: {' '.join(cmd)}")
+    try:
+        result = subprocess.run(cmd, check=True, text=True)
+        if result.returncode == 0:
+            print("\n✅ Cập nhật thành công! Vui lòng chạy 'bro-skills version' để kiểm tra.")
+        else:
+            print(f"\n❌ Cập nhật thất bại với mã lỗi: {result.returncode}")
+    except Exception as e:
+        print(f"\n❌ Lỗi khi thực thi lệnh cập nhật: {e}")
+        print(f"💡 Bạn có thể chạy lệnh sau để cập nhật thủ công:")
+        if install_method == "npm":
+            print("   npm install -g bro-skills")
+        else:
+            print("   pip install --upgrade bro-skills")
+
+
 def main():
+    if sys.platform.startswith('win'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+            sys.stderr.reconfigure(encoding='utf-8')
+        except AttributeError:
+            pass
+
     parser = argparse.ArgumentParser(
         prog="bro-skills",
         description="⚡ bro-skills - Spec-Driven Development CLI",
@@ -266,6 +307,7 @@ Ví dụ:
     bro-skills list-workflows                    # Xem danh sách workflows
     bro-skills validate                          # Validate cấu trúc .agent/
     bro-skills version                           # Xem phiên bản
+    bro-skills update                            # Cập nhật lên phiên bản mới nhất
 
 Loại dự án:
   web_public  — Blog, E-commerce, Landing Page (SEO + GEO + Content)
@@ -317,6 +359,9 @@ Quy trình dự án CÓ SẴN:
     # version
     subparsers.add_parser("version", help="Hiển thị phiên bản")
 
+    # update
+    subparsers.add_parser("update", help="Nâng cấp bro-skills lên phiên bản mới nhất")
+
     args = parser.parse_args()
 
     if args.command is None:
@@ -329,6 +374,7 @@ Quy trình dự án CÓ SẴN:
         "list-workflows": cmd_list_workflows,
         "validate": cmd_validate,
         "version": cmd_version,
+        "update": cmd_update,
     }
 
     commands[args.command](args)

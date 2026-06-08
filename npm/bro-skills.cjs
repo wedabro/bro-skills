@@ -19,6 +19,7 @@ const env = {
   PYTHONPATH: process.env.PYTHONPATH
     ? `${repoRoot}${path.delimiter}${process.env.PYTHONPATH}`
     : repoRoot,
+  BRO_SKILLS_INSTALL_METHOD: "npm",
 };
 
 for (const [command, prefixArgs] of pythonCandidates) {
