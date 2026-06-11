@@ -5,7 +5,7 @@ import os
 import subprocess
 
 def bump_version(new_version):
-    print(f"🔄Start upgrading version: {new_version}...🔄)
+    print(f"🔄Start upgrading version: {new_version}...🔄")
     
     # 1. Update package.json
     pkg_path = "package.json"
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     version_arg = sys.argv[1]
     # Simple regex to check version format x.y.z
     if not re.match(r'^\d+\.\d+\.\d+$', version_arg):
-        print(f"❌Error: Invalid version format '{version_arg}'. Must be x.y.z (e.g. 1.3.2)❌)
+        print(f"❌Error: Invalid version format '{version_arg}'. Must be x.y.z (e.g. 1.3.2)❌")
         sys.exit(1)
         
     bump_version(version_arg)
