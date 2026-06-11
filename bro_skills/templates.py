@@ -363,7 +363,7 @@ echo "✅ Context update complete"
 # IDE RULES TEMPLATES - Standard formats for each IDE
 # =============================================================================
 
-def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=False):
+def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Core rules content - reused for all IDE rules."""
     must_label = "Strictly follow" if not is_soft_rules else "Should follow"
     shall_label = "must" if not is_soft_rules else "should"
@@ -371,6 +371,17 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
     
     docker_rule = f"- Docker-First: All coding and app running activities {shall_label} take place in the container. {forbidden_label} run node/python on the host." if use_docker else "- Flexibility: Run app directly or via Docker based on project needs."
     port_rule = f"- Ports: Use port range 8900-8999. {must_label} retrieve port from environment variables (.env)." if use_docker else "- Ports: Use available ports on the system."
+
+    # Language instruction generation
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        lang_instruction = "- Respond in Vietnamese."
+    elif l_lower in ("en", "english"):
+        lang_instruction = "- Respond in English."
+    elif l_lower == "dynamic":
+        lang_instruction = "- Respond in the language used by the user (supports Vietnamese and English)."
+    else:
+        lang_instruction = f"- Respond in {lang.strip().capitalize()}."
 
     return f"""Project: {project_name}
 
@@ -384,7 +395,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 - Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
 
 ## 3. LANGUAGE & CODE
-- Respond in the language used by the user (supports Vietnamese and English).
+{lang_instruction}
 - 15-Minute Rule: Each task {shall_label} be atomic, ≤ 15 minutes, affecting ≤ 3 files.
 - PowerShell 5.1+, separate commands with `;` ({forbidden_label} use `&&`).
 - {forbidden_label} hardcoding URLs, Tokens, Keys. Use ENV vars (`.env`).
@@ -402,7 +413,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 """
 
 
-def doc_antigravity_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_antigravity_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Antigravity IDE (Google) — .agent/rules/bro-skills.md"""
     return f"""---
 trigger: always_on
@@ -412,11 +423,11 @@ description: bro-skills Workspace Rules for {project_name} - ASF 3.3 Standard
 
 # 🛡️ bro-skills Workspace Rules
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 """
 
 
-def doc_cursor_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_cursor_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Cursor IDE — .cursor/rules/bro-skills.mdc (YAML frontmatter + markdown)"""
     return f"""---
 description: bro-skills project rules for {project_name}
@@ -426,23 +437,23 @@ alwaysApply: true
 
 # bro-skills Rules
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 """
 
 
-def doc_windsurf_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_windsurf_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Windsurf IDE (Codeium) — .windsurf/rules/bro-skills.md"""
     return f"""# bro-skills Rules
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 """
 
 
-def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """VS Code (GitHub Copilot) — .github/copilot-instructions.md"""
     return f"""# Copilot Instructions for {project_name}
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## References
 - Constitution: `.agent/memory/constitution.md`
@@ -452,11 +463,11 @@ def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft
 """
 
 
-def doc_jetbrains_rules_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_jetbrains_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """JetBrains AI Assistant (PhpStorm, WebStorm, PyCharm) — .aiassistant/rules/bro-skills.md"""
     return f"""# bro-skills Rules for {project_name}
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 """
 
 
@@ -475,8 +486,18 @@ def doc_kiro_mcp_template():
     }
 
 
-def doc_kiro_steering_template(project_name="Project"):
+def doc_kiro_steering_template(project_name="Project", lang="dynamic"):
     """Kiro IDE (AWS) — .kiro/steering/tech.md"""
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        lang_instruction = "- Respond in Vietnamese."
+    elif l_lower in ("en", "english"):
+        lang_instruction = "- Respond in English."
+    elif l_lower == "dynamic":
+        lang_instruction = "- Respond in the language used by the user (supports Vietnamese and English)."
+    else:
+        lang_instruction = f"- Respond in {lang.strip().capitalize()}."
+
     return f"""# Technology & Development Standards
 
 Project: {project_name}
@@ -496,7 +517,7 @@ Shell: PowerShell 5.1+ (Windows)
 - No hardcoded URLs, Tokens, Keys, or Credentials.
 
 ## Language
-- Respond in the language used by the user (supports Vietnamese and English).
+{lang_instruction}
 
 ## Safety
 - NEVER run `docker compose down -v` on Production.
@@ -504,11 +525,11 @@ Shell: PowerShell 5.1+ (Windows)
 """
 
 
-def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Claude Code — CLAUDE.md (root)"""
     return f"""# {project_name}
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## Project Structure
 - `.agent/memory/constitution.md` — Project Constitution (Source of Law)
@@ -520,11 +541,11 @@ def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rule
 """
 
 
-def doc_agents_md_template(project_name="Project", use_docker=True, is_soft_rules=False):
+def doc_agents_md_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """GitHub Copilot Coding Agent — AGENTS.md (root)"""
     return f"""# {project_name} — Agent Instructions
 
-{_core_rules_content(project_name, use_docker, is_soft_rules)}
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## Build & Test
 - Build: `docker compose build` (If using Docker)

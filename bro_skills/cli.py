@@ -44,6 +44,29 @@ def _ask_project_type():
         print(f"⚠️ Please choose a number from 1 to {len(types_list)}")
 
 
+def _ask_agent_language():
+    """Ask the user to select the agent response language."""
+    print("🌐 Agent Response Language:")
+    print("  [1] English (en)")
+    print("  [2] Vietnamese (vi)")
+    print("  [3] Dynamic (Detect dynamically based on user messages)")
+    print("  [4] Other (Custom language)")
+
+    while True:
+        choice = input("\nSelect (1-4): ").strip()
+        if choice == "1":
+            return "en"
+        elif choice == "2":
+            return "vi"
+        elif choice == "3":
+            return "dynamic"
+        elif choice == "4":
+            custom_lang = input("Enter custom language (e.g., French, Japanese): ").strip()
+            if custom_lang:
+                return custom_lang
+        print("⚠️ Please choose a number from 1 to 4")
+
+
 def cmd_init(args):
     """Initialize the .agent/ structure for the project."""
     target = os.path.abspath(args.target or os.getcwd())
@@ -96,6 +119,15 @@ def cmd_init(args):
         type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
         print(f"  🏗️ Project Type: {type_info['label']}")
 
+    # LANGUAGE SELECTION
+    lang = getattr(args, 'lang', None)
+    if not lang:
+        print()
+        lang = _ask_agent_language()
+        print(f"\n✅ Selected language: {lang}")
+    else:
+        print(f"  🌐 Agent Language: {lang}")
+
     # Filter skills by project type
     filtered_skills = get_skills_for_project_type(project_type)
     filtered_workflows = get_workflows_for_project_type(project_type)
@@ -130,6 +162,7 @@ def cmd_init(args):
         project_name=name,
         project_type=project_type,
         scan_profile=scan_profile,
+        lang=lang,
     )
     generator.generate()
 
@@ -342,6 +375,7 @@ AVAILABLE project process:
         help="Project type: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra",
     )
     init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ if it already exists")
+    init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
 
     # list-skills
     subparsers.add_parser("list-skills", help="List all skills")

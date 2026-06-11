@@ -52,3 +52,29 @@ def test_scanner_detects_python_project(tmp_path):
     assert profile["language"] == "Python"
     assert profile["project_name"] == "demo-agent"
     assert profile["project_version"] == "0.1.0"
+
+
+def test_generator_scaffolds_with_language(tmp_path):
+    import json
+    from bro_skills.generator import ProjectGenerator
+    
+    generator = ProjectGenerator(
+        target_dir=str(tmp_path),
+        project_name="test-project",
+        project_type="simple_script",
+        lang="vi"
+    )
+    generator.generate()
+    
+    project_json_path = tmp_path / ".agent" / "project.json"
+    assert project_json_path.exists()
+    
+    with open(project_json_path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+    assert config["agent_language"] == "vi"
+    
+    rules_path = tmp_path / ".agent" / "rules" / "bro-skills.md"
+    assert rules_path.exists()
+    
+    rules_content = rules_path.read_text(encoding="utf-8")
+    assert "- Respond in Vietnamese." in rules_content

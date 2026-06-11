@@ -37,13 +37,14 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic"):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
         self.scan_profile = scan_profile  # Result from ProjectScanner
         self.attributes = attributes or {}  # Multi-agent attributes (architecture/platforms/flags)
         self.agent_dir = os.path.join(target_dir, ".agent")
+        self.lang = lang or "dynamic"
 
         # Filter skills/workflows by project type + attributes (multi-agent v2)
         self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
@@ -122,7 +123,7 @@ class ProjectGenerator:
         # Path: .agent/rules/bro-skills.md
         self._write_file(
             os.path.join(self.agent_dir, "rules", "bro-skills.md"),
-            doc_antigravity_rules_template(name, self.use_docker, self.is_soft_rules)
+            doc_antigravity_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ Antigravity  → .agent/rules/bro-skills.md")
 
@@ -132,7 +133,7 @@ class ProjectGenerator:
         os.makedirs(cursor_dir, exist_ok=True)
         self._write_file(
             os.path.join(cursor_dir, "bro-skills.mdc"),
-            doc_cursor_rules_template(name, self.use_docker, self.is_soft_rules)
+            doc_cursor_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ Cursor       → .cursor/rules/bro-skills.mdc")
 
@@ -142,7 +143,7 @@ class ProjectGenerator:
         os.makedirs(windsurf_dir, exist_ok=True)
         self._write_file(
             os.path.join(windsurf_dir, "bro-skills.md"),
-            doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules)
+            doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ Windsurf     → .windsurf/rules/bro-skills.md")
 
@@ -152,7 +153,7 @@ class ProjectGenerator:
         os.makedirs(github_dir, exist_ok=True)
         self._write_file(
             os.path.join(github_dir, "copilot-instructions.md"),
-            doc_vscode_copilot_template(name, self.use_docker, self.is_soft_rules)
+            doc_vscode_copilot_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ VS Code      → .github/copilot-instructions.md")
 
@@ -162,7 +163,7 @@ class ProjectGenerator:
         os.makedirs(jb_dir, exist_ok=True)
         self._write_file(
             os.path.join(jb_dir, "bro-skills.md"),
-            doc_jetbrains_rules_template(name, self.use_docker, self.is_soft_rules)
+            doc_jetbrains_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ JetBrains    → .aiassistant/rules/bro-skills.md")
 
@@ -172,7 +173,7 @@ class ProjectGenerator:
         os.makedirs(kiro_dir, exist_ok=True)
         self._write_file(
             os.path.join(kiro_dir, "tech.md"),
-            doc_kiro_steering_template(name)
+            doc_kiro_steering_template(name, self.lang)
         )
         print("  ✅ Kiro         → .kiro/steering/tech.md")
 
@@ -186,7 +187,7 @@ class ProjectGenerator:
         # Path: CLAUDE.md (root)
         self._write_file(
             os.path.join(self.target_dir, "CLAUDE.md"),
-            doc_claude_md_template(name, self.use_docker, self.is_soft_rules)
+            doc_claude_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ Claude Code  → CLAUDE.md")
 
@@ -194,7 +195,7 @@ class ProjectGenerator:
         # Path: AGENTS.md (root)
         self._write_file(
             os.path.join(self.target_dir, "AGENTS.md"),
-            doc_agents_md_template(name, self.use_docker, self.is_soft_rules)
+            doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
         )
         print("  ✅ GitHub Agent → AGENTS.md")
 
@@ -571,6 +572,7 @@ No tag -> inferred from keyword + project_type.
             "project_name": self.project_name,
             "project_type": self.project_type,
             "attributes": self.attributes,
+            "agent_language": self.lang,
             "asf_version": "3.3",
             "bro_skills_version": "1.3.1",
             "created_at": datetime.now().isoformat(),
