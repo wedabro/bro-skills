@@ -328,7 +328,12 @@ def cmd_update(args):
             print(f"\n❌ Update failed with error code: {result.returncode}")
     except Exception as e:
         print(f"\n❌ Error executing update command: {e}")
-        print(f"💡 You can run the following command to update manually:")
+        if sys.platform.startswith('win'):
+            print("\n💡 Tip: On Windows, updating directly from the running CLI might fail with 'Access is denied' (WinError 5) because the executable is currently in use.")
+            print("Please close any active bro-skills processes and run the upgrade command manually in your terminal:")
+        else:
+            print(f"💡 You can run the following command to update manually:")
+            
         if install_method == "npm":
             print("   npm install -g github:wedabro/bro-skills")
         else:
