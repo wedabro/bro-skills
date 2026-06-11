@@ -160,7 +160,7 @@ Before importing ANY 3rd-party library, check `package.json`. If the package is 
 
 ## 4. DESIGN ENGINEERING DIRECTIVES (Bias Correction)
 
-LLMs default to clichés. Override these defaults proactively. Each rule has a context-aware override path.
+LLMs default to clicheés. Override these defaults proactively. Each rule has a context-aware override path.
 
 ### 4.1 Typography
 * **Display / Headlines:** Default `text-4xl md:text-6xl tracking-tighter leading-none`.
@@ -648,7 +648,7 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 **Em-dashes & typography flourishes**
 * **NO em-dash (`—`) as a design element OR anywhere else.** See Section 9.G below for the complete, non-negotiable ban. The em-dash character is forbidden in headlines, eyebrows, pills, body copy, quotes, attribution, captions, button text, and alt text. Use the regular hyphen (`-`).
 * **NO `<br>`-broken-and-italicized headlines** as a default "design move." "for thirty\<br\>*years.*" type splits. Headlines should read naturally first, get clever only when the brief demands it.
-* **NO vertical rotated text** ("INDEX OF WORK, 2018 - 2026" rotated 90°). Agency-portfolio cliché. Use it only when the brief is explicitly agency / Awwwards / experimental AND it serves a real composition purpose.
+* **NO vertical rotated text** ("INDEX OF WORK, 2018 - 2026" rotated 90°). Agency-portfolio clicheé. Use it only when the brief is Clearly agency / Awwwards / experimental AND it serves a real composition purpose.
 * **NO crosshair / hairline grid lines as decoration.** Vertical and horizontal lines drawn just to make the page "feel designed" - banned. Use them only when they organize real content.
 
 **Fake product previews**
@@ -670,7 +670,7 @@ These patterns came out of real LLM-generated landing-page tests. They are the s
 * **NO "Reservation 412 of 800"-style live-stock counters** as decoration. Only if the brief is explicitly a limited-run waitlist with real data.
 
 **Decoration text strips**
-* **NO decoration text strip at hero bottom.** Patterns like `BRAND. MOTION. SPATIAL.`, `TYPE / FORM / MOTION`, `DESIGN · BUILD · SHIP`, `ESTD. 2018 · LISBON · BRAND. MOTION. SPATIAL.` as a small mono-caps strip across the bottom of the hero are an agency-portfolio cliché. Banned by default. Only acceptable when the strip carries real, navigable links (sticky bottom nav) or real status info (cookie banner, build info on a docs site).
+* **NO decorative text strip at hero bottom.** Patterns like `BRAND. MOTION. SPATIAL.` , `TYPE / FORM / MOTION` , `DESIGN · BUILD · SHIP` , `ESTD. 2018 · LISBON · BRAND. MOTION. SPATIAL.` as a small mono-caps strip across the bottom of the hero are an agency-portfolio clicheé. Banned by default. Only acceptable when the strip carries real, navigable links (sticky bottom nav) or real status info (cookie banner, build info on a docs site).
 * **NO floating top-right sub-text in section headings.** Pattern: section has a giant left-aligned headline; in the top-right corner of the same section header there is a small explainer paragraph floating with no clear alignment to anything else. That floater is the Tell. Either put the sub-text directly under the headline, or build a clean 2-column header (left: headline, right: aligned body), but not a tiny corner paragraph.
 
 **Lists, dividers and scoring**

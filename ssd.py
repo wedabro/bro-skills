@@ -3,18 +3,18 @@
 ⚡ bro-skills - Spec-Driven Development CLI (ASF 3.3)
 
 Backward compatibility wrapper.
-Nếu đã pip install, dùng lệnh `bro-skills` trực tiếp.
+If pip installed, use the `bro-skills` command directly.
 """
 import sys
 import os
 
-# Đảm bảo package bro_skills có thể import
+# Make sure the bro_skills package can be imported
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from bro_skills.cli import main
 except ImportError:
-    # Fallback nếu ai đó vẫn dùng tên cũ
+    # Fallback if someone still uses the old name
     from antigravity_ssd.cli import main
 
 if __name__ == "__main__":

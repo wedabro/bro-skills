@@ -1,3 +1,3 @@
 # API Standards
 
-Quy tắc thiết kế API, error codes, auth headers.
+API design rules, error codes, auth headers.

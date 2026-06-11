@@ -5,8 +5,8 @@ description: Technical SEO Audit & Optimization
 # 🔍 SEO Audit
 
 ## Pre-conditions
-- Public pages đã implement
-- `.agent/knowledge_base/seo_standards.md` tồn tại
+- Public pages implemented
+- `.agent/knowledge_base/seo_standards.md` exists
 
 ## Steps
 
@@ -14,7 +14,7 @@ description: Technical SEO Audit & Optimization
    - Meta tags, headings, canonical, structured data
    - Core Web Vitals, crawlability
 2. Output: Score 0-100 + issues list
-3. Nếu score < 80 → fix issues → re-audit
+3. If score < 80 → fix issues → re-audit
 
 ## Success Criteria
 - ✅ SEO Score ≥ 80

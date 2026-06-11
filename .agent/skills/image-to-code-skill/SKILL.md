@@ -23,7 +23,7 @@ This skill is for:
 Standard AI output tends to collapse into repetitive defaults:
 - one single giant compressed image for too many sections
 - text that becomes too small to read
-- centered dark hero clichés
+- centered dark hero clicheés
 - generic card spam
 - repeated left-text/right-image layouts
 - weak typography hierarchy

@@ -1,20 +1,20 @@
 ---
 name: speckit.status
-description: Progress Dashboard - Hiển thị trạng thái tiến độ project.
+description: Progress Dashboard - Displays project progress status.
 role: Progress Tracker
 ---
 
 ## 🎯 Mission
-Parse tasks.md → tính tiến độ → hiển thị dashboard trực quan.
+Parse tasks.md → calculate progress → display visual dashboard.
 
 ## 📥 Input
 - `.agent/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
-1. Parse tasks.md → đếm checkboxes:
+1. Parse tasks.md → count checkboxes:
    - `- [X]` = completed
    - `- [ ]` = pending
-2. Nhóm theo Phase → tính % mỗi phase.
+2. Group by Phase → calculate % for each phase.
 3. Output dashboard:
    ```
    📊 Progress Dashboard: [Feature Name]
@@ -25,10 +25,10 @@ Parse tasks.md → tính tiến độ → hiển thị dashboard trực quan.
    ───────────────────────────────────────
    Total:                ███████░░░░░░░░░  47% (7/15)
    ```
-4. List tasks đang pending (tiếp theo cần làm).
+4. List of pending tasks (next to do).
 
 ## 📤 Output
 - Console: Dashboard visualization
 
 ## 🚫 Guard Rails
-- KHÔNG thay đổi tasks.md — chỉ đọc và báo cáo.
+- DO NOT change tasks.md — read and report only.

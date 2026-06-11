@@ -1,8 +1,8 @@
 ---
-description: UAT Analyzer - Phân tích kết quả nghiệm thu thủ công và xử lý các khoảng cách (gaps) từ User.
+description: UAT Analyzer - Analyze manual acceptance results and process gaps from the User.
 ---
 
 # ✅ User Acceptance Testing (UAT)
 
 ## Steps
-1. **@speckit.uat** — Thu thập feedback và tạo kế hoạch hoàn thiện tính năng.
+1. **@speckit.uat** — Collect feedback and create a feature improvement plan.

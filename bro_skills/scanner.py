@@ -1,6 +1,6 @@
 """
-Scanner - Quét codebase hiện có để auto-populate .agent/ files.
-Đọc hiểu dự án thông qua config files, source code, và cấu trúc thư mục.
+Scanner - Scan the existing codebase to auto-populate .agent/ files.
+Understand the project through config files, source code, and folder structure.
 """
 
 import os
@@ -10,7 +10,7 @@ import glob
 
 
 class ProjectScanner:
-    """Quét project directory để trích xuất thông tin thật."""
+    """Scan project directory to extract real information."""
 
     def __init__(self, target_dir: str):
         self.target_dir = target_dir
@@ -49,7 +49,7 @@ class ProjectScanner:
         }
 
     def scan(self):
-        """Chạy toàn bộ quá trình quét."""
+        """Run the entire scan process."""
         self._scan_package_json()
         self._scan_pyproject()
         self._scan_docker()
@@ -61,7 +61,7 @@ class ProjectScanner:
         self._scan_source_structure()
         self._detect_framework()
 
-        # Đánh dấu có code hay không
+        # Mark whether code exists
         if (self.profile["tech_stack"]
             or self.profile["dependencies"]
             or self.profile["dev_dependencies"]
@@ -75,7 +75,7 @@ class ProjectScanner:
     # PACKAGE.JSON
     # =========================================================================
     def _scan_package_json(self):
-        """Đọc package.json để lấy dependencies, scripts, tên project."""
+        """Read package.json to get dependencies, scripts, and project name."""
         pkg_path = os.path.join(self.target_dir, "package.json")
         if not os.path.exists(pkg_path):
             return
@@ -142,7 +142,7 @@ class ProjectScanner:
     # PYPROJECT.TOML
     # =========================================================================
     def _scan_pyproject(self):
-        """Đọc pyproject.toml cho Python projects."""
+        """Read pyproject.toml for Python projects."""
         pyproject_path = os.path.join(self.target_dir, "pyproject.toml")
         if not os.path.exists(pyproject_path):
             return
@@ -184,7 +184,7 @@ class ProjectScanner:
     # DOCKER
     # =========================================================================
     def _scan_docker(self):
-        """Quét Docker files để lấy services, ports."""
+        """Scan Docker files to get services and ports."""
         # Dockerfile
         dockerfiles = glob.glob(os.path.join(self.target_dir, "**/Dockerfile"), recursive=True)
         if dockerfiles:
@@ -208,7 +208,7 @@ class ProjectScanner:
                 break
 
     def _parse_compose(self, filepath):
-        """Parse docker-compose để lấy services và ports (simple parser)."""
+        """Parse docker-compose to get services and ports (simple parser)."""
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
@@ -218,7 +218,6 @@ class ProjectScanner:
         # Extract services (simple regex)
         in_services = False
         current_service = None
-        indent_level = 0
 
         for line in content.split("\n"):
             stripped = line.strip()
@@ -244,8 +243,7 @@ class ProjectScanner:
     # PRISMA
     # =========================================================================
     def _scan_prisma(self):
-        """Quét Prisma schema để lấy models."""
-        # Check multiple possible paths
+        """Scan Prisma schema to get models."""
         schema_paths = [
             os.path.join(self.target_dir, "prisma", "schema.prisma"),
             os.path.join(self.target_dir, "packages", "database", "prisma", "schema.prisma"),
@@ -307,7 +305,7 @@ class ProjectScanner:
     # ENV VARS
     # =========================================================================
     def _scan_env(self):
-        """Quét .env.example hoặc .env để lấy tên biến (KHÔNG lấy giá trị)."""
+        """Scan .env.example or .env to get variable names (DO NOT get values)."""
         env_files = [".env.example", ".env.local.example", ".env.development"]
         for env_name in env_files:
             env_path = os.path.join(self.target_dir, env_name)
@@ -331,7 +329,7 @@ class ProjectScanner:
     # API ROUTES
     # =========================================================================
     def _scan_api_routes(self):
-        """Quét API routes từ cấu trúc thư mục."""
+        """Scan API routes from folder structure."""
         # Next.js App Router
         api_dir = os.path.join(self.target_dir, "app", "api")
         if not os.path.exists(api_dir):
@@ -362,7 +360,7 @@ class ProjectScanner:
     # PAGES
     # =========================================================================
     def _scan_pages(self):
-        """Quét public pages từ cấu trúc thư mục."""
+        """Scan public pages from folder structure."""
         # Next.js App Router pages
         app_dir = os.path.join(self.target_dir, "app")
         if not os.path.exists(app_dir):
@@ -370,7 +368,6 @@ class ProjectScanner:
 
         if os.path.exists(app_dir):
             for root, dirs, files in os.walk(app_dir):
-                # Skip api, components, etc
                 rel = os.path.relpath(root, app_dir)
                 if rel.startswith("api") or rel.startswith("_"):
                     continue
@@ -387,7 +384,7 @@ class ProjectScanner:
     # README
     # =========================================================================
     def _scan_readme(self):
-        """Đọc README để lấy mô tả dự án."""
+        """Read README to get project description."""
         readme_path = os.path.join(self.target_dir, "README.md")
         if not os.path.exists(readme_path):
             return
@@ -398,7 +395,7 @@ class ProjectScanner:
         except UnicodeDecodeError:
             return
 
-        # Lấy nội dung sau heading đầu tiên (thường là mô tả)
+        # Get content after first heading (usually the description)
         lines = content.split("\n")
         desc_lines = []
         found_heading = False
@@ -422,7 +419,7 @@ class ProjectScanner:
     # SOURCE STRUCTURE
     # =========================================================================
     def _scan_source_structure(self):
-        """Quét cấu trúc thư mục cấp 1-2 để hiểu kiến trúc."""
+        """Scan folder structure at level 1-2 to understand the architecture."""
         ignore_dirs = {
             "node_modules", ".git", ".next", ".agent", "__pycache__",
             "dist", "build", ".cache", ".turbo", "coverage",
@@ -455,7 +452,7 @@ class ProjectScanner:
     # FRAMEWORK DETECTION
     # =========================================================================
     def _detect_framework(self):
-        """Xác định framework chính từ tech stack."""
+        """Detect core framework from tech stack."""
         ts = self.profile["tech_stack"]
         if "Next.js" in ts:
             self.profile["framework"] = "Next.js"
@@ -476,14 +473,14 @@ class ProjectScanner:
     # REPORT GENERATION
     # =========================================================================
     def generate_report(self):
-        """Tạo báo cáo scan dạng text."""
+        """Generate scan report in text format."""
         p = self.profile
         lines = []
-        lines.append("📊 KẾT QUẢ QUÉT DỰ ÁN")
+        lines.append("📊 PROJECT SCAN REPORT")
         lines.append("─" * 50)
 
         if p["project_name"]:
-            lines.append(f"  📛 Tên:        {p['project_name']}")
+            lines.append(f"  📛 Name:        {p['project_name']}")
         if p["project_version"]:
             lines.append(f"  🏷️  Version:    {p['project_version']}")
         if p["framework"]:
@@ -511,7 +508,7 @@ class ProjectScanner:
             for r in p["api"]["routes"][:8]:
                 lines.append(f"     ├─ {r}")
             if len(p["api"]["routes"]) > 8:
-                lines.append(f"     └─ ...và {len(p['api']['routes']) - 8} routes khác")
+                lines.append(f"     └─ ...and {len(p['api']['routes']) - 8} other routes")
 
         if p["pages"]:
             lines.append(f"  📄 Pages:      {len(p['pages'])}")
@@ -528,7 +525,7 @@ class ProjectScanner:
     # KNOWLEDGE BASE CONTENT GENERATORS
     # =========================================================================
     def generate_infrastructure_content(self):
-        """Tạo nội dung infrastructure.md từ dữ liệu thật."""
+        """Generate infrastructure.md content from real data."""
         p = self.profile
         sections = []
         sections.append("# 🏗️ Infrastructure & Docker Standards\n")
@@ -548,7 +545,7 @@ class ProjectScanner:
             if p["docker"]["has_prod_compose"]:
                 sections.append("- **Production**: `docker-compose.prod.yml` (Standalone, Hardened)")
             else:
-                sections.append("- **Production**: [Chưa có — cần tạo `docker-compose.prod.yml`]")
+                sections.append("- **Production**: [Missing — need to create `docker-compose.prod.yml`]")
 
             if p["docker"]["services"]:
                 sections.append(f"\n### Services ({len(p['docker']['services'])})")
@@ -560,8 +557,8 @@ class ProjectScanner:
                 for port in p["docker"]["ports"]:
                     sections.append(f"- {port}")
         else:
-            sections.append("- **Docker**: Chưa cấu hình — cần thiết lập Docker environment")
-            sections.append("- **Ports**: Tuân thủ dải **8900-8999**")
+            sections.append("- **Docker**: Not configured — need to set up Docker environment")
+            sections.append("- **Ports**: Comply with port range **8900-8999**")
 
         # ENV
         if p["env_vars"]:
@@ -578,7 +575,7 @@ class ProjectScanner:
         return "\n".join(sections)
 
     def generate_data_schema_content(self):
-        """Tạo nội dung data_schema.md từ Prisma schema thật."""
+        """Generate data_schema.md content from real Prisma schema."""
         p = self.profile
         sections = []
         sections.append("# 📊 Data Schema\n")
@@ -596,13 +593,13 @@ class ProjectScanner:
                 sections.append("```\n")
         else:
             sections.append("## Database")
-            sections.append("Chưa phát hiện Database schema.")
-            sections.append("Khi thêm Prisma/SQL, chạy lại `bro-skills init` để cập nhật.\n")
+            sections.append("No Database schema detected.")
+            sections.append("Once Prisma/SQL is added, run `bro-skills init` to update.\n")
 
         return "\n".join(sections)
 
     def generate_api_standards_content(self):
-        """Tạo nội dung api_standards.md từ API routes thật."""
+        """Generate api_standards.md content from real API routes."""
         p = self.profile
         sections = []
         sections.append("# 🌐 API Standards\n")
@@ -624,19 +621,19 @@ class ProjectScanner:
         return "\n".join(sections)
 
     def generate_business_logic_content(self):
-        """Tạo nội dung business_logic.md từ source structure."""
+        """Generate business_logic.md content from source structure."""
         p = self.profile
         sections = []
         sections.append("# 💼 Business Logic\n")
         sections.append(f"> Auto-generated by bro-skills Scanner\n")
 
         if p["project_description"]:
-            sections.append(f"## Mô tả dự án")
+            sections.append(f"## Project Description")
             sections.append(p["project_description"])
             sections.append("")
 
         if p["source_structure"]:
-            sections.append("## Cấu trúc source")
+            sections.append("## Source Structure")
             for item in p["source_structure"]:
                 sections.append(f"  {item}")
             sections.append("")
@@ -648,13 +645,13 @@ class ProjectScanner:
             sections.append("")
 
         sections.append("## Core Business Rules")
-        sections.append("<!-- Điền logic nghiệp vụ cốt lõi của dự án tại đây -->")
-        sections.append("<!-- VD: Quy trình đặt hàng, xử lý thanh toán, quản lý tồn kho... -->")
+        sections.append("<!-- Fill in the core business logic of the project here -->")
+        sections.append("<!-- E.g., Ordering process, payment processing, inventory management... -->")
 
         return "\n".join(sections)
 
     def generate_identity_context(self):
-        """Tạo context bổ sung cho Identity dựa trên scan."""
+        """Generate additional identity context based on scan."""
         p = self.profile
         parts = []
         if p["framework"]:
@@ -669,4 +666,3 @@ class ProjectScanner:
             parts.append(f"Docker: {len(p['docker']['services'])} services")
 
         return " | ".join(parts) if parts else ""
-

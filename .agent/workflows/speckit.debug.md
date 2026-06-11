@@ -1,10 +1,10 @@
 ---
-description: Chẩn đoán và sửa lỗi hệ thống chuyên sâu (Systematic Debugging)
+description: Systematic Debugging
 ---
 
 # 🐞 Systematic Debugging Pipeline
 
 ## Steps
-1. **@speckit.debug** — Phân tích lỗi và tìm Root Cause.
-2. Tái hiện lỗi qua script/test.
-3. Đề xuất và thực hiện Fix Plan.
+1. **@speckit.debug** — Analyze errors and find Root Cause.
+2. Reproduce errors via script/test.
+3. Propose and implement Fix Plan.

@@ -1,11 +1,11 @@
 ---
-description: GEO - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity)
+description: GEO - Optimized for AI Search (ChatGPT, Gemini, Perplexity)
 ---
 
 # 🤖 GEO Audit
 
 ## Pre-conditions
-- SEO Audit đã pass (score ≥ 80)
+- SEO Audit passed (score ≥ 80)
 
 ## Steps
 
@@ -16,6 +16,6 @@ description: GEO - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity)
 2. Output: GEO report
 
 ## Success Criteria
-- ✅ llms.txt tồn tại
-- ✅ JSON-LD cho mọi content pages
+- ✅ llms.txt exists
+- ✅ JSON-LD for all content pages
 - ✅ E-E-A-T signals present

@@ -5,14 +5,14 @@ description: Code Review
 # 👀 Code Review
 
 ## Pre-conditions
-- Code đã implement + tests pass
+- Code implemented + tests passed
 
 ## Steps
 
 1. **@speckit.reviewer** — Review code:
    - Spec compliance, error handling, security, performance
-2. Verdict: APPROVE hoặc REQUEST CHANGES
+2. Verdict: APPROVE or REQUEST CHANGES
 
 ## Success Criteria
 - ✅ Verdict: APPROVE
-- ✅ Mọi CRITICAL findings đã fix
+- ✅ All CRITICAL findings have been fixed

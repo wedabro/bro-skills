@@ -1,23 +1,23 @@
 ---
-description: Tạo Task Breakdown (tasks.md)
+description: Create Task Breakdown (tasks.md)
 ---
 
 # 📋 Task Breakdown
 
 ## Pre-conditions
-- `.agent/specs/[feature]/plan.md` tồn tại
-- `.agent/specs/[feature]/spec.md` tồn tại
+- `.agent/specs/[feature]/plan.md` exists
+- `.agent/specs/[feature]/spec.md` exists
 
 ## Steps
 
 1. **@speckit.tasks** — Breakdown plan → atomic tasks
 2. Verify:
-   - Mỗi task ≤15 phút
-   - Mỗi task có file path
-   - Dependency ordering đúng
-   - Phase structure đúng (Setup → Foundation → Features → Polish)
+   - Each task ≤15 minutes
+   - Each task has a file path
+   - Dependency ordering is correct
+   - Phase structure is correct (Setup → Foundation → Features → Polish)
 
 ## Success Criteria
-- ✅ tasks.md có ≥1 phase
-- ✅ Mỗi task format: `- [ ] T001 [P] [USx] Description affecting path/file`
-- ✅ Không task nào ảnh hưởng >3 files
+- ✅ tasks.md has ≥1 phases
+- ✅ Each task format: `- [ ] T001 [P] [USx] Description affecting path/file`
+- ✅ No task affects >3 files

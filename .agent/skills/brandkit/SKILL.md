@@ -619,7 +619,7 @@ Use:
 Avoid:
 - generic stock people
 - random office photos
-- cliché robot imagery
+- clicheé robot imagery
 - overbusy scenes
 - unrelated imagery
 

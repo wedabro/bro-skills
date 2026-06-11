@@ -6,18 +6,18 @@
 
 ## 🏗️ Architecture
 
-- `.agent/identity/`: Định nghĩa Persona & Soul của AI.
-- `.agent/knowledge_base/`: Kho tri thức về Business, Data, API, SEO.
-- `.agent/skills/`: Các kỹ năng AI chuyên biệt (@mentions).
-- `.agent/workflows/`: Các quy trình tự động hóa (/commands).
-- `.agent/memory/`: Project Constitution (Luật dự án).
+- `.agent/identity/` : Definition of AI's Persona & Soul.
+- `.agent/knowledge_base/` : Store of knowledge about Business, Data, API, SEO.
+- `.agent/skills/` : Specialized AI skills (@mentions).
+- `.agent/workflows/` : Automated processes (/commands).
+- `.agent/memory/` : Project Constitution (Project Law).
 
-## 🔍 SEO & GEO
-- `@speckit.seo`: Audit Technical SEO (Meta, Sitemap, Core Web Vitals)
-- `@speckit.geo`: Tối ưu cho AI Search (llms.txt, E-E-A-T, Schema.org)
-- `knowledge_base/seo_standards.md`: Checklist & JSON-LD templates
+## 🔍 SEO ​​& GEO
+- `@speckit.seo` : Audit Technical SEO (Meta, Sitemap, Core Web Vitals)
+- `@speckit.geo` : Optimized for AI Search (llms.txt, E-E-A-T, Schema.org)
+- `knowledge_base/seo_standards.md` : Checklist & JSON-LD templates
 
 ## 🚀 Quick Start
-1. Run `/01-speckit.constitution` để thiết lập luật dự án.
-2. Run `@speckit.identity` để tinh chỉnh Persona của AI.
-3. Run `/02-speckit.specify` để bắt đầu tính năng mới.
+1. Run `/01-speckit.constitution` to set project rules.
+2. Run `@speckit.identity` to fine-tune the AI ​​Persona.
+3. Run `/02-speckit.specify` to start the new feature.

@@ -1,3 +1,3 @@
 # Data Schema
 
-Định nghĩa cấu trúc database, quan hệ thực thể tại đây.
+Define database structure and entity relationships here.

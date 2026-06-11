@@ -1,7 +1,7 @@
 """
-Generator - Core logic tạo cấu trúc .agent/ chuẩn ASF 3.3.
-Hỗ trợ lọc skills/workflows theo Project Type.
-Tự động populate nội dung từ Scanner khi dự án có sẵn.
+Scaffolder Generator - Core logic for creating the .agent/ directory structure.
+Supports filtering skills/workflows by Project Type.
+Automatically populates content from Scanner when the project already exists.
 """
 
 import os
@@ -35,17 +35,17 @@ from .scanner import ProjectScanner
 
 
 class ProjectGenerator:
-    """Sinh cấu trúc .agent/ cho project theo chuẩn Spec-Kit & ASF 3.3."""
+    """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
     def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
-        self.scan_profile = scan_profile  # Kết quả từ ProjectScanner
+        self.scan_profile = scan_profile  # Result from ProjectScanner
         self.attributes = attributes or {}  # Multi-agent attributes (architecture/platforms/flags)
         self.agent_dir = os.path.join(target_dir, ".agent")
 
-        # Lọc skills/workflows theo project type + attributes (multi-agent v2)
+        # Filter skills/workflows by project type + attributes (multi-agent v2)
         self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
         self.filtered_workflows = get_workflows_for_project_type(project_type)
 
@@ -60,16 +60,16 @@ class ProjectGenerator:
         }
 
     def generate(self):
-        """Thực thi toàn bộ quá trình sinh cấu trúc."""
+        """Execute the entire scaffolding process."""
         from .registry import get_project_type_info
         type_info = get_project_type_info(self.project_type)
         self.use_docker = type_info.get("use_docker", True)
         self.is_soft_rules = type_info.get("is_soft_rules", False)
 
-        print(f"📁 Tạo cấu trúc thư mục (ASF 3.3 Standard — {self.project_type})...")
+        print(f"📁 Scaffolding directory structure (ASF 3.3 Standard — {self.project_type})...")
         self._create_directories()
 
-        # ─── 0. Check Port (Chỉ cho dự án MỚI & dùng Docker) ───
+        # ─── 0. Check Port (Only for NEW projects & using Docker) ───
         project_config_path = os.path.join(self.agent_dir, "project.json")
         is_new_project = not os.path.exists(project_config_path)
 
@@ -80,34 +80,34 @@ class ProjectGenerator:
                  print(f"📡 Port assigned (8900-8999): Public:{ports[0]}, Admin:{ports[1]}, API:{ports[2]}")
                  self._save_ports_to_env(ports)
              else:
-                 print("⚠️  Không tìm thấy dải port 8900-8999 trống. Vui lòng kiểm tra lại hệ thống.")
-                 self.assigned_ports = (8900, 8901, 8902) # Fallback an toàn
+                 print("⚠️  No available ports found in 8900-8999 range. Please check your system.")
+                 self.assigned_ports = (8900, 8901, 8902) # Safe fallback
         else:
              self.assigned_ports = None
 
-        print("🎭 Thiết lập Identity & Soul...")
+        print("🎭 Setting up Identity & Soul...")
         self._create_identity()
 
-        print("🧠 Khởi tạo Knowledge Base...")
+        print("🧠 Initializing Knowledge Base...")
         self._create_knowledge_base()
 
-        print("🛠️ Tạo Skills (@mentions)...")
+        print("🛠️ Creating Skills (@mentions)...")
         self._create_skills()
 
-        print("🔄 Tạo Workflows (/commands)...")
+        print("🔄 Creating Workflows (/commands)...")
         self._create_workflows()
 
-        print("🧭 Tạo Multi-Agent (registry + orchestrator)...")
+        print("🧭 Creating Multi-Agent (registry + orchestrator)...")
         self._create_agents()
 
-        print("📄 Tạo Templates & Memory...")
+        print("📄 Creating Templates & Memory...")
         self._create_templates()
         self._create_memory()
 
-        print("🔧 Tạo Bash Scripts...")
+        print("🔧 Creating Bash Scripts...")
         self._create_scripts()
 
-        print("🖥️  Thiết lập Rules cho 8 IDE/Agent...")
+        print("🖥️  Setting up Rules for 8 IDE/Agent...")
         self._create_ide_rules()
 
         self._create_project_config()
@@ -115,7 +115,7 @@ class ProjectGenerator:
         self._print_stats()
 
     def _create_ide_rules(self):
-        """Tạo rules files chuẩn cho 8 IDE/Agent — đúng path + format từng IDE."""
+        """Create standard rules files for 8 IDE/Agent — correct path + format for each IDE."""
         name = self.project_name
 
         # ─── 1. Antigravity (Google) ────────────────────────
@@ -172,14 +172,14 @@ class ProjectGenerator:
         os.makedirs(kiro_dir, exist_ok=True)
         self._write_file(
             os.path.join(kiro_dir, "tech.md"),
-            doc_kiro_steering_template(name) # Kiro keeps original for now
+            doc_kiro_steering_template(name)
         )
         print("  ✅ Kiro         → .kiro/steering/tech.md")
 
-        # MCP config cho Kiro (merge-safe, không ghi đè server đã có)
+        # MCP config for Kiro (merge-safe)
         self._create_kiro_mcp()
 
-        # Bridge skills cho Kiro auto-load (.kiro/skills → .agent/skills)
+        # Bridge skills for Kiro auto-load (.kiro/skills → .agent/skills)
         self._create_kiro_skills_bridge()
 
         # ─── 7. Claude Code ─────────────────────────────────
@@ -198,12 +198,11 @@ class ProjectGenerator:
         )
         print("  ✅ GitHub Agent → AGENTS.md")
 
-
     def _create_kiro_mcp(self):
-        """Tạo/merge .kiro/settings/mcp.json (merge-safe).
+        """Create/merge .kiro/settings/mcp.json (merge-safe).
 
-        - File chưa có → tạo mới với scaffold mặc định.
-        - File đã có → CHỈ thêm server còn thiếu, KHÔNG ghi đè server/config hiện có.
+        - File does not exist -> create new with default scaffold.
+        - File exists -> ONLY add missing servers, DO NOT overwrite existing servers/configs.
         """
         import json
 
@@ -231,14 +230,14 @@ class ProjectGenerator:
         if added:
             print(f"  ✅ Kiro MCP     → .kiro/settings/mcp.json (+{', '.join(added)})")
         else:
-            print("  ✅ Kiro MCP     → .kiro/settings/mcp.json (giữ nguyên server hiện có)")
+            print("  ✅ Kiro MCP     → .kiro/settings/mcp.json (keeping existing servers)")
 
     def _create_kiro_skills_bridge(self):
-        """Bridge .agent/skills → .kiro/skills để Kiro (AWS) auto-load skills.
+        """Bridge .agent/skills -> .kiro/skills for Kiro (AWS) to auto-load skills.
 
-        Format SKILL.md của bro-skills (frontmatter name + description) trùng
-        chuẩn Kiro skill nên dùng trực tiếp. Ưu tiên symlink/junction (sync 2
-        chiều, không nhân bản); fail thì fallback sang copy.
+        The SKILL.md format of bro-skills (frontmatter name + description) matches
+        the Kiro skill standard so it can be used directly. Prefer symlink/junction
+        (2-way sync, no duplication); fallback to copy on failure.
         """
         import shutil
 
@@ -246,12 +245,12 @@ class ProjectGenerator:
         dst = os.path.join(self.target_dir, ".kiro", "skills")
         os.makedirs(os.path.dirname(dst), exist_ok=True)
 
-        # Dọn link/dir cũ để tái tạo sạch
+        # Clean old links/dirs
         if os.path.islink(dst) or os.path.isfile(dst):
             os.unlink(dst)
         elif os.path.isdir(dst):
             if os.name == "nt":
-                # Junction được nhận diện là dir; xoá an toàn
+                # Junction is recognized as dir; delete safely
                 try:
                     os.rmdir(dst)
                 except OSError:
@@ -261,7 +260,7 @@ class ProjectGenerator:
 
         rel_src = os.path.relpath(src, os.path.dirname(dst))
 
-        # 1) POSIX: symlink tương đối
+        # 1) POSIX: relative symlink
         if os.name != "nt":
             try:
                 os.symlink(rel_src, dst, target_is_directory=True)
@@ -270,7 +269,7 @@ class ProjectGenerator:
             except (OSError, NotImplementedError):
                 pass
         else:
-            # 2) Windows: junction (không cần quyền admin)
+            # 2) Windows: junction (does not need admin rights)
             try:
                 import subprocess
                 subprocess.run(
@@ -282,24 +281,24 @@ class ProjectGenerator:
             except (subprocess.CalledProcessError, FileNotFoundError):
                 pass
 
-        # 3) Fallback: copy (mất sync 2 chiều)
+        # 3) Fallback: copy (loses 2-way sync)
         shutil.copytree(src, dst)
-        print("  📄 Kiro Skills  → .kiro/skills (copy — symlink không khả dụng)")
+        print("  📄 Kiro Skills  → .kiro/skills (copy — symlink/junction unavailable)")
 
     def _create_directories(self):
-        """Tạo cấu trúc thư mục .agent/ theo chuẩn ASF 3.3."""
+        """Scaffold .agent/ directory structure compliant with ASF 3.3."""
         dirs = [
-            ".agent/identity",       # Tầng nhân cách
-            ".agent/knowledge_base", # Tầng tri thức dự án
-            ".agent/skills",         # Tầng kỹ năng (@skill)
-            ".agent/workflows",      # Tầng điều hướng (/command)
-            ".agent/scripts/bash",   # Tầng hạ tầng
-            ".agent/templates",      # Tầng khuôn mẫu
-            ".agent/memory",         # Tầng lưu trữ Constitution
-            ".agent/rules",          # Tầng Rules cho Antigravity
-            ".agent/codebase",       # Tầng bản đồ cấu trúc (speckit.map)
-            ".agent/specs",          # Tầng Specification & Planning
-            ".agent/agents",         # Tầng Multi-Agent (registry + orchestrator)
+            ".agent/identity",       # Identity layer
+            ".agent/knowledge_base", # Project knowledge base layer
+            ".agent/skills",         # Skills layer (@skill)
+            ".agent/workflows",      # Workflows layer (/command)
+            ".agent/scripts/bash",   # Infrastructure scripts layer
+            ".agent/templates",      # Scaffolding templates layer
+            ".agent/memory",         # Constitution storage layer
+            ".agent/rules",          # Antigravity rules layer
+            ".agent/codebase",       # Structure map layer (speckit.map)
+            ".agent/specs",          # Specification & Planning layer
+            ".agent/agents",         # Multi-Agent layer (registry + orchestrator)
         ]
 
         for d in dirs:
@@ -308,11 +307,11 @@ class ProjectGenerator:
             self.stats["directories"] += 1
 
     def _create_identity(self):
-        """Tạo Master Identity — có nhận biết Project Type + thông tin scan."""
+        """Create Master Identity - aware of Project Type + scan information."""
         filepath = os.path.join(self.agent_dir, "identity", "master-identity.md")
         content = doc_identity_template(self.project_name, self.project_type, self.use_docker)
 
-        # Bổ sung context từ scanner
+        # Append context from scanner
         if self.scan_profile and self.scan_profile.get("has_existing_code"):
             scanner = ProjectScanner(self.target_dir)
             scanner.profile = self.scan_profile
@@ -324,15 +323,15 @@ class ProjectGenerator:
         self.stats["identity"] += 1
 
     def _create_knowledge_base(self):
-        """Tạo các file tri thức nền tảng — dùng scan data nếu có."""
+        """Create baseline knowledge base files - use scan data if available."""
         base_path = os.path.join(self.agent_dir, "knowledge_base")
 
         if self.scan_profile and self.scan_profile.get("has_existing_code"):
-            # ĐỌC DỮ LIỆU THẬT TỪ SCANNER
+            # READ REAL DATA FROM SCANNER
             scanner = ProjectScanner(self.target_dir)
             scanner.profile = self.scan_profile
 
-            print("  📖 Đang điền nội dung từ codebase thật...")
+            print("  📖 Populating content from real codebase...")
 
             self._write_file(
                 os.path.join(base_path, "infrastructure.md"),
@@ -352,21 +351,21 @@ class ProjectGenerator:
             )
             self.stats["knowledge"] += 4
         else:
-            # Dự án mới — dùng template placeholder
+            # New project - use template placeholder
             infra_path = os.path.join(base_path, "infrastructure.md")
             infra_template = DOCUMENT_TEMPLATE_MAP.get("infrastructure-template.md")
             self._write_file(infra_path, infra_template())
 
             files = {
-                "business_logic.md": "# Business Logic\n\nĐịnh nghĩa logic nghiệp vụ cốt lõi tại đây.",
-                "data_schema.md": "# Data Schema\n\nĐịnh nghĩa cấu trúc database, quan hệ thực thể tại đây.",
-                "api_standards.md": "# API Standards\n\nQuy tắc thiết kế API, error codes, auth headers.",
+                "business_logic.md": "# Business Logic\n\nDefine core business logic here.",
+                "data_schema.md": "# Data Schema\n\nDefine database structure and entity relationships here.",
+                "api_standards.md": "# API Standards\n\nAPI design guidelines, error codes, and auth headers.",
             }
             for name, content in files.items():
                 self._write_file(os.path.join(base_path, name), content)
                 self.stats["knowledge"] += 1
 
-        # SEO & UI/UX Standards — CHỈ tạo cho Web projects
+        # SEO & UI/UX Standards — ONLY create for Web projects
         type_info = PROJECT_TYPES.get(self.project_type, {})
         allowed_skills = type_info.get("includes_skills", [])
         
@@ -384,7 +383,7 @@ class ProjectGenerator:
             print("  🎨 UI/UX Standards → knowledge_base/ui_ux_standards.md")
 
     def _create_skills(self):
-        """Tạo SKILL.md cho mỗi skill — CHỈ tạo skills phù hợp project type."""
+        """Create SKILL.md for each skill - ONLY create skills matching project type."""
         for skill in self.filtered_skills:
             skill_name = skill["name"]
             skill_dir = os.path.join(self.agent_dir, "skills", skill_name)
@@ -408,7 +407,7 @@ role: {skill['role']}
 ---
 
 ## Role
-Bạn là **{skill['role']}**.
+You are **{skill['role']}**.
 
 ## Task
 {skill['description']}
@@ -421,24 +420,24 @@ Bạn là **{skill['role']}**.
 """
 
     def _create_workflows(self):
-        """Tạo workflow .md files — CHỈ tạo workflows phù hợp project type."""
+        """Create workflow .md files - ONLY create workflows matching project type."""
         for wf in self.filtered_workflows:
             cmd = wf["command"]
             filepath = os.path.join(self.agent_dir, "workflows", f"{cmd}.md")
 
-            # Ưu tiên template chi tiết từ WORKFLOW_TEMPLATE_MAP
+            # Prioritize detailed templates from WORKFLOW_TEMPLATE_MAP
             template_fn = WORKFLOW_TEMPLATE_MAP.get(cmd)
             if template_fn:
                 content = template_fn()
             else:
-                # Fallback cho workflows không có template
+                # Fallback for workflows without templates
                 content = f"---\ndescription: {wf['description']}\n---\n\n# Workflow: {cmd}\n\n1. Run @{wf['skills'][0] if wf['skills'] else 'speckit.tasks'}"
 
             self._write_file(filepath, content)
             self.stats["workflows"] += 1
 
     def _create_agents(self):
-        """Sinh .agent/agents/: registry.json + orchestrator.md (Multi-Agent v2)."""
+        """Scaffold .agent/agents/: registry.json + orchestrator.md (Multi-Agent v2)."""
         import json
 
         agents_dir = os.path.join(self.agent_dir, "agents")
@@ -477,7 +476,7 @@ Bạn là **{skill['role']}**.
         builder_list = ", ".join(builder_names) if builder_names else "(none)"
         return f"""---
 name: orchestrator
-description: Multi-Agent Orchestrator - Dieu phoi agent theo project_type + attributes va pipeline Specify->Plan->Tasks->Implement.
+description: Multi-Agent Orchestrator - Coordinate agents by project_type + attributes and pipeline Specify->Plan->Tasks->Implement.
 role: Lead Orchestrator
 trigger: always_on
 ---
@@ -485,13 +484,13 @@ trigger: always_on
 # 🧭 Multi-Agent Orchestrator
 
 ## 🎯 Mission
-Điều phối nhiều agent chuyên biệt trong dự án **{self.project_name}** (`{self.project_type}`).
-Quyết định agent nào xử lý task nào dựa trên `project_type` + `attributes` và giai đoạn pipeline.
+Coordinate specialized agents in the project **{self.project_name}** (`{self.project_type}`).
+Decide which agent handles which task based on `project_type` + `attributes` and pipeline phases.
 
 ## 📥 Input
 - `.agent/project.json` → `project_type` + `attributes`
 - `.agent/agents/registry.json` → base + modifiers
-- `.agent/memory/constitution.md` → ràng buộc (Docker-First, Port 8900-8999, ENV)
+- `.agent/memory/constitution.md` → constraints (Docker-First, Port 8900-8999, ENV)
 
 ## 🎛️ Resolved Agent Set (auto-generated)
 - **Active agents**: {active_list}
@@ -508,30 +507,30 @@ active = core_agents
        + modifiers.flags[f] for f in attributes.flags
 active = unique(active)
 ```
-Cùng `project_type` nhưng `attributes` khác → tập agent KHÁC nhau.
+Same `project_type` but different `attributes` -> different agent set.
 
-### 2. Routing theo Pipeline Phase
-| Phase | Agent điều phối | Domain agents |
+### 2. Routing by Pipeline Phase
+| Phase | Coordinating Agent | Domain Agents |
 |---|---|---|
 | Specify | speckit.specify | review scope |
 | Plan | speckit.plan | speckit.devops + builders |
 | Tasks | speckit.tasks | — |
-| Implement | speckit.implement | builder theo task tag |
+| Implement | speckit.implement | builder based on task tag |
 | Verify | speckit.tester / reviewer / validate | — |
 
 ### 3. Task Tagging
-Mỗi task trong `tasks.md` PHẢI có tag `@agent:<name>` để route đúng.
-Không có tag → suy luận từ keyword + project_type.
+Each task in `tasks.md` MUST have the tag `@agent:<name>` to route correctly.
+No tag -> inferred from keyword + project_type.
 
 ### 4. Conflict Resolution
 - Constitution > Orchestrator > Domain Agent.
-- 2 agent tranh chấp 1 file → owner theo Task Tag, agent còn lại review.
+- 2 agents conflicting over 1 file -> owner based on Task Tag, the other agent reviews.
 
 ## 🚫 Guard Rails
-- KHÔNG bỏ qua core agents trong pipeline.
-- KHÔNG để 2 agent ghi cùng 1 file song song.
-- KHÔNG vi phạm Constitution dù domain agent yêu cầu.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT bypass core agents in pipeline.
+- DO NOT allow 2 agents to write to the same file in parallel.
+- DO NOT violate the Constitution even if requested by a domain agent.
+- Respond in the language used by the user (supports Vietnamese and English).
 """
 
     def _create_templates(self):
@@ -539,7 +538,7 @@ Không có tag → suy luận từ keyword + project_type.
             # Skip internal templates
             if filename in ("identity-template.md",):
                 continue
-            # Skip SEO template cho non-web projects
+            # Skip SEO template for non-web projects
             type_info = PROJECT_TYPES.get(self.project_type, {})
             allowed_skills = type_info.get("includes_skills", [])
             if filename == "seo-standards-template.md" and "web" not in allowed_skills:
@@ -566,7 +565,7 @@ Không có tag → suy luận từ keyword + project_type.
             self.stats["scripts"] += 1
 
     def _create_project_config(self):
-        """Lưu thông tin project type vào .agent/project.json."""
+        """Save project type info to .agent/project.json."""
         import json
         config = {
             "project_name": self.project_name,
@@ -593,8 +592,8 @@ Không có tag → suy luận từ keyword + project_type.
         if "web" in allowed_skills:
             seo_section = """
 ## 🔍 SEO & GEO
-- `@speckit.seo`: Audit Technical SEO (Meta, Sitemap, Core Web Vitals)
-- `@speckit.geo`: Tối ưu cho AI Search (llms.txt, E-E-A-T, Schema.org)
+- `@speckit.seo`: Technical SEO Audit (Meta, Sitemap, Core Web Vitals)
+- `@speckit.geo`: Optimized for AI Search (llms.txt, E-E-A-T, Schema.org)
 - `knowledge_base/seo_standards.md`: Checklist & JSON-LD templates
 """
 
@@ -606,16 +605,16 @@ Không có tag → suy luận từ keyword + project_type.
 
 ## 🏗️ Architecture
 
-- `.agent/identity/`: Định nghĩa Persona & Soul của AI.
-- `.agent/knowledge_base/`: Kho tri thức về Business, Data, API, SEO.
-- `.agent/skills/`: Các kỹ năng AI chuyên biệt (@mentions).
-- `.agent/workflows/`: Các quy trình tự động hóa (/commands).
-- `.agent/memory/`: Project Constitution (Luật dự án).
+- `.agent/identity/`: Persona & Soul definition of the AI.
+- `.agent/knowledge_base/`: Project knowledge base (Business, Data, API, SEO).
+- `.agent/skills/`: Specialized AI skills (@mentions).
+- `.agent/workflows/`: Automation workflows (/commands).
+- `.agent/memory/`: Project Constitution (Rules of the project).
 {seo_section}
 ## 🚀 Quick Start
-1. Run `/01-speckit.constitution` để thiết lập luật dự án.
-2. Run `@speckit.identity` để tinh chỉnh Persona của AI.
-3. Run `/02-speckit.specify` để bắt đầu tính năng mới.
+1. Run `/01-speckit.constitution` to establish the project constitution.
+2. Run `@speckit.identity` to refine the AI Persona.
+3. Run `/02-speckit.specify` to start a new feature.
 """
         self._write_file(os.path.join(self.agent_dir, "README.md"), content)
 
@@ -625,7 +624,7 @@ Không có tag → suy luận từ keyword + project_type.
             f.write(content)
 
     def _find_available_ports(self, start_port=8900, end_port=8999):
-        """Tìm 3 port liên tiếp còn trống trong dải 8900-8999."""
+        """Find 3 consecutive available ports in the range 8900-8999."""
         import socket
 
         def is_port_available(port):
@@ -643,17 +642,14 @@ Không có tag → suy luận từ keyword + project_type.
         return None
 
     def _save_ports_to_env(self, ports):
-        """Ghi cấu hình port vào file .env (ENV-first)."""
+        """Write port configuration to .env file (ENV-first)."""
         env_path = os.path.join(self.target_dir, ".env")
-        lines = []
-        
-        # Nếu đã có file .env, đọc nội dung cũ để tránh ghi đè dữ liệu quan trọng
         existing_content = ""
         if os.path.exists(env_path):
             with open(env_path, "r", encoding="utf-8") as f:
                 existing_content = f.read()
 
-        # Chuẩn bị dữ liệu port
+        # Prepare port variables
         port_vars = {
             f"NEXT_PUBLIC_PORT_FE": ports[0],
             f"ADMIN_PORT": ports[1],
@@ -661,7 +657,7 @@ Không có tag → suy luận từ keyword + project_type.
             f"NEXT_PUBLIC_API_URL": f"http://localhost:{ports[2]}"
         }
 
-        # Tạo nội dung .env mới hoặc bổ sung
+        # Create or append new .env content
         new_lines = [f"{k}={v}" for k, v in port_vars.items() if k not in existing_content]
         
         if new_lines:
@@ -676,7 +672,7 @@ Không có tag → suy luận từ keyword + project_type.
         type_info = PROJECT_TYPES.get(self.project_type, {})
         type_label = type_info.get("label", self.project_type)
         print(f"\n{'─' * 50}")
-        print(f"📊 Thống kê khởi tạo (ASF 3.3 — {type_label}):")
+        print(f"Scaffolding stats (ASF 3.3 — {type_label}):")
         print(f"  🎭 Identity:  {self.stats['identity']}")
         print(f"  🧠 Knowledge: {self.stats['knowledge']}")
         print(f"  🛠️ Skills:    {self.stats['skills']}")

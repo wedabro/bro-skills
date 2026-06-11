@@ -1,26 +1,26 @@
 ---
-description: Tạo/cập nhật Master Identity cho AI Agent
+description: Create/update Master Identity for AI Agent
 ---
 
 # 🆔 Identity Setup
 
 ## Pre-conditions
-- `.agent/project.json` tồn tại (chạy `bro-skills init` trước)
-- `.agent/memory/constitution.md` tồn tại (khuyến nghị)
+- `.agent/project.json` exists (run `bro-skills init` first)
+- `.agent/memory/constitution.md` exists (recommended)
 
 ## Steps
 
-1. **@speckit.identity** — Thu thập thông tin:
-   - Đọc `project.json` → project type, name
-   - Đọc `constitution.md` → tech stack, principles
-   - Scan codebase → patterns, conventions hiện có
-2. Tạo/cập nhật `.agent/identity/master-identity.md`:
+1. **@speckit.identity** — Collect information:
+   - Read `project.json` → project type, name
+   - Read `constitution.md` → tech stack, principles
+   - Scan codebase → existing patterns, conventions
+2. Create/update `.agent/identity/master-identity.md` :
    - Persona + Core Capabilities
    - Soul (Core Beliefs): "bro-skills First", "Docker is the Law"
    - Project Context (auto-detected)
-3. Nếu `web_public`/`fullstack` → thêm SEO & GEO Awareness section
+3. If `web_public` / `fullstack` → add SEO & GEO Awareness section
 
 ## Success Criteria
-- ✅ `master-identity.md` tồn tại
-- ✅ Persona gắn chặt domain dự án (không chung chung)
-- ✅ Core Beliefs bao gồm mandatory items
+- ✅ `master-identity.md` exists
+- ✅ Persona closely tied to the project domain (not generic)
+- ✅ Core Beliefs includes mandatory items

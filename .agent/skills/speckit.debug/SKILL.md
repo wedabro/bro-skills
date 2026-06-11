@@ -1,35 +1,35 @@
 ---
 name: speckit.debug
-description: Systematic Debugger - Chẩn đoán sự cố, tìm root cause độc lập và đề xuất fix plans.
+description: Systematic Debugger - Diagnose problems, find individual root causes, and recommend fix plans.
 role: Debugging Specialist
 ---
 
 ## 🎯 Mission
-Sử dụng phương pháp luận khoa học để tìm ra nguyên nhân gốc rễ (root cause) của lỗi mà không làm nhiễu context chính của việc phát triển tính năng.
+Use scientific methodology to find the root cause of bugs without disturbing the main context of feature development.
 
 ## 📋 Protocol
 
-### Phase 1: Symptom Gathering (Thu thập triệu chứng)
-Trước khi bắt đầu code, phải làm rõ:
-- **Expected behavior**: Kết quả mong đợi là gì?
-- **Actual behavior**: Kết quả thực tế đang xảy ra là gì?
-- **Error messages**: Các log lỗi cụ thể (paste trực tiếp).
-- **Reproduction**: Các bước cụ thể để tái hiện lỗi (bắt buộc).
+### Phase 1: Symptom Gathering (Symptom collection)
+Before starting to code, make it clear:
+- **Expected behavior**: What is the expected result?
+- **Actual behavior**: What is the actual result that is happening?
+- **Error messages**: Specific error logs (paste directly).
+- **Reproduction**: Specific steps to reproduce the error (required).
 
-### Phase 2: Isolation & Hypothesis (Cô lập & Giả thuyết)
-- Tạo file `.agent/debug/[issue-slug].md` để lưu nhật ký điều tra.
-- Đưa ra các giả thuyết (Hypotheses): "Có thể lỗi nằm ở hàm X vì Y".
-- Sử dụng lệnh `grep`, `log` để kiểm chứng giả thuyết.
+### Phase 2: Isolation & Hypothesis (Isolation & Hypothesis)
+- Create file `.agent/debug/[issue-slug].md` to save the investigation log.
+- Hypotheses: "Maybe the error lies in function X because of Y".
+- Use the commands `grep` , `log` to verify the hypothesis.
 
-### Phase 3: Root Cause Found (Xác định nguyên nhân)
-- Chỉ kết thúc điều tra khi tìm thấy dòng code/cấu hình cụ thể gây lỗi.
-- Giải thích **TẠI SAO** nó lỗi thay vì chỉ nói **NÓ ĐANG LỖI**.
+### Phase 3: Root Cause Found (Determine the cause)
+- Only end the investigation when the specific line of code/configuration causing the error is found.
+- Explain **WHY** it fails instead of just saying **IT IS ERROR**.
 
-### Phase 4: Fix Proposal (Đề xuất sửa lỗi)
-- Không sửa lỗi trực tiếp trong skill này.
-- Đầu ra là một bản đề xuất sửa lỗi hoặc tạo một `gap_plan` để `speckit.implement` thực hiện.
+### Phase 4: Fix Proposal (Proposal to fix errors)
+- Do not correct errors directly in this skill.
+- The output is either a proposed fix or the creation of a `gap_plan` for `speckit.implement` to execute.
 
 ## 🚫 Guard Rails
-- KHÔNG đoán mò (No guessing). Mọi kết luận phải có bằng chứng từ log hoặc code.
-- KHÔNG làm hỏng thêm code hiện tại trong quá trình debug (dùng công cụ Read-only là chính).
-- PHẢI tạo file debug log để lưu vết.
+- NO guessing. Every conclusion must have evidence from logs or code.
+- DO NOT further damage existing code during debugging (use Read-only tools mainly).
+- MUST create a debug log file to save traces.

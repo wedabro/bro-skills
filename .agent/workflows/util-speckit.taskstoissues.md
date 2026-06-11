@@ -5,7 +5,7 @@ description: Sync tasks.md → Issue Tracker
 # 🔗 Issue Sync
 
 ## Pre-conditions
-- tasks.md tồn tại
+- tasks.md exists
 
 ## Steps
 1. **@speckit.taskstoissues** — Parse tasks → generate issue export
@@ -13,4 +13,4 @@ description: Sync tasks.md → Issue Tracker
 
 ## Success Criteria
 - ✅ issues-export.md generated
-- ✅ Mỗi task mapped thành 1 issue
+- ✅ Each task mapped into 1 issue

@@ -1,12 +1,10 @@
-"""
-Registry - Định nghĩa tất cả Skills và Workflows cho bro-skills.
-Đây là nguồn sự thật duy nhất (Single Source of Truth) cho metadata.
+"""Registry - Defines all Skills and Workflows for bro-skills.
+This is the Single Source of Truth for metadata.
 
-Mỗi skill có trường `project_types`:
-  - "all"       → Áp dụng cho mọi loại dự án
-  - "web"       → Chỉ dự án Web (Public B2C, SaaS B2B, Full-stack)
-  - "web_public" → Chỉ dự án Web Public (B2C có end-user)
-"""
+Each skill has a `project_types` field:
+  - "all" → Applies to all types of projects
+  - "web" → Web project only (Public B2C, SaaS B2B, Full-stack)
+  - "web_public" → Web Public project only (B2C with end-user)"""
 
 # ============================================================================
 # PROJECT TYPES
@@ -14,7 +12,7 @@ Mỗi skill có trường `project_types`:
 PROJECT_TYPES = {
     "web_public": {
         "label": "Web Public (B2C)",
-        "description": "Blog, E-commerce, Landing Page, News — Cần SEO + GEO",
+        "description": "Blog, E-commerce, Landing Page, News — Need SEO + GEO",
         "includes_skills": ["all", "web", "web_public"],
     },
     "web_saas": {
@@ -24,17 +22,17 @@ PROJECT_TYPES = {
     },
     "mobile_app": {
         "label": "Mobile App",
-        "description": "iOS/Android — Không cần SEO, dùng ASO",
+        "description": "iOS/Android — No need for SEO, use ASO",
         "includes_skills": ["all"],
     },
     "desktop_cli": {
         "label": "Desktop / CLI Tool",
-        "description": "Electron, WPF, CLI — Không cần SEO",
+        "description": "Electron, WPF, CLI — No SEO needed",
         "includes_skills": ["all"],
     },
     "fullstack": {
         "label": "Full-stack (Web + API)",
-        "description": "Frontend Public + Backend API — Cần SEO + GEO + DevOps",
+        "description": "Frontend Public + Backend API — Need SEO + GEO + DevOps",
         "includes_skills": ["all", "web", "web_public"],
     },
     "game": {
@@ -44,14 +42,14 @@ PROJECT_TYPES = {
     },
     "simple_script": {
         "label": "Simple Script / Automation",
-        "description": "Python/Bash/JS scripts nhỏ — Không Docker, Không Next.js",
+        "description": "Small Python/Bash/JS scripts — No Docker, No Next.js",
         "includes_skills": ["all"],
         "use_docker": False,
         "is_soft_rules": True,
     },
     "custom_infra": {
         "label": "Custom Infrastructure",
-        "description": "Dự án có hạ tầng riêng — Không ép Docker chuẩn 89XX",
+        "description": "The project has its own infrastructure — Do not force Docker standard 89XX",
         "includes_skills": ["all"],
         "use_docker": False,
         "is_soft_rules": True,
@@ -67,18 +65,18 @@ SKILLS_REGISTRY = [
     {
         "name": "speckit.identity",
         "role": "Persona Architect",
-        "description": "Quản lý nhân cách và định hướng hành vi của AI cho dự án.",
+        "description": "Manage AI personality and behavioral orientation for the project.",
         "project_types": "all",
     },
     {
         "name": "speckit.devops",
         "role": "DevOps Architect",
-        "description": "Chuyên gia hạ tầng Docker & Security Hardening — Port ENV-first, dải 8900-8999.",
+        "description": "Docker Infrastructure & Security Hardening Specialist — Port ENV-first, range 8900-8999.",
         "project_types": "all",
     },
     {
         "name": "speckit.analyze",
-        "description": "Consistency Checker - Phân tích tính nhất quán giữa spec, plan, tasks",
+        "description": "Consistency Checker - Analyze consistency between spec, plan, tasks",
         "role": "Consistency Analyst",
         "project_types": "all",
         "depends_on": ["speckit.tasks"],
@@ -88,7 +86,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.checker",
-        "description": "Static Analysis Aggregator - Chạy static analysis trên codebase",
+        "description": "Static Analysis Aggregator - Run static analysis on the codebase",
         "role": "Static Analyst",
         "project_types": "all",
         "depends_on": ["speckit.implement"],
@@ -98,7 +96,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.checklist",
-        "description": "Requirements Validator - Tạo và validate checklist từ spec",
+        "description": "Requirements Validator - Create and validate checklist from spec",
         "role": "Requirements Auditor",
         "project_types": "all",
         "depends_on": ["speckit.specify"],
@@ -106,7 +104,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.clarify",
-        "description": "Ambiguity Resolver - Phát hiện và giải quyết mơ hồ trong spec",
+        "description": "Ambiguity Resolver - Detect and resolve ambiguity in spec",
         "role": "Clarity Engineer",
         "project_types": "all",
         "depends_on": ["speckit.specify"],
@@ -116,7 +114,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.constitution",
-        "description": "Governance Manager - Thiết lập & quản lý Constitution (Source of Law)",
+        "description": "Governance Manager - Set up & manage Constitution (Source of Law)",
         "role": "Governance Architect",
         "project_types": "all",
         "depends_on": [],
@@ -126,7 +124,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.diff",
-        "description": "Artifact Comparator - So sánh sự khác biệt giữa các artifacts",
+        "description": "Artifact Comparator - Compares differences between artifacts",
         "role": "Diff Analyst",
         "project_types": "all",
         "depends_on": [],
@@ -134,7 +132,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.implement",
-        "description": "Code Builder (Anti-Regression) - Triển khai code theo tasks với IRONCLAD protocols",
+        "description": "Code Builder (Anti-Regression) - Deploy code in tasks with IRONCLAD protocols",
         "role": "Master Builder",
         "project_types": "all",
         "depends_on": ["speckit.tasks"],
@@ -145,7 +143,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.migrate",
-        "description": "Legacy Code Migrator - Chuyển đổi legacy code sang chuẩn mới",
+        "description": "Legacy Code Migrator - Convert legacy code to the new standard",
         "role": "Migration Specialist",
         "project_types": "all",
         "depends_on": [],
@@ -155,7 +153,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.plan",
-        "description": "Technical Planner - Tạo plan.md từ spec (data model, API contracts, research)",
+        "description": "Technical Planner - Create plan.md from spec (data model, API contracts, research)",
         "role": "System Architect",
         "project_types": "all",
         "depends_on": ["speckit.specify"],
@@ -166,7 +164,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.quizme",
-        "description": "Logic Challenger (Red Team) - Đặt câu hỏi phản biện, tìm edge cases",
+        "description": "Logic Challenger (Red Team) - Ask critical questions, find edge cases",
         "role": "Red Team Analyst",
         "project_types": "all",
         "depends_on": ["speckit.specify"],
@@ -174,7 +172,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.reviewer",
-        "description": "Code Reviewer - Review code theo spec và best practices",
+        "description": "Code Reviewer - Review code according to spec and best practices",
         "role": "Code Reviewer",
         "project_types": "all",
         "depends_on": ["speckit.implement"],
@@ -184,7 +182,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.specify",
-        "description": "Feature Definer - Tạo spec.md từ mô tả ngôn ngữ tự nhiên",
+        "description": "Feature Definer - Generates spec.md from natural language description",
         "role": "Domain Scribe",
         "project_types": "all",
         "depends_on": [],
@@ -195,7 +193,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.status",
-        "description": "Progress Dashboard - Hiển thị trạng thái tiến độ project",
+        "description": "Progress Dashboard - Displays project progress status",
         "role": "Progress Tracker",
         "project_types": "all",
         "depends_on": ["speckit.tasks"],
@@ -203,7 +201,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.tasks",
-        "description": "Task Breaker - Tạo tasks.md atomic, có thứ tự dependency từ plan",
+        "description": "Task Breaker - Create atomic tasks.md, with dependency order from plan",
         "role": "Execution Strategist",
         "project_types": "all",
         "depends_on": ["speckit.plan"],
@@ -214,7 +212,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.taskstoissues",
-        "description": "Issue Tracker Syncer - Đồng bộ tasks.md sang issue tracker",
+        "description": "Issue Tracker Syncer - Synchronize tasks.md to issue tracker",
         "role": "Issue Syncer",
         "project_types": "all",
         "depends_on": ["speckit.tasks"],
@@ -222,7 +220,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.tester",
-        "description": "Test Runner & Coverage - Chạy tests và báo cáo coverage",
+        "description": "Test Runner & Coverage - Run tests and report coverage",
         "role": "Test Engineer",
         "project_types": "all",
         "depends_on": ["speckit.implement"],
@@ -232,7 +230,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.validate",
-        "description": "Implementation Validator - Validate implementation vs spec tổng thể",
+        "description": "Implementation Validator - Validate implementation vs overall spec",
         "role": "Validation Oracle",
         "project_types": "all",
         "depends_on": ["speckit.implement"],
@@ -273,7 +271,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.uiux",
-        "description": "UI/UX Architect - Định nghĩa Design System, UI Components, Spacing, Typography, Responsive Patterns.",
+        "description": "UI/UX Architect - Definition of Design System, UI Components, Spacing, Typography, Responsive Patterns.",
         "role": "UI/UX Architect",
         "project_types": "web",
         "depends_on": ["speckit.specify"],
@@ -283,47 +281,47 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.debug",
-        "description": "Systematic Debugger - Chẩn đoán sự cố, tìm root cause độc lập và đề xuất fix plans.",
+        "description": "Systematic Debugger - Diagnose problems, find individual root causes, and recommend fix plans.",
         "role": "Debug Specialist",
         "project_types": "all",
     },
     {
         "name": "speckit.backlog",
-        "description": "Backlog Manager - Quản lý Ý tưởng, Yêu cầu chờ xử lý và quét TODO/FIXME từ codebase.",
+        "description": "Backlog Manager - Manage Ideas, Pending Requests and scan TODO/FIXME from codebase.",
         "role": "Product Owner",
         "project_types": "all",
     },
     {
         "name": "speckit.roadmap",
-        "description": "Roadmap Strategist - Quản lý lộ trình cấp cao (Milestones) và chuyển giao giữa các Phase.",
+        "description": "Roadmap Strategist - Manage high-level roadmaps (Milestones) and transitions between Phases.",
         "role": "Product Manager",
         "project_types": "all",
     },
     {
         "name": "speckit.map",
-        "description": "Codebase Mapper - Tự động phân tích cấu trúc dự án, vẽ biểu đồ phụ thuộc và viết tài liệu kiến trúc.",
+        "description": "Codebase Mapper - Automatically analyze project structure, draw dependency diagrams, and write architectural documents.",
         "role": "Software Architect",
         "project_types": "all",
     },
     {
         "name": "speckit.uat",
-        "description": "UAT Analyzer - Phân tích kết quả nghiệm thu thủ công và xử lý các khoảng cách (gaps) từ User.",
+        "description": "UAT Analyzer - Analyze manual acceptance results and process gaps from the User.",
         "role": "QA Engineer",
         "project_types": "all",
     },
     {
         "name": "speckit.wordpress",
-        "description": "WordPress Theme Architect - Chuyên gia phát triển theme, plugin và tối ưu hóa ecosystem WordPress.",
+        "description": "WordPress Theme Architect - Expert in developing themes, plugins and optimizing the WordPress ecosystem.",
         "role": "WordPress Expert",
         "project_types": "web",
     },
 
     # ========================================================================
     # MULTI-AGENT BUILDERS (v2 — Attribute-based selection)
-    # `project_types: "builder"` → KHÔNG chọn qua tag filter cũ.
-    # Chọn qua attribute resolver (resolve_builder_skills) theo project type +
+    # `project_types: "builder"` → DO NOT select past the old filter tag.
+    # Select via attribute resolver (resolve_builder_skills) according to project type +
     # attributes (architecture / platforms / flags).
-    # Riêng speckit.security tag "all" → core, áp dụng MỌI dự án.
+    # As for speckit.security tag "all" → core, applies to EVERY project.
     # ========================================================================
     {
         "name": "speckit.security",
@@ -333,7 +331,7 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.backend",
-        "description": "Backend/API Developer - Xây dựng API service, business logic, auth, integration.",
+        "description": "Backend/API Developer - Build API services, business logic, auth, integration.",
         "role": "Backend Engineer",
         "project_types": "builder",
     },
@@ -393,12 +391,12 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "01-speckit.constitution",
-        "description": "Thiết lập/cập nhật Constitution (Source of Law)",
+        "description": "Establish/update Constitution (Source of Law)",
         "skills": ["speckit.constitution"],
     },
     {
         "command": "speckit.identity",
-        "description": "Tạo/cập nhật Master Identity cho AI Agent",
+        "description": "Create/update Master Identity for AI Agent",
         "skills": ["speckit.identity"],
     },
     {
@@ -408,42 +406,42 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "02-speckit.specify",
-        "description": "Tạo Feature Specification (spec.md)",
+        "description": "Create Feature Specification (spec.md)",
         "skills": ["speckit.specify"],
     },
     {
         "command": "03-speckit.clarify",
-        "description": "Giải quyết mơ hồ trong Specification",
+        "description": "Resolve ambiguity in Specification",
         "skills": ["speckit.clarify"],
     },
     {
         "command": "04-speckit.plan",
-        "description": "Tạo Technical Plan (plan.md)",
+        "description": "Create Technical Plan (plan.md)",
         "skills": ["speckit.plan"],
     },
     {
         "command": "05-speckit.tasks",
-        "description": "Tạo Task Breakdown (tasks.md)",
+        "description": "Create Task Breakdown (tasks.md)",
         "skills": ["speckit.tasks"],
     },
     {
         "command": "06-speckit.analyze",
-        "description": "Phân tích tính nhất quán giữa artifacts",
+        "description": "Analyze consistency between artifacts",
         "skills": ["speckit.analyze"],
     },
     {
         "command": "07-speckit.implement",
-        "description": "Triển khai code theo tasks (Anti-Regression)",
+        "description": "Deploy code according to tasks (Anti-Regression)",
         "skills": ["speckit.implement"],
     },
     {
         "command": "08-speckit.checker",
-        "description": "Chạy Static Analysis",
+        "description": "Run Static Analysis",
         "skills": ["speckit.checker"],
     },
     {
         "command": "09-speckit.tester",
-        "description": "Chạy Tests & Coverage",
+        "description": "Run Tests & Coverage",
         "skills": ["speckit.tester"],
     },
     {
@@ -464,7 +462,7 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "13-speckit.geo",
-        "description": "GEO - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity)",
+        "description": "GEO - Optimized for AI Search (ChatGPT, Gemini, Perplexity)",
         "skills": ["speckit.geo"],
         "project_types": "web",
     },
@@ -475,7 +473,7 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "util-speckit.checklist",
-        "description": "Tạo/validate Requirements Checklist",
+        "description": "Create/validate Requirements Checklist",
         "skills": ["speckit.checklist"],
     },
     {
@@ -486,7 +484,7 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "util-speckit.diff",
-        "description": "So sánh Artifacts (Spec vs Implementation)",
+        "description": "Compare Artifacts (Spec vs Implementation)",
         "skills": ["speckit.diff"],
     },
     {
@@ -496,17 +494,17 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "util-speckit.quizme",
-        "description": "Red Team - Đặt câu hỏi phản biện tìm edge cases",
+        "description": "Red Team - Ask critical questions to find edge cases",
         "skills": ["speckit.quizme"],
     },
     {
         "command": "util-speckit.status",
-        "description": "Hiển thị Progress Dashboard",
+        "description": "Display Progress Dashboard",
         "skills": ["speckit.status"],
     },
     {
         "command": "util-speckit.uiux",
-        "description": "Thiết lập/cập nhật UI/UX Design System & Standards",
+        "description": "Set up/update UI/UX Design System & Standards",
         "skills": ["speckit.uiux"],
         "project_types": "web",
     },
@@ -517,27 +515,27 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "speckit.debug",
-        "description": "Chẩn đoán và sửa lỗi hệ thống chuyên sâu (Systematic Debugging)",
+        "description": "Systematic Debugging",
         "skills": ["speckit.debug"],
     },
     {
         "command": "speckit.backlog",
-        "description": "Quản lý Ý tưởng (Backlog) và quét nợ kỹ thuật (TODO/FIXME)",
+        "description": "Managing Ideas (Backlog) and scanning technical debt (TODO/FIXME)",
         "skills": ["speckit.backlog"],
     },
     {
         "command": "speckit.roadmap",
-        "description": "Quản lý lộ trình cấp cao (Milestones) và chuyển giao giữa các Phase",
+        "description": "Manage high-level roadmaps (Milestones) and transitions between Phases",
         "skills": ["speckit.roadmap"],
     },
     {
         "command": "speckit.map",
-        "description": "Vẽ bản đồ kiến trúc và sơ đồ phụ thuộc của Codebase",
+        "description": "Draw the architecture map and dependency diagram of the Codebase",
         "skills": ["speckit.map"],
     },
     {
         "command": "speckit.uat",
-        "description": "UAT Analyzer - Phân tích kết quả nghiệm thu thủ công và xử lý các khoảng cách (gaps) từ User.",
+        "description": "UAT Analyzer - Analyze manual acceptance results and process gaps from the User.",
         "skills": ["speckit.uat"],
     },
     {
@@ -548,7 +546,7 @@ WORKFLOWS_REGISTRY = [
     },
     {
         "command": "speckit.orchestrate",
-        "description": "Multi-Agent Orchestration - Chọn & điều phối agent theo project_type + attributes",
+        "description": "Multi-Agent Orchestration - Select & coordinate agents by project_type + attributes",
         "skills": ["speckit.specify", "speckit.plan", "speckit.tasks", "speckit.implement"],
     },
     {
@@ -566,22 +564,22 @@ WORKFLOWS_REGISTRY = [
 #                 + MODIFIERS.architecture[arch]
 #                 + MODIFIERS.platforms[p...]
 #                 + MODIFIERS.flags[f...]
-# Orchestrator điều phối các builder này theo Task Tag (@agent:).
+# The Orchestrator coordinates these builders according to the Task Tag (@agent:).
 # ----------------------------------------------------------------------------
 
-# Builder mặc định theo project_type
+# Default Builder according to project_type
 BASE_BUILDERS_BY_TYPE = {
     "web_public":   ["speckit.frontend", "speckit.uiux"],
     "web_saas":     ["speckit.frontend", "speckit.backend", "speckit.database", "speckit.uiux"],
     "fullstack":    ["speckit.frontend", "speckit.backend", "speckit.database", "speckit.uiux"],
-    "mobile_app":   [],  # quyết định bởi platforms
+    "mobile_app":   [],  # decided by platforms
     "game":         ["speckit.gamedev"],
     "desktop_cli":  ["speckit.frontend"],
     "simple_script": [],
     "custom_infra": [],
 }
 
-# Modifiers: thuộc tính dự án → thêm builder
+# Modifiers: project properties → add builder
 MODIFIERS = {
     "architecture": {
         "monolith": [],
@@ -606,7 +604,7 @@ MODIFIERS = {
     },
 }
 
-# Chỉ resolve các builder skill thực sự tồn tại trong registry
+# Only resolve builder skills that actually exist in the registry
 _BUILDER_SKILL_NAMES = {
     s["name"] for s in SKILLS_REGISTRY
     if s.get("project_types") == "builder"
@@ -614,15 +612,14 @@ _BUILDER_SKILL_NAMES = {
 
 
 def resolve_builder_skills(project_type, attributes=None):
-    """Resolve danh sách builder skill theo project_type + attributes.
+    """Resolve builder skill list by project_type + attributes.
 
     attributes = {
-        "architecture": "monolith" | "microservice" | "serverless",
+        "architecture": "monolith" | "microservices" | "serverless",
         "platforms": ["web", "ios", "android", "cross_platform", "desktop"],
         "flags": ["public_facing", "has_backend", ...]
     }
-    Trả về list tên skill (đã loại trùng, chỉ gồm builder skills tồn tại).
-    """
+    Returns a list of skill names (duplicates removed, only builder skills that exist)."""
     selected = []
     selected.extend(BASE_BUILDERS_BY_TYPE.get(project_type, []))
 
@@ -638,7 +635,7 @@ def resolve_builder_skills(project_type, attributes=None):
     for f in attrs.get("flags", []) or []:
         selected.extend(MODIFIERS["flags"].get(f, []))
 
-    # Loại trùng, giữ thứ tự; chỉ giữ skill builder tồn tại trong registry
+    # Same type, keep order; Just keep the skill builder alive in the registry
     seen = set()
     result = []
     for name in selected:
@@ -649,20 +646,19 @@ def resolve_builder_skills(project_type, attributes=None):
 
 
 def get_skills_for_project_type(project_type, attributes=None):
-    """Lọc skills phù hợp với loại dự án.
+    """Filter skills appropriate to project type.
 
-    Gồm 2 phần:
-      1. Tag-based (legacy): skills có project_types in includes_skills (all/web/web_public).
-         Builder skills (project_types == "builder") bị loại khỏi nhánh này.
-      2. Attribute-based (v2): builder skills resolve theo project_type + attributes.
-    """
+    Consists of 2 parts:
+      1. Tag-based (legacy): skills have project_types in includes_skills (all/web/web_public).
+         Builder skills (project_types == "builder") are removed from this branch.
+      2. Attribute-based (v2): builder skills resolve by project_type + attributes."""
     if project_type not in PROJECT_TYPES:
-        return SKILLS_REGISTRY  # fallback: trả về tất cả
+        return SKILLS_REGISTRY  # fallback: return all
 
     type_info = PROJECT_TYPES[project_type]
     allowed = type_info["includes_skills"]
 
-    # 1. Tag-based core/web skills (KHÔNG gồm builder)
+    # 1. Tag-based core/web skills (NOT includes builder)
     tagged = [
         s for s in SKILLS_REGISTRY
         if s.get("project_types", "all") in allowed
@@ -673,7 +669,7 @@ def get_skills_for_project_type(project_type, attributes=None):
     builder_names = resolve_builder_skills(project_type, attributes)
     builders = [s for s in SKILLS_REGISTRY if s["name"] in builder_names]
 
-    # Hợp nhất, giữ thứ tự registry, loại trùng
+    # Merge, keep registry order, eliminate duplicates
     seen = set()
     result = []
     for s in tagged + builders:
@@ -684,7 +680,7 @@ def get_skills_for_project_type(project_type, attributes=None):
 
 
 def get_project_type_info(project_type):
-    """Lấy metadata của project type."""
+    """Get the metadata of the project type."""
     return PROJECT_TYPES.get(project_type, {
         "label": "Unknown",
         "use_docker": True,
@@ -693,7 +689,7 @@ def get_project_type_info(project_type):
 
 
 def get_workflows_for_project_type(project_type):
-    """Lọc workflows phù hợp với loại dự án."""
+    """Filter workflows by project type."""
     if project_type not in PROJECT_TYPES:
         return WORKFLOWS_REGISTRY
 

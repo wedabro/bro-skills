@@ -1,5 +1,5 @@
 """
-Cho phép chạy: python -m bro_skills
+Allow running: python -m bro_skills
 """
 from bro_skills.cli import main
 

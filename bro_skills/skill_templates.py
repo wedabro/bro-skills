@@ -1,109 +1,111 @@
 """
-Skill Templates - Nội dung SKILL.md chi tiết cho 29 skills.
-Nguyên tắc: Gọn nhưng đủ chính xác để AI biết làm gì, đọc gì, output gì, KHÔNG làm gì.
+Skill Templates - Detailed SKILL.md content for 29 skills.
+Principle: Concise but precise enough for AI to know what to do, what to read, what to output, and what NOT to do.
 """
 
 
 def skill_identity():
-    return """---
+    return r"""
+---
 name: speckit.identity
-description: Quản lý nhân cách và định hướng hành vi của AI cho dự án.
+description: Manage AI personality and behavioral orientation for the project.
 role: Persona Architect
 ---
 
 ## 🎯 Mission
-Tạo và duy trì file `master-identity.md` — định nghĩa AI là ai trong context dự án này.
+Create and maintain file `master-identity.md` — defines who AI is in this project context.
 
 ## 📥 Input
 - `.agent/project.json` (project type, name)
 - `.agent/memory/constitution.md` (tech stack, principles)
-- Codebase scan results (nếu có)
+- Codebase scan results (if any)
 
 ## 📋 Protocol
-1. Đọc `project.json` → xác định project type và domain.
-2. Đọc `constitution.md` → trích xuất tech stack, principles, non-negotiables.
-3. Phân tích codebase (nếu có) → xác định patterns và conventions đang dùng.
-4. Tạo/cập nhật `.agent/identity/master-identity.md` với các sections:
-   - **Persona**: Role + expertise domain. **BẮT BUỘC giao tiếp bằng Tiếng Việt**.
-   - **Core Capabilities**: 3-5 khả năng chính.
-   - **Collaboration Style**: Cách tương tác với developer.
-   - **Soul (Core Beliefs)**: Phải bao gồm "bro-skills First" và "Docker is the Law".
+1. Read `project.json` → determine project type and domain.
+2. Read `constitution.md` → extract tech stack, principles, non-negotiables.
+3. Analyze the codebase (if any) → determine the patterns and conventions in use.
+4. Create/update `.agent/identity/master-identity.md` with sections:
+   - **Persona**: Role + expertise domain. **MANDATORY communication in Vietnamese**.
+   - **Core Capabilities**: 3-5 main abilities.
+   - **Collaboration Style**: How to interact with developers.
+   - **Soul (Core Beliefs)**: Must include "bro-skills First" and "Docker is the Law".
    - **Project Context**: Tech stack, DB, Docker info (auto-detected).
-5. Nếu project type là `web_public`/`fullstack` → thêm section SEO & GEO Awareness.
+5. If project type is `web_public` / `fullstack` → add SEO & GEO Awareness section.
 
 ## 📤 Output
 - File: `.agent/identity/master-identity.md`
 
 ## 🚫 Guard Rails
-- KHÔNG tạo persona quá chung chung — phải gắn chặt với domain dự án.
-- KHÔNG thêm capabilities mà project không dùng (VD: không nói ML nếu không có ML).
-- KHÔNG sử dụng ngôn ngữ khác ngoài Tiếng Việt khi giao tiếp với User.
+- DO NOT create a persona that is too general — it must be closely tied to the project domain.
+- DO NOT add capabilities that the project does not use (eg: do not say ML if there is no ML).
+- DO NOT use languages ​​other than Vietnamese when communicating with Users.
 """
 
 
 def skill_devops():
-    return """---
+    return r"""
+---
 name: speckit.devops
-description: Chuyên gia hạ tầng Docker & Security Hardening — Port ENV-first, dải 8900-8999.
+description: Docker Infrastructure & Security Hardening Specialist — Port ENV-first, range 8900-8999.
 role: DevOps Architect
 ---
 
 ## 🎯 Mission
-Thiết lập và quản lý hệ thống Docker chuẩn hóa, bảo mật cho dự án.
-Port PHẢI luôn cấu hình qua ENV vars — KHÔNG BAO GIỜ hard-code.
+Set up and manage a standardized and secure Docker system for the project.
+Ports MUST always be configured via ENV vars — NEVER hard-code.
 
 ## 📥 Input
 - `.agent/memory/constitution.md` (port range, security rules)
-- Existing `Dockerfile`, `docker-compose.yml` (nếu có)
+- Existing `Dockerfile` , `docker-compose.yml` (if available)
 - `.env.example`
 
 ## 📋 Protocol
 
 ### 1. Port Allocation (ENV-first) ⭐
 
-**LUÔN cấu hình port qua ENV:**
-- `.env` file (local) hoặc server ENV (production)
-- `docker-compose.yml` đọc: `"${PUBLIC_PORT:-8920}:3000"`
-- KHÔNG hard-code port number trong bất kỳ file nào
+**ALWAYS configure ports via ENV:**
+- `.env` file (local) or server ENV (production)
+- `docker-compose.yml` reads: `"${PUBLIC_PORT:-8920}:3000"`
+- DO NOT hard-code port number in any file
 
-**Quy tắc quét port theo môi trường:**
+**Port scanning rules according to environment:**
 
-| Môi trường | Docker đã chạy? | Hành động |
+| Environment | Docker running? | Act |
 |---|---|---|
-| **Local** | ❌ Chưa (lần đầu) | Quét dải `8900-8999` bằng socket/helper → chọn 3 ports trống liên tiếp |
-| **Local** | ✅ Đã chạy | **BỎ QUA** quét — dùng ports hiện tại từ `.env` / docker |
-| **Staging/Beta/Prod** | Bất kỳ | **LUÔN** quét lần đầu để cấu hình → ghi vào `.env` |
+| **Local** | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
+| **Local** | ✅ Already running | **SKIP** scan — use current ports from `.env` / docker |
+| **Staging/Beta/Prod** | Any | **ALWAYS** initial scan for configuration → write to `.env` |
 
-**Check Docker đã chạy (Local):**
+**Check Docker is running (Local):**
 ```bash
 docker compose ps --format json 2>$null
-# Có containers → SKIP port scan
-# Trống/error → RUN port scan
+# There are containers → SKIP port scan
+# Empty/error → RUN port scan
 ```
 
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
 
 ### 2. Local Docker (`docker-compose.yml`):
-- Ports đọc từ ENV: `"${PUBLIC_PORT:-8920}:3000"`
+- Ports read from ENV: `"${PUBLIC_PORT:-8920}:3000"`
 - Volume mounts cho hot-reload code
-- Named volumes cho `node_modules` (tránh host-container lock)
-- Health checks cho mỗi service
+- Named volumes for `node_modules` (avoid host-container lock)
+- Health checks for each service
 
 ### 3. Production Docker (`docker-compose.prod.yml`):
 - Multi-stage builds (builder → runner)
-- `USER node` hoặc `USER appuser` (KHÔNG chạy root)
-- Loại bỏ devDependencies trong image final
+- `USER node` or `USER appuser` (DO NOT run as root)
+- Remove devDependencies in the final image
 - Alpine/Slim base images
-- Ports đọc từ ENV (KHÔNG hard-code)
+- Ports read from ENV (NO hard-code)
 
 ### 4. Security Checklist:
 - `.dockerignore`: block `.env`, `.git`, `node_modules`
-- Không hard-code secrets trong Dockerfile
-- Chỉ EXPOSE ports cần thiết
+- No hard-code secrets in Dockerfile
+- Only EXPOSE ports are needed
 
 ### 5. Documentation:
-- Cập nhật `.agent/knowledge_base/infrastructure.md` với kết quả
-- Cập nhật `.env.example` với tất cả port vars
+- Update `.agent/knowledge_base/infrastructure.md` with the results
+- Update `.env.example` with all port vars
 
 ## 📤 Output
 - Files: `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`
@@ -111,23 +113,24 @@ docker compose ps --format json 2>$null
 - Doc: `.agent/knowledge_base/infrastructure.md` (updated)
 
 ## 🚫 Guard Rails
-- KHÔNG dùng port ngoài dải 8900-8999.
-- KHÔNG hard-code port number — LUÔN dùng ENV vars.
-- KHÔNG chạy `docker compose down -v` trên production.
-- KHÔNG hard-code credentials vào Dockerfile.
-- KHÔNG quét port khi Docker local đã chạy (có containers).
+- DO NOT use ports outside the 8900-8999 range.
+- DO NOT hard-code port numbers — ALWAYS use ENV vars.
+- DO NOT run `docker compose down -v` on production.
+- DO NOT hard-code credentials into the Dockerfile.
+- DO NOT scan ports when Docker local is already running (with containers).
 """
 
 
 def skill_analyze():
-    return """---
+    return r"""
+---
 name: speckit.analyze
-description: Consistency Checker - Phân tích tính nhất quán giữa spec, plan, tasks.
+description: Consistency Checker - Analyze consistency between spec, plan, tasks.
 role: Consistency Analyst
 ---
 
 ## 🎯 Mission
-Đảm bảo spec.md, plan.md, tasks.md không mâu thuẫn và phủ hết requirements.
+Make sure spec.md, plan.md, tasks.md do not conflict and cover all requirements.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
@@ -135,97 +138,98 @@ role: Consistency Analyst
 - `.agent/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
-1. **Coverage Check**: Mỗi User Scenario trong spec → phải có task(s) trong tasks.md.
-2. **Conflict Check**: Plan nói dùng tech A nhưng tasks lại reference tech B → BÁO LỖI.
-3. **Constitution Check**: So plan.md với constitution.md → phát hiện violations.
-4. **Completeness Check**: Mỗi data model trong plan → phải có task tạo model + migration.
-5. **Output bảng Gap Analysis**:
+1. **Coverage Check**: Each User Scenario in the spec → must have task(s) in tasks.md.
+2. **Conflict Check**: Plan says to use tech A but tasks reference tech B → ERROR REPORT.
+3. **Constitution Check**: Compare plan.md with constitution.md → detect violations.
+4. **Completeness Check**: Each data model in the plan → must have a model creation + migration task.
+5. **Gap Analysis table output**:
    ```
    | Spec Requirement | Plan Section | Task ID | Status |
    |------------------|-------------|---------|--------|
    | User login       | Auth flow   | T005    | ✅ OK  |
    | Payment          | -           | -       | ❌ GAP |
    ```
-6. Tính Coverage Score: `(matched / total) × 100%`.
+6. Calculate Coverage Score: `(matched / total) × 100%` .
 
 ## 📤 Output
 - Console: Gap Analysis table + Coverage Score
 - File: `.agent/memory/analyze-report.md`
 
 ## 🚫 Guard Rails
-- CHỈ báo cáo — KHÔNG tự ý sửa artifacts.
-- Mỗi gap phải chỉ rõ artifact nào thiếu.
+- Reporting ONLY — DO NOT arbitrarily edit artifacts.
+- Each gap must clearly indicate which artifact is missing.
 """
 
 
 def skill_checker():
-    return """---
+    return r"""
+---
 name: speckit.checker
-description: Static Analysis Aggregator - Chạy static analysis trên codebase.
+description: Static Analysis Aggregator - Run static analysis on the codebase.
 role: Static Analyst
 ---
 
 ## 🎯 Mission
-Quét codebase phát hiện vi phạm coding standards, security issues, performance anti-patterns.
-**PHẢI chạy actual commands** — không chỉ scan bằng mắt.
+Codebase scanning detects violations of coding standards, security issues, performance anti-patterns.
+**MUST run actual commands** — not just scan by eye.
 
 ## 📥 Input
-- Source code (toàn bộ `src/`, `app/`, `pages/`)
+- Source code (all `src/` , `app/` , `pages/` )
 - `.agent/memory/constitution.md` (coding standards)
 - `Dockerfile`, `docker-compose*.yml`
 
 ## 📋 Protocol
 
 ### Phase 1: TypeScript Compile Check (CRITICAL)
-Đây là bước quan trọng nhất, PHẢI chạy trước mọi deploy:
+This is the most important step, MUST run before every deploy:
 ```bash
-# Trong Docker container hoặc local:
+# In Docker container or local:
 docker compose exec <service> npx tsc --noEmit
-# Hoặc build thử:
-docker compose build 2>&1 | grep -i "error\\|fail"
+# Or try building:
+docker compose build 2>&1 | grep -i "error\|fail"
 ```
-- Bắt: type mismatch, missing props, sai tên thuộc tính, import lỗi
-- Mọi lỗi TS đều là 🔴 CRITICAL
+- Catch: type mismatch, missing props, wrong property names, import errors
+- All TS errors are 🔴 CRITICAL
 
 ### Phase 2: Dockerfile & Docker Compose Lint
 ```bash
-# Kiểm tra mọi COPY source tồn tại
-# Kiểm tra docker compose syntax:
+# Check for any COPY sources that exist
+# Check out docker compose syntax:
 docker compose -f docker-compose*.yml config --quiet
-# Kiểm tra volume shadowing (CẤM dùng volumes cho production):
-grep -A 5 "volumes:" docker-compose.prod.yml  # Phải KHÔNG có `. :/app`
+# Check volume shadowing (Using volumes for production is PROHIBITED):
+grep -A 5 "volumes:" docker-compose.prod.yml # Must NOT have `. :/app`
 ```
 - Volume mount `- .:/app` trong production → 🔴 CRITICAL
-- COPY path không tồn tại → 🔴 CRITICAL
-- Port ngoài 8900-8999 → 🟡 WARNING
+- COPY path does not exist → 🔴 CRITICAL
+- Outer port 8900-8999 → 🟡 WARNING
 
 ### Phase 3: ENV Compliance
 ```bash
-# Tìm hard-coded URLs/tokens:
-grep -rn "http://localhost\\|http://127.0.0.1\\|https://" apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules\\|.next\\|schema.org"
-# Tìm default text fallback:
+# Find hard-coded URLs/tokens:
+grep -rn "http://localhost\|http://127.0.0.1\|https://" apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules\|.next\|schema.org"
+# Find default text fallback:
 grep -rn '|| "' apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules"
 ```
 
 ### Phase 4: Import Hygiene
-- Tìm unused imports, circular dependencies
+- Find unused imports, circular dependencies
 - Verify shared package exports match actual usage
 
 ### Phase 5: Build-time Safety (Next.js specific)
 ```bash
-# Tìm SSG/SSR pages gọi API mà không có try-catch:
-grep -rn "await api\\.\\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
-# Mỗi kết quả phải nằm trong try-catch block
+# Find SSG/SSR pages that call the API without try-catch:
+grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
+# Each result must be in a try-catch block
 ```
-- API call trong `generateStaticParams` / `sitemap()` không có try-catch → 🔴 CRITICAL
+- API call in `generateStaticParams` / `sitemap()` has no try-catch → 🔴 CRITICAL
 
 ### Phase 6: Security Scan
-- Tìm `eval()`, `dangerouslySetInnerHTML` (cần sanitize), SQL concatenation
-- Tìm secrets/keys trong source code
+- Find `eval()` , `dangerouslySetInnerHTML` (need sanitize), SQL concatenation
+- Find secrets/keys in source code
 
 ### Phase 7: Monorepo Integrity
-- Verify shared package exports khớp với imports
-- Cross-reference types: mọi `entity.X` phải tồn tại trong interface
+- Verify shared package exports match imports
+- Cross-reference types: every `entity.X` must exist in the interface
 
 ## 📤 Output
 - File: `.agent/memory/checker-report.md`
@@ -234,388 +238,398 @@ grep -rn "await api\\.\\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/ap
   ## 🔴 CRITICAL (N issues)
   - `apps/web/src/app/page.tsx:65` — Property 'category' does not exist on type 'Article'
   ## 🟡 WARNING (N issues)
-  - `docker-compose.beta.yml:40` — Volume mount `.:/app` sẽ override built code
+  - `docker-compose.beta.yml:40` — Volume mount `.:/app` will override built code
   ## 🟢 INFO (N issues)
   - ...
   ```
 
 ## 🚫 Guard Rails
-- CHỈ báo cáo — KHÔNG tự sửa code.
-- Mỗi finding phải có file path + line number cụ thể.
-- **PHẢI chạy `tsc --noEmit` hoặc `docker compose build`** — scan bằng mắt KHÔNG ĐỦ.
-- Nếu có 🔴 CRITICAL → kết luận FAIL, deploy KHÔNG được phép.
+- Report ONLY — DO NOT edit the code yourself.
+- Each finding must have a specific file path + line number.
+- **MUST run `tsc --noEmit` or `docker compose build` ** — visual scanning is NOT ENOUGH.
+- If there is 🔴 CRITICAL → FAIL conclusion, deployment is NOT allowed.
 """
 
 
 def skill_checklist():
-    return """---
+    return r"""
+---
 name: speckit.checklist
-description: Requirements Validator - Tạo và validate checklist từ spec.
+description: Requirements Validator - Create and validate checklist from spec.
 role: Requirements Auditor
 ---
 
 ## 🎯 Mission
-Trích xuất mọi functional requirement từ spec.md thành checklist có thể track được.
+Extract all functional requirements from spec.md into a trackable checklist.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/tasks.md` (nếu có)
+- `.agent/specs/[feature]/tasks.md` (if available)
 
 ## 📋 Protocol
-1. Đọc spec.md → trích xuất mọi yêu cầu (từ User Scenarios + Success Criteria).
-2. Tạo checklist format:
+1. Read spec.md → extract all requirements (from User Scenarios + Success Criteria).
+2. Create checklist format:
    ```markdown
    ## Functional Requirements
-   - [ ] FR01: User có thể đăng ký tài khoản → T003, T004
-   - [ ] FR02: User có thể đăng nhập → T005
-   - [x] FR03: User có thể xem sản phẩm → T010 ✅
+   - [ ] FR01: User can register an account → T003, T004
+   - [ ] FR02: User can log in → T005
+   - [x] FR03: User can view product → T010 ✅
    ```
-3. Nếu có tasks.md → link mỗi requirement đến task IDs.
-4. Đánh status: ✅ Met / ❌ Not Met / ⚠️ Partial.
+3. If there is tasks.md → link each requirement to task IDs.
+4. Enter status: ✅ Met / ❌ Not Met / ⚠️ Partial.
 
 ## 📤 Output
 - File: `.agent/specs/[feature]/checklist.md`
 
 ## 🚫 Guard Rails
-- Mỗi requirement PHẢI trích dẫn được từ spec.md (không tự bịa thêm).
+- Each requirement MUST be quoted from spec.md (not made up).
 """
 
 
 def skill_clarify():
-    return """---
+    return r"""
+---
 name: speckit.clarify
-description: Ambiguity Resolver - Phát hiện và giải quyết mơ hồ trong spec.
+description: Ambiguity Resolver - Detect and resolve ambiguity in spec.
 role: Clarity Engineer
 ---
 
 ## 🎯 Mission
-Scan spec.md → phát hiện chỗ mơ hồ → hỏi developer tối đa 3 câu → cập nhật spec.
+Scan spec.md → detect ambiguity → ask developer up to 3 questions → update spec.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
 
 ## 📋 Protocol
-1. Scan spec.md tìm:
-   - **Vague language**: "nhanh", "nhiều", "dễ dùng", "tương tự", "v.v."
-   - **Missing boundaries**: Không rõ min/max, pagination limits, file size limits
-   - **Undefined error handling**: Khi X fail thì sao?
-   - **Ambiguous actors**: "User" là ai? Admin? Guest? Registered?
-2. Phân loại mỗi issue:
-   - 🔴 **CRITICAL**: Ảnh hưởng kiến trúc, PHẢI hỏi developer
-   - 🟡 **IMPORTANT**: Nên hỏi nhưng có thể đề xuất mặc định
-   - 🟢 **MINOR**: Tự fix được (VD: thêm "tối đa 50 items" nếu thiếu)
-3. Hỏi developer TỐI ĐA 3 câu CRITICAL, mỗi câu có bảng options:
+1. Scan spec.md to find:
+   - **Vague language**: "fast", "many", "easy to use", "similar", "etc."
+   - **Missing boundaries**: Unknown min/max, pagination limits, file size limits
+   - **Undefined error handling**: What happens when X fails?
+   - **Ambiguous actors**: Who is "User"? Admin? Guest? Registered?
+2. Categorize each issue:
+   - 🔴 **CRITICAL**: Architectural influence, MUST ask developer
+   - 🟡 **IMPORTANT**: Should ask but can suggest default
+   - 🟢 **MINOR**: Can be fixed by yourself (eg: add "maximum 50 items" if missing)
+3. Ask the developer MAXIMUM 3 CRITICAL questions, each question has an options table:
    ```
-   | Option | Mô tả | Impact |
+| Option | Describe | Impact |
    |--------|-------|--------|
    | A      | ...   | ...    |
    | B      | ...   | ...    |
    | C      | ...   | ...    |
    ```
-4. Auto-fix các items 🟢 MINOR.
-5. Cập nhật spec.md với clarifications → đánh dấu `[CLARIFIED]`.
+4. Auto-fix items 🟢 MINOR.
+5. Update spec.md with clarifications → mark `[CLARIFIED]` .
 
 ## 📤 Output
 - File: Updated `.agent/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
-- TỐI ĐA 3 câu hỏi — không hỏi quá nhiều.
-- KHÔNG thay đổi intent gốc của spec.
+- MAXIMUM 3 questions — don't ask too many.
+- DO NOT change the original intent of the spec.
 """
 
 
 def skill_constitution():
-    return """---
+    return r"""
+---
 name: speckit.constitution
-description: Governance Manager - Thiết lập & quản lý Constitution (Source of Law).
+description: Governance Manager - Set up & manage Constitution (Source of Law).
 role: Governance Architect
 ---
 
 ## 🎯 Mission
-Tạo và duy trì constitution.md — "luật tối cao" mà mọi agent phải tuân thủ.
+Create and maintain constitution.md — the "supreme law" that every agent must comply with.
 
 ## 📥 Input
-- Developer cung cấp: tech stack, principles, constraints
-- `.agent/knowledge_base/infrastructure.md` (nếu có)
+- Developer provides: tech stack, principles, constraints
+- `.agent/knowledge_base/infrastructure.md` (if available)
 
 ## 📋 Protocol
-1. Thu thập từ developer:
+1. Collected from developers:
    - Tech stack (frameworks, DB, language)
    - Docker ports (trong range 8900-8999)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
-2. Tạo/cập nhật `.agent/memory/constitution.md` với sections BẮT BUỘC:
+2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
    - **§1 Infrastructure**: Docker-first policy, port allocation, environments
    - **§2 Security**: No root containers, no hardcoded secrets, multi-stage builds
    - **§3 Code Standards**: Language, naming conventions, ENV policy
-   - **§4 Non-Negotiables**: Danh sách rules KHÔNG BAO GIỜ được vi phạm
-   - **§5 Monorepo Rules** (nếu monorepo):
-     - Shared Package Contract: type exports là source of truth
-     - Build Independence: mỗi app phải compile độc lập
-     - Package exports phải match actual file structure
+   - **§4 Non-Negotiables**: List of rules that should NEVER be violated
+   - **§5 Monorepo Rules** (if monorepo):
+     - Shared Package Contract: type exports is the source of truth
+     - Build Independence: each app must be compiled independently
+     - Package exports must match actual file structure
    - **§6 Docker Deployment Rules**:
-     - CẤM volume shadowing (`- .:/app`) trong production/beta
-     - Dockerfile COPY paths phải tồn tại
-     - CMD entrypoint phải match với build output
-     - Next.js apps phải có thư mục `public/`
-   - **§7 Build-time Safety** (nếu Next.js):
-     - SSG pages (sitemap, generateStaticParams): API calls phải try-catch
-     - fetchApi phải return null/empty nếu API_URL undefined
+     - Volume shadowing ( `- .:/app` ) is PROHIBITED in production/beta
+     - Dockerfile COPY paths must exist
+     - CMD entrypoint must match build output
+     - Next.js apps must have a `public/` folder
+   - **§7 Build-time Safety** (if Next.js):
+     - SSG pages (sitemap, generateStaticParams): API calls must be try-catch
+     - fetchApi must return null/empty if API_URL is undefined
    - **§8 Pre-Deploy Checklist**:
-     - `docker compose build` thành công
-     - Tất cả services `Up` (không `Restarting`)
+     - `docker compose build` succeeded
+     - All services `Up` (not `Restarting` )
      - Health check: 200 OK
-3. Validate: Mỗi section phải có ít nhất 1 rule cụ thể, không chung chung.
+3. Validate: Each section must have at least 1 specific rule, not general.
 
 ## 📤 Output
 - File: `.agent/memory/constitution.md`
 
 ## 🚫 Guard Rails
-- Constitution KHÔNG chứa implementation details (HOW) — chỉ chứa rules (WHAT).
-- Mỗi rule phải testable (có thể verify bằng code/check).
+- Constitution does NOT contain implementation details (HOW) — only rules (WHAT).
+- Each rule must be testable (can be verified with code/check).
 """
 
 
 def skill_diff():
-    return """---
+    return r"""
+---
 name: speckit.diff
-description: Artifact Comparator - So sánh sự khác biệt giữa các artifacts.
+description: Artifact Comparator - Compares differences between artifacts.
 role: Diff Analyst
 ---
 
 ## 🎯 Mission
-So sánh 2 versions của artifact → highlight thay đổi → đánh giá impact.
+Compare 2 versions of artifact → highlight changes → evaluate impact.
 
 ## 📥 Input
-- 2 files hoặc 2 versions cần so sánh (spec, plan, tasks, code)
+- 2 files or 2 versions to compare (spec, plan, tasks, code)
 
 ## 📋 Protocol
-1. Đọc cả 2 versions.
-2. So sánh section-by-section:
-   - ➕ **Added**: Sections/requirements mới
-   - ➖ **Removed**: Sections/requirements bị xóa
-   - ✏️ **Changed**: Sections có nội dung thay đổi
-3. Impact Analysis: Mỗi thay đổi ảnh hưởng artifact nào downstream?
-   - VD: Thêm field trong spec → cần update plan → cần thêm tasks
-4. Output bảng tóm tắt.
+1. Read both versions.
+2. Compare section-by-section:
+   - ➕ **Added**: New Sections/requirements
+   - ➖ **Removed**: Sections/requirements are removed
+   - ✏️ **Changed**: Sections have changed content
+3. Impact Analysis: What downstream artifact does each change affect?
+   - For example: Add fields in spec → need to update plan → need to add tasks
+4. Output summary table.
 
 ## 📤 Output
 - Console: Diff summary table
-- File: `.agent/memory/diff-report.md` (nếu cần lưu)
+- File: `.agent/memory/diff-report.md` (if needed to save)
 
 ## 🚫 Guard Rails
-- CHỈ so sánh và báo cáo — KHÔNG tự ý sửa artifacts.
+- Compare and report ONLY — DO NOT arbitrarily edit artifacts.
 """
 
 
 def skill_implement():
-    return """---
+    return r"""
+---
 name: speckit.implement
-description: Code Builder (Anti-Regression) - Triển khai code theo tasks với IRONCLAD protocols.
+description: Code Builder (Anti-Regression) - Deploy code in tasks with IRONCLAD protocols.
 role: Master Builder
 ---
 
 ## 🎯 Mission
-Implement code theo tasks.md, tuân thủ IRONCLAD Protocols và **Deviation Rules** để tự vận hành khi gặp lỗi.
+Implement code according to tasks.md, complying with IRONCLAD Protocols and **Deviation Rules** to operate automatically when encountering errors.
 
 ## 📋 Protocol
 
 ### IRONCLAD Protocols:
-1. **Blast Radius**: Phân tích rủi ro dựa trên số lượng file ảnh hưởng.
-2. **Strategy**: Chọn sửa trực tiếp hoặc Strangler Pattern.
-3. **TDD**: Tạo script repro fail -> code -> pass.
-4. **Context Anchoring**: Re-read constitution mỗi 3 tasks.
-5. **Build Gate**: LUÔN chạy tsc/build sau mỗi task.
+1. **Blast Radius**: Analyzes risk based on the number of affected files.
+2. **Strategy**: Choose direct editing or Strangler Pattern.
+3. **TDD**: Create repro script fail -> code -> pass.
+4. **Context Anchoring**: Re-read constitution every 3 tasks.
+5. **Build Gate**: ALWAYS run tsc/build after each task.
 
-### Deviation Rules (Tự xử trí khi lệch hướng) ⭐
-- **Bug detected**: Tự động sửa nếu nằm trong scope, hoặc tạo task mới nếu nghiêm trọng.
-- **Missing Critical**: Nếu thiếu config/file quan trọng, tự động bổ sung ngay.
-- **Blocker**: Nếu kẹt, tự thực hiện "Root Cause Analysis" trước khi hỏi người dùng.
-- **Arch Change**: Nếu cần đổi kiến trúc, PHẢI hỏi người dùng.
+### Deviation Rules (Self-handling when deviating) ⭐
+- **Bug detected**: Automatically fix if within scope, or create new task if serious.
+- **Missing Critical**: If important config/file is missing, automatically add it immediately.
+- **Blocker**: If stuck, perform "Root Cause Analysis" yourself before asking the user.
+- **Arch Change**: If you need to change the architecture, you MUST ask the user.
 
 ### Self-Check Protocol
-- Mọi task chỉ hoàn thành khi vượt qua Build Gate (không lỗi Type, không lỗi Docker).
+- All tasks are only completed when they pass Build Gate (no Type errors, no Docker errors).
 
 ## 🚫 Guard Rails
-- KHÔNG commit code lỗi build.
-- KHÔNG hard-code sensitive info.
+- DO NOT commit build error code.
+- NO hard-code sensitive info.
 """
 
 
 def skill_migrate():
-    return """---
+    return r"""
+---
 name: speckit.migrate
-description: Legacy Code Migrator - Reverse-engineer codebase hiện có sang chuẩn SDD.
+description: Legacy Code Migrator - Reverse-engineer existing codebase to SDD standard.
 role: Migration Specialist
 ---
 
 ## 🎯 Mission
-Scan legacy codebase → tạo spec + plan sơ bộ → đánh giá tech debt → đề xuất migration path.
+Scan legacy codebase → create spec + preliminary plan → evaluate tech debt → propose migration path.
 
 ## 📥 Input
 - Existing codebase (source code, configs, DB schema)
 - `.agent/memory/constitution.md` (target standards)
 
 ## 📋 Protocol
-1. **Scan Phase**: Dùng ProjectScanner patterns để detect:
+1. **Scan Phase**: Use ProjectScanner patterns to detect:
    - Languages, frameworks, dependencies
    - Data models (Prisma/SQL/Mongoose schemas)
    - API routes, pages, components
-   - Docker setup (nếu có)
-2. **Reverse-Engineer Spec**: Từ code → tạo draft `spec.md`:
-   - Mỗi page/route → 1 User Scenario
-   - Mỗi data model → 1 entity description
+   - Docker setup (if any)
+2. **Reverse-Engineer Spec**: From code → create draft `spec.md` :
+   - Each page/route → 1 User Scenario
+   - Each data model → 1 entity description
 3. **Tech Debt Inventory** (`migration-risk.md`):
    - 🔴 Critical: Security holes, deprecated deps, no tests
    - 🟡 Important: Missing Docker, no CI/CD, inconsistent patterns
    - 🟢 Minor: Code style, naming conventions
-4. **Migration Sequence**: Đề xuất thứ tự migrate (ít risk trước).
+4. **Migration Sequence**: Suggested migration order (less risk first).
 
 ## 📤 Output
 - `.agent/specs/migration/spec.md` (draft)
 - `.agent/specs/migration/migration-risk.md`
 
 ## 🚫 Guard Rails
-- KHÔNG refactor code trong bước này — chỉ phân tích và tạo tài liệu.
-- KHÔNG xóa code cũ.
+- DO NOT refactor code in this step — just analyze and document.
+- DO NOT delete old code.
 """
 
 
 def skill_plan():
-    return """---
+    return r"""
+---
 name: speckit.plan
-description: Technical Planner - Tạo plan.md từ spec (data model, API contracts, research).
+description: Technical Planner - Create plan.md from spec (data model, API contracts, research).
 role: System Architect
 ---
 
 ## 🎯 Mission
-Chuyển spec.md (WHAT) thành plan.md (HOW). Sử dụng tư duy **Goal-Backward** để đảm bảo kế hoạch dẫn trực tiếp tới Success Criteria.
+Convert spec.md (WHAT) to plan.md (HOW). Use **Goal-Backward** thinking to ensure your plan leads directly to Success Criteria.
 
 ## 📋 Protocol
 
 ### Phase 0: Research
-- Scan spec → liệt kê unknowns ("NEEDS CLARIFICATION").
-- Nghiên cứu giải pháp → ghi vào `research.md`.
+- Scan spec → list unknowns ("NEEDS CLARIFICATION").
+- Research the solution → write to `research.md` .
 
 ### Phase 1: Data Model
-- Từ entities trong spec → tạo `data-model.md`.
-- Xác định relationships (1:N, N:N).
+- From entities in spec → create `data-model.md` .
+- Determine relationships (1:N, N:N).
 
 ### Phase 2: API Contracts
-- Từ User Scenarios → tạo `contracts/[entity].md`.
+- From User Scenarios → create `contracts/[entity].md` .
 
 ### Phase 3: Architecture
-- Tạo `plan.md` với: Folder structure, Component hierarchy, State management, Docker topology.
+- Create `plan.md` with: Folder structure, Component hierarchy, State management, Docker topology.
 
 ### Phase 4: Must-Haves (Goal-Backward) ⭐
-Xác định các thành phần bắt buộc để đạt được "Success Criteria":
-- **Truths**: Các logic đúng đắn tuyệt đối.
-- **Artifacts**: Các file/output then chốt.
-- **Key Links**: Liên kết giữa các module.
+Identify required components to achieve "Success Criteria":
+- **Truths**: Absolutely correct logic.
+- **Artifacts**: Key files/outputs.
+- **Key Links**: Links between modules.
 
 ### Gate Check
-- So sánh plan vs constitution → BÁO LỖI nếu vi phạm rules.
+- Compare plan vs constitution → REPORT if rules are violated.
 
 ## 🚫 Guard Rails
-- KHÔNG viết code trong bước planning.
-- PHẢI check constitution compliance.
+- DO NOT write code during the planning step.
+- MUST check constitutional compliance.
 """
 
 
 def skill_quizme():
-    return """---
+    return r"""
+---
 name: speckit.quizme
-description: Logic Challenger (Red Team) - Đặt câu hỏi phản biện, tìm edge cases.
+description: Logic Challenger (Red Team) - Ask critical questions, find edge cases.
 role: Red Team Analyst
 ---
 
 ## 🎯 Mission
-Challenge spec + plan bằng câu hỏi edge-case, tìm lỗ hổng logic trước khi implement.
+Challenge spec + plan with edge-case questions, find logic flaws before implementation.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
 - `.agent/specs/[feature]/plan.md`
 
 ## 📋 Protocol
-1. Đọc spec + plan → tìm assumptions ẩn (implicit assumptions).
-2. Sinh TỐI ĐA 5 câu hỏi edge-case, mỗi câu thuộc 1 category:
-   - **Boundary**: "Nếu user nhập 0 sản phẩm thì sao?"
-   - **Concurrency**: "Nếu 2 người cùng mua sản phẩm cuối cùng?"
-   - **Failure**: "Nếu payment gateway timeout?"
-   - **Security**: "Nếu user sửa price trong request?"
-   - **Scale**: "Nếu có 100K products, performance ra sao?"
-3. Với mỗi câu hỏi → đề xuất giải pháp nếu developer confirm đó là vấn đề.
-4. Interactive: Chờ developer trả lời → quyết định cần update spec không.
+1. Read spec + plan → find implicit assumptions.
+2. Generate a MAXIMUM of 5 edge-case questions, each in 1 category:
+   - **Boundary**: "What if the user enters 0 products?"
+   - **Concurrency**: "If two people buy the final product together?"
+   - **Failure**: "If payment gateway timeout?"
+   - **Security**: "If the user edits the price in the request?"
+   - **Scale**: "If there are 100K products, how will the performance be?"
+3. For each question → suggest a solution if the developer confirms it is the problem.
+4. Interactive: Wait for the developer to respond → decide whether to update the spec or not.
 
 ## 📤 Output
 - Console: Interactive Q&A session
-- File: `.agent/memory/quizme-findings.md` (nếu phát hiện issues)
+- File: `.agent/memory/quizme-findings.md` (if issues are detected)
 
 ## 🚫 Guard Rails
-- TỐI ĐA 5 câu hỏi — không overwhelm developer.
-- Câu hỏi phải THỰC TẾ, không hỏi edge case quá xa vời.
+- MAXIMUM 5 questions — don't overwhelm the developer.
+- Questions must be REALISTIC, do not ask edge cases that are too far-fetched.
 """
 
 
 def skill_reviewer():
-    return """---
+    return r"""
+---
 name: speckit.reviewer
-description: Code Reviewer - Review code theo spec và best practices.
+description: Code Reviewer - Review code according to spec and best practices.
 role: Code Reviewer
 ---
 
 ## 🎯 Mission
-Review implementation code → đảm bảo đúng spec, bảo mật, hiệu năng.
+Review implementation code → ensure correct spec, security, performance.
 
 ## 📥 Input
-- Source code (files đã implement)
+- Source code (implemented files)
 - `.agent/specs/[feature]/spec.md` + `plan.md`
 - `.agent/memory/constitution.md`
 
 ## 📋 Protocol
-1. **Spec Compliance**: Code có implement đúng mọi requirement trong spec không?
-2. **Error Handling**: Mọi API route có try-catch? Có return đúng error format?
-3. **Security**: Tìm injection risks, missing auth checks, exposed secrets.
-4. **Performance**: Tìm N+1 queries, await waterfalls, missing pagination.
-5. **Constitution**: Code có vi phạm rules nào trong constitution.md?
+1. **Spec Compliance**: Does the code correctly implement all requirements in the spec?
+2. **Error Handling**: Does every API route have try-catch? Is return in the correct error format?
+3. **Security**: Find injection risks, missing auth checks, exposed secrets.
+4. **Performance**: Found N+1 queries, awaiting waterfalls, missing pagination.
+5. **Constitution**: Does the code violate any rules in constitution.md?
 6. **Output**: Verdict + table findings:
    ```
    | File:Line | Severity | Issue | Suggestion |
    |-----------|----------|-------|------------|
    | api/users.ts:45 | 🔴 | Missing auth | Add middleware |
    ```
-7. Verdict: ✅ **APPROVE** hoặc ❌ **REQUEST CHANGES** (kèm danh sách cần fix).
+7. Verdict: ✅ **APPROVE** or ❌ **REQUEST CHANGES** (with list to fix).
 
 ## 📤 Output
 - File: `.agent/memory/review-report.md`
 
 ## 🚫 Guard Rails
-- KHÔNG tự fix code — chỉ review và đề xuất.
-- Mỗi finding PHẢI có file:line cụ thể.
+- DO NOT fix the code yourself — only review and make suggestions.
+- Each finding MUST have a specific file:line.
 """
 
 
 def skill_specify():
-    return """---
+    return r"""
+---
 name: speckit.specify
-description: Feature Definer - Tạo spec.md từ mô tả ngôn ngữ tự nhiên.
+description: Feature Definer - Generates spec.md from natural language description.
 role: Domain Scribe
 ---
 
 ## 🎯 Mission
-Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không phải HOW).
+Pass natural language description → standardized spec.md (WHAT, not HOW).
 
 ## 📥 Input
-- Mô tả feature từ developer (text tự do)
+- Feature description from developer (free text)
 - `.agent/memory/constitution.md` (constraints)
 
 ## 📋 Protocol
-1. Đọc mô tả → trích xuất:
-   - **Actors**: Ai tương tác? (User, Admin, System, Guest)
-   - **Actions**: Làm gì? (CRUD, search, filter, export)
-   - **Data**: Dữ liệu gì? (entities, fields, relationships)
-   - **Constraints**: Giới hạn gì? (auth, permissions, limits)
-2. Tạo `.agent/specs/[feature]/spec.md` với format BẮT BUỘC:
+1. Read description → extract:
+   - **Actors**: Who interacts? (User, Admin, System, Guest)
+   - **Actions**: Do what? (CRUD, search, filter, export)
+   - **Data**: What data? (entities, fields, relationships)
+   - **Constraints**: What limits? (auth, permissions, limits)
+2. Create `.agent/specs/[feature]/spec.md` with REQUIRED format:
    ```markdown
    ---
    title: [Feature Name]
@@ -624,14 +638,14 @@ Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không
    created: [date]
    ---
    ## 1. Overview
-   [1-2 câu mô tả]
+   [1-2 sentence description]
 
    ## 2. User Scenarios
    - **US1**: As a [actor], I want to [action], so that [value].
    - **US2**: ...
 
    ## 3. Functional Requirements
-   - FR01: [requirement cụ thể, measurable]
+   - FR01: [specific, measurable requirement]
 
    ## 4. Non-Functional Requirements
    - NFR01: Response time < 2s
@@ -639,37 +653,38 @@ Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không
    ## 5. Success Criteria
    - [ ] SC01: [testable criterion]
    ```
-3. Mỗi User Scenario PHẢI có: Actor + Action + Value.
-4. Mỗi Functional Requirement PHẢI measurable (có số liệu cụ thể).
+3. Each User Scenario MUST have: Actor + Action + Value.
+4. Each Functional Requirement MUST be measurable (have specific data).
 
 ## 📤 Output
 - File: `.agent/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
-- KHÔNG viết implementation details (HOW) — chỉ mô tả WHAT.
-- KHÔNG dùng technical jargon trong User Scenarios (business language).
-- KHÔNG bỏ qua error cases — mỗi action phải có "khi thất bại thì sao?"
+- DO NOT write implementation details (HOW) — just describe WHAT.
+- DO NOT use technical jargon in User Scenarios (business language).
+- DO NOT ignore error cases — each action must have a "what if it fails?"
 """
 
 
 def skill_status():
-    return """---
+    return r"""
+---
 name: speckit.status
-description: Progress Dashboard - Hiển thị trạng thái tiến độ project.
+description: Progress Dashboard - Displays project progress status.
 role: Progress Tracker
 ---
 
 ## 🎯 Mission
-Parse tasks.md → tính tiến độ → hiển thị dashboard trực quan.
+Parse tasks.md → calculate progress → display visual dashboard.
 
 ## 📥 Input
 - `.agent/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
-1. Parse tasks.md → đếm checkboxes:
+1. Parse tasks.md → count checkboxes:
    - `- [X]` = completed
    - `- [ ]` = pending
-2. Nhóm theo Phase → tính % mỗi phase.
+2. Group by Phase → calculate % for each phase.
 3. Output dashboard:
    ```
    📊 Progress Dashboard: [Feature Name]
@@ -680,76 +695,78 @@ Parse tasks.md → tính tiến độ → hiển thị dashboard trực quan.
    ───────────────────────────────────────
    Total:                ███████░░░░░░░░░  47% (7/15)
    ```
-4. List tasks đang pending (tiếp theo cần làm).
+4. List of pending tasks (next to do).
 
 ## 📤 Output
 - Console: Dashboard visualization
 
 ## 🚫 Guard Rails
-- KHÔNG thay đổi tasks.md — chỉ đọc và báo cáo.
+- DO NOT change tasks.md — read and report only.
 """
 
 
 def skill_tasks():
-    return """---
+    return r"""
+---
 name: speckit.tasks
-description: Task Breaker - Tạo tasks.md atomic, có thứ tự dependency từ plan.
+description: Task Breaker - Create atomic tasks.md, with dependency order from plan.
 role: Execution Strategist
 ---
 
 ## 🎯 Mission
-Chuyển plan.md thành danh sách tasks atomic, có thứ tự dependency, mỗi task ≤15 phút.
+Convert plan.md into a list of atomic tasks, ordered by dependency, each task ≤15 minutes.
 
 ## 📥 Input
 - `.agent/specs/[feature]/plan.md`
 - `.agent/specs/[feature]/spec.md`
 
 ## 📋 Protocol
-1. Đọc plan.md → breakdown mỗi component thành atomic tasks.
-2. Format BẮT BUỘC cho mỗi task:
+1. Read plan.md → break down each component into atomic tasks.
+2. REQUIRED format for each task:
    ```
    - [ ] T001 [P] Setup project structure per plan.md
    - [ ] T002 [P] Create database schema in prisma/schema.prisma
    - [ ] T003 [P] [US1] Implement user registration API in src/api/auth.ts
    ```
    - `[P]`: Priority (blocking task)
-   - `[US1]`: Link đến User Scenario
-   - Path: File chính bị ảnh hưởng
-3. Phase Structure BẮT BUỘC:
+   - `[US1]` : Link to User Scenario
+   - Path: Main file affected
+3. Phase Structure REQUIRED:
    - **Phase 1: Setup** — Project init, configs, boilerplate
    - **Phase 2: Foundation** — DB, auth, shared utilities (blocking)
-   - **Phase 3+**: Mỗi User Story = 1 phase (theo priority từ spec)
+   - **Phase 3+**: Each User Story = 1 phase (according to priority from spec)
    - **Final Phase: Polish** — Error handling, optimization, cleanup
 4. Dependency Rules:
-   - Task phụ thuộc task khác → phải đặt SAU.
-   - Foundation tasks luôn ở Phase 2.
-5. **15-Minute Rule**: Mỗi task ≤ 15 phút, ảnh hưởng ≤ 3 files.
+   - Task depends on another task → must be placed AFTER.
+   - Foundation tasks are always in Phase 2.
+5. **15-Minute Rule**: Each task takes ≤ 15 minutes, affects ≤ 3 files.
 
 ## 📤 Output
 - File: `.agent/specs/[feature]/tasks.md`
 
 ## 🚫 Guard Rails
-- KHÔNG tạo task quá lớn (>3 files hoặc >15 phút).
-- KHÔNG tạo task trùng lặp.
-- Mỗi task PHẢI có file path cụ thể.
+- DO NOT create tasks that are too large (>3 files or >15 minutes).
+- DO NOT create duplicate tasks.
+- Each task MUST have a specific file path.
 """
 
 
 def skill_taskstoissues():
-    return """---
+    return r"""
+---
 name: speckit.taskstoissues
-description: Issue Tracker Syncer - Đồng bộ tasks.md sang issue tracker.
+description: Issue Tracker Syncer - Synchronize tasks.md to issue tracker.
 role: Issue Syncer
 ---
 
 ## 🎯 Mission
-Parse tasks.md → tạo issues sẵn sàng import vào GitHub/GitLab/Jira.
+Parse tasks.md → create issues ready to import into GitHub/GitLab/Jira.
 
 ## 📥 Input
 - `.agent/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
-1. Parse mỗi task → extract: ID, title, description, phase, user story link.
+1. Parse each task → extract: ID, title, description, phase, user story link.
 2. Map sang issue format:
    ```markdown
    **Title**: T003 - Implement user registration API
@@ -759,26 +776,27 @@ Parse tasks.md → tạo issues sẵn sàng import vào GitHub/GitLab/Jira.
    - Depends on: T002
    - Acceptance: User can register with email/password
    ```
-3. Group issues theo Phase → tạo Milestones.
+3. Group issues by Phase → create Milestones.
 4. Output file `.agent/memory/issues-export.md`.
 
 ## 📤 Output
 - File: `.agent/memory/issues-export.md`
 
 ## 🚫 Guard Rails
-- KHÔNG tạo issue trên remote — chỉ generate file export.
+- DO NOT create an issue on the remote — just generate an export file.
 """
 
 
 def skill_tester():
-    return """---
+    return r"""
+---
 name: speckit.tester
-description: Test Runner & Coverage - Tạo test plan, viết tests, báo cáo coverage.
+description: Test Runner & Coverage - Create test plans, write tests, report coverage.
 role: Test Engineer
 ---
 
 ## 🎯 Mission
-Đảm bảo implementation có test coverage đầy đủ, chạy pass 100%.
+Make sure the implementation has full test coverage and passes 100%.
 
 ## 📥 Input
 - Source code (implemented files)
@@ -786,12 +804,12 @@ role: Test Engineer
 - `.agent/specs/[feature]/spec.md` (success criteria)
 
 ## 📋 Protocol
-1. **Test Plan**: Từ tasks.md (completed) → list functions/routes cần test.
-2. **Write Tests**: Cho mỗi function/route:
-   - Happy path (input hợp lệ → output đúng)
-   - Error path (input lỗi → error handling đúng)
+1. **Test Plan**: From tasks.md (completed) → list functions/routes to test.
+2. **Write Tests**: For each function/route:
+   - Happy path (valid input → correct output)
+   - Error path (error input → error handling correct)
    - Edge case (boundary values, empty, null)
-3. **Run Tests**: `docker compose exec [service] npm test` hoặc tương đương.
+3. **Run Tests**: `docker compose exec [service] npm test` or equivalent.
 4. **Coverage Report**:
    ```
    📊 Test Coverage Report
@@ -802,56 +820,57 @@ role: Test Engineer
    ───────────────────────
    Untested: src/api/payment.ts, src/utils/cache.ts, src/hooks/useAuth.ts
    ```
-5. Liệt kê tests failed với error details.
+5. List failed tests with error details.
 
 ## 📤 Output
 - Test files (theo convention: `*.test.ts`, `*.spec.ts`)
 - File: `.agent/memory/test-report.md`
 
 ## 🚫 Guard Rails
-- KHÔNG skip error path tests — phải test cả failing cases.
-- KHÔNG mock quá nhiều — prefer integration tests cho API routes.
+- DO NOT skip error path tests — must also test failing cases.
+- DON'T mock too much — prefer integration tests for API routes.
 """
 
 
 def skill_validate():
-    return """---
+    return r"""
+---
 name: speckit.validate
-description: Implementation Validator - Validate implementation vs spec tổng thể.
+description: Implementation Validator - Validate implementation vs overall spec.
 role: Validation Oracle
 ---
 
 ## 🎯 Mission
-Kiểm tra TOÀN BỘ implementation có đáp ứng spec.md hay không — final gate trước deploy.
+Check whether the ENTIRE implementation meets spec.md or not — final gate before deploying.
 
 ## 📥 Input
-- Tất cả artifacts: spec.md, plan.md, tasks.md
+- All artifacts: spec.md, plan.md, tasks.md
 - Source code (implementation)
 - `.agent/memory/constitution.md`
 
 ## 📋 Protocol
-1. **Tasks Completion**: Mọi task trong tasks.md đã `[X]`?
-2. **Success Criteria**: Mọi SC trong spec.md đã đạt?
-3. **Build Verification** (PHẢI chạy actual command):
+1. **Tasks Completion**: All tasks in tasks.md have `[X]` ?
+2. **Success Criteria**: All SCs in spec.md passed?
+3. **Build Verification** (MUST run actual command):
    ```bash
    docker compose -f docker-compose.beta.yml build 2>&1 | tail -n 100
    ```
-   Nếu fail → ❌ BLOCKED
-4. **Runtime Verification** (PHẢI chạy actual command):
+   If failed → ❌ BLOCKED
+4. **Runtime Verification** (MUST run actual command):
    ```bash
    docker compose -f docker-compose.beta.yml up -d
    sleep 15
    docker compose -f docker-compose.beta.yml ps
    ```
-   - Tất cả services phải `Up` (KHÔNG `Restarting`)
-   - Nếu `Restarting` → chạy `docker compose logs <service>` → ❌ BLOCKED
-5. **Health Check** (PHẢI chạy actual command):
+   - All services must be `Up` (NOT `Restarting` )
+   - If `Restarting` → run `docker compose logs <service>` → ❌ BLOCKED
+5. **Health Check** (MUST run actual command):
    ```bash
    curl -s http://localhost:<web_port> | head -c 200
    curl -s http://localhost:<api_port>/health
    ```
-   Tất cả phải trả về 200
-6. **Constitution Check**: Không vi phạm rules nào?
+   All must return 200
+6. **Constitution Check**: No rules violated?
 7. **Final Verdict**:
    ```
    🏁 VALIDATION REPORT
@@ -867,25 +886,26 @@ Kiểm tra TOÀN BỘ implementation có đáp ứng spec.md hay không — fina
 
 ## 📤 Output
 - File: `.agent/memory/validation-report.md`
-- Verdict: ✅ PASS hoặc ❌ FAIL (kèm danh sách blockers)
+- Verdict: ✅ PASS or ❌ FAIL (with blockers list)
 
 ## 🚫 Guard Rails
-- KHÔNG approve nếu còn task chưa complete.
-- KHÔNG approve nếu build fail.
-- KHÔNG approve nếu bất kỳ service nào `Restarting`.
-- PHẢI chạy actual commands — không chỉ đọc code.
+- DO NOT approve if there are unfinished tasks.
+- DO NOT approve if build fails.
+- DO NOT approve if any service is `Restarting` .
+- MUST run actual commands — don't just read the code.
 """
 
 
 def skill_seo():
-    return """---
+    return r"""
+---
 name: speckit.seo
-description: Technical SEO Lead - Tối ưu Meta Tags, Sitemap, Core Web Vitals, Schema.org.
+description: Technical SEO Lead - Optimize Meta Tags, Sitemap, Core Web Vitals, Schema.org.
 role: SEO Technical Lead
 ---
 
 ## 🎯 Mission
-Đảm bảo mọi page public đạt chuẩn Technical SEO và sẵn sàng cho AI Search (GEO).
+Ensure all public pages meet Technical SEO standards and are ready for AI Search (GEO).
 
 ## 📥 Input
 - Source code (pages, layouts, components)
@@ -893,48 +913,49 @@ role: SEO Technical Lead
 
 ## 📋 Protocol
 
-### Bước 1: Audit Technical SEO
-- Mỗi page có `<title>` unique, ≤60 ký tự?
-- Mỗi page có `<meta description>`, ≤160 ký tự?
-- Heading hierarchy chuẩn (1 `<h1>` per page, H1→H2→H3)?
-- Canonical URLs set cho mọi page?
-- Structured Data (JSON-LD) đúng schema?
+### Step 1: Audit Technical SEO
+- Is each page `<title>` unique, ≤60 characters?
+- Each page has `<meta description>` , ≤160 characters?
+- Standard heading hierarchy (1 `<h1>` per page, H1→H2→H3)?
+- Canonical URLs set for every page?
+- Structured Data (JSON-LD) correct schema?
 
-### Bước 2: Core Web Vitals
+### Step 2: Core Web Vitals
 - LCP < 2.5s, INP < 200ms, CLS < 0.1
 - Images: WebP/AVIF, lazy loading, explicit width/height
 - Fonts: `font-display: swap`
 
-### Bước 3: Crawlability
-- `robots.txt` không block CSS/JS
+### Step 3: Crawlability
+- `robots.txt` does not block CSS/JS
 - `sitemap.xml` auto-generate
-- Internal linking structure hợp lý
+- Reasonable internal linking structure
 - Custom 404 page
 
-### Bước 4: Output
-Report tại `.agent/memory/seo-audit-report.md`:
+### Step 4: Output
+Report at `.agent/memory/seo-audit-report.md` :
 - Issues: 🔴 Critical / 🟡 Warning / 🟢 Info
-- Fix suggestion cho mỗi issue
-- Score tổng (0-100)
+- Fix suggestions for each issue
+- Total Score (0-100)
 
 ## 📤 Output
 - File: `.agent/memory/seo-audit-report.md`
 
 ## 🔗 Handoffs
-- `@speckit.geo`: Sau khi Technical SEO đạt → chuyển sang GEO audit
-- `@speckit.implement`: Fix các issues được phát hiện
+- `@speckit.geo` : After Technical SEO passes → switch to GEO audit
+- `@speckit.implement` : Fix detected issues
 """
 
 
 def skill_geo():
-    return """---
+    return r"""
+---
 name: speckit.geo
-description: GEO Strategist - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity).
+description: GEO Strategist - Optimized for AI Search (ChatGPT, Gemini, Perplexity).
 role: GEO Strategist
 ---
 
 ## 🎯 Mission
-Đảm bảo website được AI Search engines **trích dẫn** trong câu trả lời.
+Make sure the website is **cited** by AI Search engines in the answer.
 
 ## 📥 Input
 - Source code (content pages)
@@ -942,71 +963,72 @@ role: GEO Strategist
 
 ## 📋 Protocol
 
-### Bước 1: AI Crawlability
-- File `llms.txt` tại root domain?
-- SSR/SSG cho content pages (KHÔNG CSR)?
-- JSON-LD đầy đủ cho Article, Product, FAQ?
+### Step 1: AI Crawlability
+- File `llms.txt` at root domain?
+- SSR/SSG for content pages (NO CSR)?
+- Full JSON-LD for Article, Product, FAQ?
 
-### Bước 2: E-E-A-T Compliance
-- **Experience**: Nội dung thể hiện kinh nghiệm thực tế?
+### Step 2: E-E-A-T Compliance
+- **Experience**: Does the content represent real-life experience?
 - **Expertise**: Author bio, credentials?
-- **Authoritativeness**: Nguồn trích dẫn, data points?
+- **Authoritativeness**: Source of citation, data points?
 - **Trustworthiness**: HTTPS, privacy policy, contact info?
 
-### Bước 3: Content Format for AI
-- Short paragraphs (2-3 câu)
+### Step 3: Content Format for AI
+- Short paragraphs (2-3 sentences)
 - Bullet points, numbered lists
-- Direct answers ở đầu mỗi section
-- FAQ sections dạng "People Also Ask"
-- Fact-dense: Mỗi đoạn ≥1 data point
+- Direct answers at the beginning of each section
+- FAQ sections "People Also Ask" format
+- Fact-dense: Each segment ≥1 data point
 
-### Bước 4: Topic Authority
+### Step 4: Topic Authority
 - Topic clusters (pillar + supporting articles)
-- Internal linking giữa bài cùng chủ đề
+- Internal linking between articles on the same topic
 
 ## 📤 Output
 - File: `.agent/memory/geo-audit-report.md`
 
 ## 🔗 Handoffs
-- `@speckit.content`: Tối ưu nội dung theo chuẩn GEO
+- `@speckit.content` : Optimize content according to GEO standards
 """
 
 
 def skill_content():
-    return """---
+    return r"""
+---
 name: speckit.content
 description: Content Architect - Heading Structure, Readability, Multimodal, Fact-density.
 role: Content Strategist
 ---
 
 ## 🎯 Mission
-Đảm bảo nội dung website đạt chuẩn cho cả người đọc VÀ AI search engines.
+Ensure website content meets standards for both readers AND AI search engines.
 
 ## 📥 Input
-- Content pages (bài viết, sản phẩm, landing pages)
+- Content pages (articles, products, landing pages)
 - `.agent/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
-### Bước 1: Heading Structure
-- Mỗi page chỉ 1 `<h1>` duy nhất
-- Hierarchy: H1→H2→H3 (không nhảy cấp)
-- Heading mô tả nội dung section cụ thể
+### Step 1: Heading Structure
+- Each page has only one `<h1>`
+- Hierarchy: H1→H2→H3 (no level jump)
+- Heading describes the specific section content
 
-### Bước 2: Readability
-- Đoạn văn: Tối đa 3-4 câu
-- Bullet points thay cho đoạn dài
+### Step 2: Readability
+- Paragraph: Maximum 3-4 sentences
+- Bullet points instead of long paragraphs
 - Highlight key terms (bold/italic)
 
-### Bước 3: Multimodal Content
-- Image: `alt` text mô tả chi tiết
-- Video: Transcript hoặc description
-- Tables: Responsive, có caption
+### Step 3: Multimodal Content
+- Image: `alt` text detailed description
+- Video: Transcript or description
+- Tables: Responsive, with captions
 
-### Bước 4: Fact-density
-- Mỗi section ≥1 statistic/data point
-- Trích dẫn nguồn khi đưa claims
-- Quotes từ experts khi phù hợp
+### Step 4: Fact-density
+- Each section ≥1 statistic/data point
+- Cite sources when submitting claims
+- Quotes from experts when appropriate
 
 ## 📤 Output
 - File: `.agent/memory/content-guidelines.md`
@@ -1017,66 +1039,68 @@ role: Content Strategist
 
 
 def skill_uiux():
-    return """---
+    return r"""
+---
 name: speckit.uiux
-description: UI/UX Architect - Định nghĩa Design System Anti-Slop, UI Components, Spacing, Typography, Responsive Patterns.
+description: UI/UX Architect - Definition of Design System Anti-Slop, UI Components, Spacing, Typography, Responsive Patterns.
 role: UI/UX Architect
 ---
 
 ## 🎯 Mission
-Thiết lập và quản lý tiêu chuẩn UI/UX "Pro Max" cho dự án, đảm bảo giao diện premium, chuyên nghiệp, độc đáo và TUYỆT ĐỐI không bị "AI slop" (tránh các thiết kế mặc định nhàm chán của AI).
+Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium, professional, unique interface and ABSOLUTELY no "AI slops" (avoid AI's boring default designs).
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md` (chứa User Scenarios)
+- `.agent/specs/[feature]/spec.md` (contains User Scenarios)
 - `.agent/memory/constitution.md` (tech stack constraints)
-- Brand guidelines (nếu có)
+- Brand guidelines (if any)
 
 ## 📋 Protocol
 
 ### Phase 0: Brief Inference (Read the Room)
-- Phân tích dự án (SaaS, portfolio, public-sector) để định hình vibe.
-- Xác định 3 thông số: `DESIGN_VARIANCE` (1-10), `MOTION_INTENSITY` (1-10), `VISUAL_DENSITY` (1-10).
+- Analyze projects (SaaS, portfolio, public-sector) to shape vibe.
+- Define 3 parameters: `DESIGN_VARIANCE` (1-10), `MOTION_INTENSITY` (1-10), `VISUAL_DENSITY` (1-10).
 
 ### Phase 1: Brand Identity & Colors (Anti-Default)
-- **Màu sắc**: CẤM dùng các màu mặc định (red, blue, green). CẤM lạm dụng "AI Purple / Blue glow". Dùng palette tinh tế như Cold Luxury, Forest, Black & Tan.
-- **Typography**: CẤM dùng `Inter` và Serif làm mặc định cho mọi thứ. Dùng `Geist`, `Satoshi`, `Cabinet Grotesk` hoặc font sans-serif có gu.
+- **Colors**: It is PROHIBITED to use default colors (red, blue, green). It is PROHIBITED to abuse "AI Purple / Blue glow". Use a sophisticated palette like Cold Luxury, Forest, Black & Tan.
+- **Typography**: PROHIBITED using `Inter` and Serif as default for anything. Use `Geist` , `Satoshi` , `Cabinet Grotesk` or a sans-serif font of your choice.
 
 ### Phase 2: Spacing, Layout & Rhythm
-- Hạn chế top padding của Hero (max `pt-24`). Hero tối đa 2 dòng tiêu đề.
-- Áp dụng Anti-Center Bias: Tránh căn giữa Hero một cách nhàm chán.
-- CẤM lạm dụng "eyebrow" (tiêu đề in hoa siêu nhỏ). Tối đa 1 eyebrow trên 3 sections.
-- Bento Grid phải có nhịp điệu, không để ô trống, đa dạng hoá background của các ô (hình, gradient tinh tế, chữ).
+- Limit Hero's top padding (max `pt-24` ). Hero maximum 2 subject lines.
+- Apply Anti-Center Bias: Avoid boringly centering the Hero.
+- Misuse of "eyebrow" (titles in super small caps) is PROHIBITED. Maximum 1 eyebrow per 3 sections.
+- Bento Grid must have rhythm, not leave empty cells, diversify the background of the cells (images, subtle gradients, text).
 
 ### Phase 3: Core Components Design
-- **Buttons**: Text không wrap dòng trên desktop. Contrast WCAG AA.
-- **Cards**: Hạn chế shadow đen thui trên nền sáng. Không lồng card trong card.
-- **Forms**: Label trên input, không dùng placeholder thay label.
+- **Buttons**: Text does not wrap lines on the desktop. Contrast WCAG AA.
+- **Cards**: Limit dark shadows on light backgrounds. Do not nest cards within cards.
+- **Forms**: Label on input, do not use placeholder instead of label.
 
 ### Phase 4: Rich Aesthetics Directive
-- Tránh gradient AI rẻ tiền. Sử dụng Glassmorphism thực tế (backdrop-filter + 1px inner border) nếu hợp vibe.
-- Interactive States: Skeletal loading (không dùng spinner chung chung), tactile feedback khi bấm (scale-98).
+- Avoid cheap AI gradients. Use realistic Glassmorphism (backdrop-filter + 1px inner border) if the vibe fits.
+- Interactive States: Skeletal loading (no generic spinner), tactile feedback when clicking (scale-98).
 
 ## 📤 Output
 - File: `.agent/knowledge_base/ui_ux_standards.md`
-- File: `.agent/specs/[feature]/ui-specs.md` (cho từng tính năng)
+- File: `.agent/specs/[feature]/ui-specs.md` (for each feature)
 
 ## 🚫 Guard Rails
-- KHÔNG sử dụng màu mặc định của trình duyệt.
-- KHÔNG dùng mix Serif và Sans-serif trong cùng một headline.
-- KHÔNG dùng 2 CTA có cùng mục đích (cùng intent) trên cùng một trang.
-- BẮT BUỘC ưu tiên Mobile-first design.
+- DO NOT use browser default colors.
+- DO NOT mix Serif and Sans-serif in the same headline.
+- DO NOT use 2 CTAs with the same purpose (same intent) on the same page.
+- MANDATORY Mobile-first design priority.
 """
 
 
 def skill_backend():
-    return """---
+    return r"""
+---
 name: speckit.backend
 description: Backend/API Developer - Xay dung API service, business logic, auth, integration theo API standards.
 role: Backend Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logic tách lớp, auth/authz chắc, integration ổn định. Khớp `knowledge_base/api_standards.md`.
+Build backend/API production: standard REST/GraphQL endpoint, layered business logic, solid auth/authz, stable integration. Match `knowledge_base/api_standards.md` .
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md` + `plan.md` (data model, API contracts)
@@ -1086,100 +1110,102 @@ Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logi
 ## 📋 Protocol
 
 ### 1. API Layer
-- Tuân thủ `api_standards.md`: versioning (`/v1`), naming, status codes, error envelope nhất quán.
-- Validation input ở biên (DTO/schema). Reject sớm, message rõ.
-- Pagination/filtering/sorting chuẩn hóa cho list endpoints.
+- `api_standards.md` compliance: versioning ( `/v1` ), naming, status codes, error envelope consistency.
+- Validation of input at the edge (DTO/schema). Reject soon, clear message.
+- Standardized pagination/filtering/sorting for list endpoints.
 
 ### 2. Architecture (Layered)
-- Tách `controller → service → repository`. KHÔNG để business logic trong controller.
-- Dependency injection, không khởi tạo cứng dependency.
-- Idempotency cho operations nhạy cảm (payment, create).
+- Detach `controller → service → repository` . DO NOT put business logic in the controller.
+- Dependency injection, no hard initialization of dependencies.
+- Idempotency for sensitive operations (payment, create).
 
 ### 3. Auth & Security
-- AuthN (JWT/session) + AuthZ (RBAC/policy) ở middleware.
-- Parameterized query (chống SQLi). KHÔNG nối chuỗi SQL.
+- AuthN (JWT/session) + AuthZ (RBAC/policy) in middleware.
+- Parameterized query (anti-SQLi). DO NOT concatenate SQL strings.
 - Rate limiting + input sanitization cho public endpoints.
 
 ### 4. Data & Transaction
-- Transaction boundary rõ ràng; rollback khi lỗi.
+- Transaction boundary is clear; rollback on error.
 - N+1 query check; index theo `data_schema.md`.
 
 ### 5. Observability
-- Structured logging (request id), health check endpoint, metrics cơ bản.
-- Error handling tập trung, KHÔNG nuốt exception.
+- Structured logging (request id), health check endpoint, basic metrics.
+- Error handling is centralized, NOT exception swallowing.
 
 ## 📤 Output
 - API code + contract (OpenAPI/GraphQL schema).
-- Cập nhật `knowledge_base/api_standards.md` nếu thêm pattern.
+- Update `knowledge_base/api_standards.md` if pattern is added.
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code URL/secret/port → ENV (`API_*`, `DB_*`).
-- KHÔNG trả raw error/stacktrace ra client.
-- KHÔNG bỏ qua authz check trên endpoint nhạy cảm.
-- KHÔNG để endpoint public không auth mà không cảnh báo.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code URL/secret/port → ENV ( `API_*` , `DB_*` ).
+- DO NOT return raw error/stacktrace to the client.
+- DO NOT bypass authz check on sensitive endpoints.
+- DO NOT let public endpoints fail to authenticate without warning.
+- Feedback in Vietnamese.
 """
 
 
 def skill_frontend():
-    return """---
+    return r"""
+---
 name: speckit.frontend
 description: Frontend Developer - Xay dung UI components, state management, data fetching, accessibility, performance (Anti-Slop).
 role: Frontend Engineer
 ---
 
 ## 🎯 Mission
-Hiện thực hóa Design System (từ `@speckit.uiux`) thành code production: component tái sử dụng, state quản lý sạch, data fetching tối ưu, accessible & animation mượt mà chuẩn taste-skill.
+Realize Design System (from `@speckit.uiux` ) into production code: reusable components, clean state management, optimized data fetching, accessible & smooth animation standard taste-skill.
 
 ## 📥 Input
 - `.agent/knowledge_base/ui_ux_standards.md` (Design System)
 - `.agent/specs/[feature]/spec.md` (UI requirements)
-- API contract từ `@speckit.backend`
+- API contract from `@speckit.backend`
 - `.agent/memory/constitution.md` (ENV, Docker-First, Port 8900-8999)
 
 ## 📋 Protocol
 
 ### 1. Component Architecture
-- Component nhỏ, tái sử dụng, single responsibility. Viewport dùng `100dvh` thay vì `100vh` để tránh layout jump trên mobile.
-- Theo Design System: spacing/typography/color tokens. Tuyệt đối không hardcode inline style trừ phi bắt buộc.
+- Small, reusable, single responsibility components. Viewport uses `100dvh` instead of `100vh` to avoid layout jump on mobile.
+- According to Design System: spacing/typography/color tokens. Absolutely do not hardcode inline style unless required.
 
 ### 2. State & Data
-- CẤM dùng `useState` cho các continuous values (vị trí chuột, scroll progress). Dùng `useMotionValue` / `useTransform` của Framer Motion / GSAP.
-- Data fetching: BẮT BUỘC có Skeletal loader states (match với hình dáng UI cuối), không dùng circular spinner chung chung.
+- It is PROHIBITED to use `useState` for continuous values ​​(mouse position, scroll progress). Use `useMotionValue` / `useTransform` of Framer Motion / GSAP.
+- Data fetching: MUST have Skeletal loader states (match the final UI shape), do not use generic circular spinner.
 
 ### 3. Accessibility (a11y) & UI Rules
-- Semantic HTML, ARIA. BẮT BUỘC test contrast ratio (WCAG AA). Button CTA text phải dễ đọc trên nền button.
-- Button text KHÔNG được rớt dòng (wrap) trên desktop. Label button ngắn gọn (max 3 từ).
-- Tactile Feedback: thêm `active:scale-[0.98]` hoặc `-translate-y-[1px]` để tạo cảm giác bấm vật lý.
+- Semantic HTML, ARIA. MANDATORY contrast ratio test (WCAG AA). Button CTA text must be easy to read on the button background.
+- Button text must NOT wrap on the desktop. Label button is brief (maximum 3 words).
+- Tactile Feedback: add `active:scale-[0.98]` or `-translate-y-[1px]` to create a physical click feeling.
 
 ### 4. Motion & Performance
-- Animate `transform` và `opacity` (hỗ trợ hardware acceleration). CẤM animate top/left/width/height liên tục.
-- BẮT BUỘC tôn trọng `prefers-reduced-motion` nếu thêm animation phức tạp.
-- GSAP / Framer Motion phải được clearup đúng lúc (tránh memory leak).
+- Animate `transform` and `opacity` (supports hardware acceleration). It is PROHIBITED to animate top/left/width/height continuously.
+- REQUIRED respect for `prefers-reduced-motion` if adding complex animations.
+- GSAP / Framer Motion must be cleared in time (to avoid memory leaks).
 
 ### 5. ENV & Config
-- Dùng `NEXT_PUBLIC_*` cho client config. KHÔNG hard-code endpoint.
+- Use `NEXT_PUBLIC_*` for client config. NO hard-code endpoints.
 
 ## 📤 Output
-- UI component code + tests cơ bản (render/interaction).
+- UI component code + basic tests (render/interaction).
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code text/URL/màu → dùng i18n/tokens/ENV.
-- KHÔNG dùng 2 button CTA trùng mục đích trên một màn hình.
-- KHÔNG vi phạm a11y (thiếu label, button chữ trắng trên nền sáng).
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code text/URL/color → use i18n/tokens/ENV.
+- DO NOT use 2 CTA buttons for the same purpose on one screen.
+- DO NOT violate a11y (missing label, button with white text on light background).
+- Feedback in Vietnamese.
 """
 
 
 def skill_database():
-    return """---
+    return r"""
+---
 name: speckit.database
 description: Database Architect - Thiet ke schema, index, migration, query optimization, data integrity.
 role: Database Architect
 ---
 
 ## 🎯 Mission
-Thiết kế và tối ưu tầng dữ liệu: schema chuẩn hóa hợp lý, index hiệu quả, migration an toàn, query nhanh, toàn vẹn dữ liệu.
+Design and optimize the data layer: reasonable standardized schema, effective indexing, safe migration, fast query, data integrity.
 
 ## 📥 Input
 - `.agent/knowledge_base/data_schema.md`
@@ -1189,38 +1215,38 @@ Thiết kế và tối ưu tầng dữ liệu: schema chuẩn hóa hợp lý, in
 ## 📋 Protocol
 
 ### 1. Schema Design
-- Chuẩn hóa (3NF) mặc định; denormalize có chủ đích khi cần performance (ghi rõ lý do).
-- Khóa chính/ngoại rõ ràng, constraint (NOT NULL, UNIQUE, CHECK) tại DB.
-- Naming convention nhất quán; cập nhật `data_schema.md`.
+- Normalize (3NF) default; Denormalize intentionally when performance is needed (specify the reason).
+- Clear primary/foreign keys, constraints (NOT NULL, UNIQUE, CHECK) in the DB.
+- Naming convention is consistent; update `data_schema.md` .
 
 ### 2. Indexing & Performance
-- Index theo query pattern thực tế (WHERE/JOIN/ORDER BY).
-- Tránh over-indexing (chậm write). Composite index đúng thứ tự cột.
-- Phát hiện & xử lý N+1, full table scan.
+- Index according to actual query pattern (WHERE/JOIN/ORDER BY).
+- Avoid over-indexing (slow writing). Composite index correct column order.
+- Detect & process N+1, full table scan.
 
-### 3. Migration (An toàn)
+### 3. Migration (Safe)
 - Migration versioned, reversible (up/down).
 - Zero-downtime pattern: expand → migrate → contract.
-- KHÔNG destructive change trực tiếp trên production data mà không backup + xác nhận.
+- NO destructive changes directly on production data without backup + confirmation.
 
 ### 4. Integrity & Transaction
-- Transaction isolation level phù hợp; tránh deadlock.
-- Cascade rules cân nhắc kỹ; soft-delete khi cần audit.
+- Transaction isolation level is appropriate; avoid deadlock.
+- Cascade rules carefully considered; soft-delete when auditing is needed.
 
 ### 5. Security
-- Least-privilege DB user; KHÔNG dùng root/admin cho app.
-- Encryption at-rest cho dữ liệu nhạy cảm; mask PII.
+- Least-privilege DB user; DO NOT use root/admin for the app.
+- Encryption at-rest for sensitive data; mask PII.
 
 ## 📤 Output
 - Schema DDL + migration files.
-- Cập nhật `knowledge_base/data_schema.md` (ERD, index list).
+- Update `knowledge_base/data_schema.md` (ERD, index list).
 
 ## 🚫 Guard Rails
-- KHÔNG chạy migration destructive trên prod khi chưa backup + xác nhận.
-- KHÔNG hard-code credential → ENV (`DB_*`).
-- KHÔNG bỏ index trên FK / cột query nóng.
-- KHÔNG lưu password plaintext (phải hash).
-- Phản hồi bằng Tiếng Việt.
+- DO NOT run destructive migration on prod without backup + confirmation.
+- NO hard-code credential → ENV ( `DB_*` ).
+- DO NOT drop index on FK/hot query columns.
+- DO NOT save plaintext passwords (must be hashed).
+- Feedback in Vietnamese.
 """
 
 
@@ -1232,45 +1258,44 @@ role: iOS Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng app iOS native production: Swift + SwiftUI/UIKit, kiến trúc sạch, tuân thủ Human Interface Guidelines & App Store Review.
+Build native production iOS apps: Swift + SwiftUI/UIKit, clean architecture, complying with Human Interface Guidelines & App Store Review.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
 - `.agent/knowledge_base/ui_ux_standards.md`
-- API contract từ `@speckit.backend`
+- API contract from `@speckit.backend`
 
 ## 📋 Protocol
 
 ### 1. Architecture
-- Swift + SwiftUI (ưu tiên) hoặc UIKit. Pattern MVVM / TCA.
-- Dependency injection; module hóa feature.
+- Swift + SwiftUI (preferred) or UIKit. MVVM / TCA pattern.
+- Dependency injection; modularize features.
 
 ### 2. Lifecycle & State
 - Scene/App lifecycle, background tasks, state restoration.
-- `@State`/`@Observable` hoặc Combine cho reactive state.
+- `@State` / `@Observable` or Combine for reactive state.
 
 ### 3. Platform Integration
-- Permission flow (camera, location, notification) đúng Info.plist + rationale.
+- Permission flow (camera, location, notification) correct Info.plist + rationale.
 - Push notification (APNs), deep linking (Universal Links).
 
 ### 4. Performance & UX
-- 60/120fps, tránh main-thread blocking, lazy list.
+- 60/120fps, avoid main-thread blocking, lazy lists.
 - Safe area, Dynamic Type, Dark Mode, accessibility (VoiceOver).
 
 ### 5. Security & Compliance
-- Token trong Keychain (KHÔNG UserDefaults).
+- Tokens in Keychain (NOT UserDefaults).
 - App Transport Security (HTTPS only).
-- Tuân thủ App Store Review Guidelines + privacy nutrition label.
+- Comply with App Store Review Guidelines + privacy nutrition label.
 
 ## 📤 Output
-- Swift code + project config (xcconfig/ENV cho endpoint).
+- Swift code + project config (xcconfig/ENV for endpoints).
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code endpoint/key → xcconfig/ENV.
-- KHÔNG lưu token vào UserDefaults/plaintext → Keychain.
-- KHÔNG block main thread bằng I/O.
-- KHÔNG bỏ qua privacy permission rationale.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code endpoints/keys -> xcconfig/ENV.
+- DO NOT save tokens in UserDefaults/plaintext -> Keychain.
+- DO NOT block the main thread with I/O operations.
+- DO NOT bypass privacy permission rationale.
 """
 
 
@@ -1282,45 +1307,44 @@ role: Android Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng app Android native production: Kotlin + Jetpack Compose, kiến trúc sạch, tuân thủ Material Design & Play Store Policy.
+Build native production Android apps: Kotlin + Jetpack Compose, clean architecture, complying with Material Design & Play Store Policy.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
 - `.agent/knowledge_base/ui_ux_standards.md`
-- API contract từ `@speckit.backend`
+- API contract from `@speckit.backend`
 
 ## 📋 Protocol
 
 ### 1. Architecture
-- Kotlin + Jetpack Compose (ưu tiên) hoặc View. Pattern MVVM / MVI + Clean Architecture.
-- Hilt/Koin cho DI; module hóa theo feature.
+- Kotlin + Jetpack Compose (preferred) or View. MVVM / MVI + Clean Architecture pattern.
+- Hilt/Koin for DI; modularize features.
 
 ### 2. Lifecycle & State
 - Activity/Fragment lifecycle, `ViewModel` + `StateFlow`, config change survival.
-- WorkManager cho background; Navigation Component.
+- WorkManager for background tasks; Navigation Component.
 
 ### 3. Platform Integration
-- Runtime permission flow đúng + rationale.
-- Push (FCM), deep linking (App Links).
+- Runtime permission flow correct + rationale.
+- Push notification (FCM), deep linking (App Links).
 
 ### 4. Performance & UX
-- Tránh main-thread blocking (Coroutines/Dispatchers), lazy list (LazyColumn).
-- Material Design 3, Dark theme, accessibility (TalkBack), đa screen size.
+- Avoid main-thread blocking (Coroutines/Dispatchers), lazy lists (LazyColumn).
+- Material Design 3, Dark theme, accessibility (TalkBack), multi-screen size.
 
 ### 5. Security & Compliance
-- Token trong EncryptedSharedPreferences/Keystore.
+- Tokens in EncryptedSharedPreferences/Keystore.
 - Network security config (HTTPS), ProGuard/R8 obfuscation.
-- Tuân thủ Play Store Data Safety + target SDK mới nhất.
+- Comply with Play Store Data Safety + latest target SDK.
 
 ## 📤 Output
-- Kotlin code + Gradle config (BuildConfig/ENV cho endpoint).
+- Kotlin code + Gradle config (BuildConfig/ENV for endpoints).
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code endpoint/key → BuildConfig/ENV.
-- KHÔNG lưu token plaintext → Keystore/EncryptedSharedPreferences.
-- KHÔNG block main thread → Coroutines.
-- KHÔNG bỏ qua runtime permission rationale.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code endpoints/keys -> BuildConfig/ENV.
+- DO NOT save tokens in plaintext -> Keystore/EncryptedSharedPreferences.
+- DO NOT block the main thread -> Coroutines.
+- DO NOT bypass runtime permission rationale.
 """
 
 
@@ -1332,56 +1356,55 @@ role: Mobile Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng app mobile cross-platform production: React Native/Flutter, 1 codebase chạy iOS + Android, offline-first, tuân thủ store guidelines.
+Build cross-platform mobile production apps: React Native/Flutter, 1 codebase running on iOS + Android, offline-first, complying with store guidelines.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
 - `.agent/knowledge_base/ui_ux_standards.md`
-- API contract từ `@speckit.backend`
-- Framework target (RN/Flutter; HỎI nếu thiếu)
+- API contract from `@speckit.backend`
+- Target framework (RN/Flutter; ASK if missing)
 
 ## 📋 Protocol
 
 ### 1. Framework & Architecture
-- Xác định RN hoặc Flutter. Pattern (MVVM/Clean), navigation rõ ràng, deep linking.
+- Determine RN or Flutter. MVVM/Clean pattern, clear navigation, deep linking.
 
 ### 2. Lifecycle & State
 - App lifecycle (background/foreground), state restoration.
-- State management (Redux/Riverpod/Bloc); permission flow đúng lúc.
+- State management (Redux/Riverpod/Bloc); correct runtime permission flow.
 
 ### 3. Offline-First & Data
 - Local storage (SQLite/Realm/AsyncStorage), sync strategy, conflict resolution.
-- Cache + retry cho network kém.
+- Cache + retry for unstable network.
 
 ### 4. Performance & UX
-- 60 FPS scroll, virtualization list, tránh jank.
-- Tối ưu app size, cold start; responsive + safe area.
+- 60 FPS scroll, virtualized lists, avoid UI jank.
+- Optimize app size, cold start; responsive + safe area.
 
 ### 5. Store Compliance & Security
-- Tuân thủ App Store / Play Store guidelines.
-- Secure storage cho token (Keychain/Keystore). KHÔNG plaintext.
+- Comply with App Store / Play Store guidelines.
+- Secure storage for tokens (Keychain/Keystore). NO plaintext.
 
 ## 📤 Output
-- App code (RN/Flutter) + config build.
+- App code (RN/Flutter) + build config.
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code endpoint/key → ENV / secure config.
-- KHÔNG lưu credential plaintext.
-- KHÔNG block main/UI thread bằng I/O.
-- KHÔNG bỏ qua permission rationale.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code endpoints/keys -> ENV / secure config.
+- DO NOT save credentials in plaintext.
+- DO NOT block the main/UI thread with I/O operations.
+- DO NOT bypass permission rationale.
 """
 
 
 def skill_data():
     return """---
 name: speckit.data
-description: Data/ML Engineer - Xay dung data pipeline (ETL/ELT), data quality, ML workflow, orchestration.
+description: Data/ML Engineer - Build data pipelines (ETL/ELT), data quality, ML workflows, orchestration.
 role: Data Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng data pipeline production: ingest → transform → load đáng tin cậy, data quality đảm bảo, ML workflow reproducible.
+Build production data pipelines: reliable ingest → transform → load, guaranteed data quality, reproducible ML workflows.
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md`
@@ -1391,50 +1414,50 @@ Xây dựng data pipeline production: ingest → transform → load đáng tin c
 ## 📋 Protocol
 
 ### 1. Pipeline Architecture
-- Chọn model: batch (ETL/ELT) vs streaming. Orchestration (Airflow/Dagster/Prefect).
-- Idempotent + re-runnable steps; checkpoint/state rõ ràng.
-- Partition + incremental load thay vì full reload khi có thể.
+- Select model: batch (ETL/ELT) vs streaming. Orchestration (Airflow/Dagster/Prefect).
+- Idempotent + re-runnable steps; clear checkpoint/state.
+- Partition + incremental load instead of full reload when possible.
 
 ### 2. Data Quality
-- Schema validation tại biên ingest; reject/quarantine bad records.
+- Schema validation at ingest edge; reject/quarantine bad records.
 - Data contract: type, null, range, uniqueness checks.
 - Lineage + freshness monitoring.
 
 ### 3. Storage & Modeling
-- Tách raw / staging / curated layers.
-- Modeling theo `data_schema.md`; partition key + indexing hợp lý.
+- Separate raw / staging / curated layers.
+- Modeling according to `data_schema.md`; reasonable partition keys + indexing.
 
-### 4. ML Workflow (nếu có)
-- Tách feature engineering, training, inference.
-- Reproducibility: seed, version data + model, track experiment.
-- Tránh data leakage (train/test split đúng).
+### 4. ML Workflow (if any)
+- Separate feature engineering, training, inference.
+- Reproducibility: seed, version data + model, track experiments.
+- Avoid data leakage (correct train/test split).
 
 ### 5. Reliability
-- Retry + dead-letter cho step lỗi; alerting.
-- Backfill strategy an toàn.
+- Retry + dead-letter queue for failed steps; alerting.
+- Safe backfill strategy.
 
 ## 📤 Output
 - Pipeline code + orchestration DAG/config.
-- Cập nhật `knowledge_base/data_schema.md`.
+- Update `knowledge_base/data_schema.md`.
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code connection string/credential → ENV (`DB_*`).
-- KHÔNG full reload khi incremental khả thi.
-- KHÔNG bỏ qua data validation → tránh silent corruption.
-- KHÔNG để PII chưa mask trong log/output.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code connection string/credentials -> ENV (`DB_*`).
+- DO NOT full reload when incremental is feasible.
+- DO NOT bypass data validation -> avoid silent corruption.
+- DO NOT leave unmasked PII in logs/outputs.
 """
 
 
 def skill_security():
-    return """---
+    return r"""
+---
 name: speckit.security
 description: Security Auditor - Audit AppSec theo OWASP, secret scanning, dependency/vuln, threat modeling.
 role: Security Auditor
 ---
 
 ## 🎯 Mission
-Đảm bảo bảo mật toàn vòng đời: audit code theo OWASP, phát hiện secret leak, quét lỗ hổng dependency, threat modeling cho feature nhạy cảm.
+Ensuring full lifecycle security: auditing code according to OWASP, detecting secret leaks, scanning dependency vulnerabilities, threat modeling for sensitive features.
 
 ## 📥 Input
 - Codebase + `.agent/specs/[feature]/spec.md`
@@ -1446,309 +1469,314 @@ role: Security Auditor
 ### 1. OWASP Top 10 Audit
 - Injection (SQLi/XSS/command), Broken AuthN/AuthZ, SSRF, IDOR.
 - Insecure deserialization, security misconfiguration.
-- Mỗi finding: severity + vị trí + fix đề xuất.
+- Each finding: severity + location + suggested fix.
 
 ### 2. Secret & Config
-- Quét hard-coded secret/key/token trong code + git history.
-- Verify ENV usage theo Constitution §3; `.env` không commit.
-- Kiểm tra `.dockerignore`, `.gitignore` block file nhạy cảm.
+- Scan hard-coded secrets/keys/tokens in code + git history.
+- Verify ENV usage according to Constitution §3; `.env` does not commit.
+- Check `.dockerignore` , `.gitignore` block sensitive files.
 
 ### 3. Dependency & Supply Chain
-- Quét CVE dependency (npm audit / pip-audit / trivy).
-- Phát hiện package typosquatting / unmaintained.
-- Pin version (KHÔNG dùng range mở cho dep nhạy cảm).
+- Scan for CVE dependencies (npm audit / pip-audit / trivy).
+- Detected package typosquatting / unmaintained.
+- Pin version (DO NOT use open range for sensitive devices).
 
 ### 4. AuthN / AuthZ
-- Verify mọi endpoint nhạy cảm có authz check (chống IDOR).
-- Token storage/expiry/rotation đúng; rate limiting.
+- Verify all sensitive endpoints with authz check (anti-IDOR).
+- Token storage/expiry/rotation correct; rate limiting.
 
-### 5. Threat Modeling (feature nhạy cảm)
-- STRIDE nhẹ: liệt kê asset, attack surface, mitigation.
-- Production hardening: container non-root, port tối thiểu.
+### 5. Threat Modeling (sensitive features)
+- Light STRIDE: lists assets, attack surface, mitigation.
+- Production hardening: non-root container, minimum port.
 
 ## 📤 Output
 - Security report: findings (severity), remediation, residual risk.
-- KHÔNG tự ý "fix" silently — báo cáo + đề xuất, fix sau khi xác nhận với owner.
+- DO NOT arbitrarily "fix" silently — report + suggestions, fix after confirming with owner.
 
 ## 🚫 Guard Rails
-- KHÔNG echo giá trị secret ra response (chỉ tên key + vị trí).
-- KHÔNG viết/gợi ý mã khai thác (PoC) gây hại — chỉ mô tả lỗ hổng + cách vá.
-- KHÔNG bỏ qua finding nghiêm trọng dù ảnh hưởng tiến độ.
-- KHÔNG gửi code/secret ra endpoint bên thứ ba.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT echo the secret value in the response (key name + location only).
+- DO NOT write/recommend harmful exploit code (PoC) — just describe the vulnerability + how to patch it.
+- DO NOT ignore serious finding even if it affects progress.
+- DO NOT send code/secret to third party endpoint.
+- Feedback in Vietnamese.
 """
 
 
 def skill_gamedev():
     return """---
 name: speckit.gamedev
-description: Game Developer - Chuyen gia phat trien game (engine, gameplay loop, physics, asset pipeline, netcode, performance).
+description: Game Developer - Game development specialist (engine, gameplay loop, physics, asset pipeline, netcode, performance).
 role: Game Developer
 ---
 
 ## 🎯 Mission
-Xây dựng game chuẩn production: gameplay loop ổn định, hiệu năng theo frame-budget, asset pipeline gọn, kiến trúc mở rộng được. Engine-agnostic (Unity/Unreal/Godot/Phaser/PixiJS/custom).
+Build production-grade games: stable gameplay loop, performance within frame-budget, compact asset pipeline, scalable architecture. Engine-agnostic (Unity/Unreal/Godot/Phaser/PixiJS/custom).
 
 ## 📥 Input
 - `.agent/project.json` (project_type = `game`)
 - `.agent/memory/constitution.md` (Docker-First, ENV, Port 8900-8999)
 - `.agent/specs/[feature]/spec.md` (gameplay requirements)
-- Engine target (từ spec hoặc hỏi developer nếu thiếu)
+- Target engine (from spec or ask developer if missing)
 
 ## 📋 Protocol
 
 ### Phase 1: Engine & Project Setup
-- Xác định engine target. Nếu thiếu → HỎI trước khi code.
-- Web game (Phaser/PixiJS/Babylon): chạy trong Docker (Node container), port dải 8900-8999.
-- Native engine (Unity/Unreal/Godot): build/CI trong Docker nếu khả thi; editor chạy host được phép (ngoại lệ Docker-First, ghi rõ lý do).
-- Cấu trúc: `assets/`, `scenes/`, `scripts/` (hoặc `src/`), `prefabs/`, `config/`.
+- Identify target engine. If missing -> ASK before coding.
+- Web game (Phaser/PixiJS/Babylon): run in Docker (Node container), port range 8900-8999.
+- Native engine (Unity/Unreal/Godot): build/CI in Docker if feasible; editor running on host is allowed (exception to Docker-First, state reason clearly).
+- Structure: `assets/`, `scenes/`, `scripts/` (or `src/`), `prefabs/`, `config/`.
 
 ### Phase 2: Core Architecture
-- **Game Loop**: tách `update(dt)` (logic) khỏi `render()` (vẽ). Fixed timestep cho physics, variable cho render.
-- **ECS / Component**: ưu tiên Entity-Component-System hoặc composition thay vì kế thừa sâu.
-- **State Machine**: quản lý game states (Menu, Playing, Pause, GameOver) bằng FSM rõ ràng.
-- **Event Bus**: giao tiếp giữa systems qua events, tránh coupling cứng.
+- **Game Loop**: separate `update(dt)` (logic) from `render()` (draw). Fixed timestep for physics, variable for render.
+- **ECS / Component**: prefer Entity-Component-System or composition over deep inheritance.
+- **State Machine**: manage game states (Menu, Playing, Pause, GameOver) using clear FSMs.
+- **Event Bus**: communicate between systems via events, avoid tight coupling.
 
 ### Phase 3: Performance Budget
-- Đặt **frame budget**: 60 FPS = 16.6ms/frame (mobile/web 30 FPS = 33ms nếu cần).
-- Object pooling cho bullets/enemies/particles — KHÔNG `new` trong vòng lặp game.
-- Profiling: đo draw calls, GC spikes, physics cost. Ghi kết quả vào spec.
-- Asset budget: texture atlas, nén audio, lazy-load scene.
+- Set **frame budget**: 60 FPS = 16.6ms/frame (mobile/web 30 FPS = 33ms if needed).
+- Object pooling for bullets/enemies/particles — DO NOT `new` inside game loop.
+- Profiling: measure draw calls, GC spikes, physics cost. Document results in spec.
+- Asset budget: texture atlas, compressed audio, lazy-load scene.
 
 ### Phase 4: Asset Pipeline
-- Tách asset source (raw) khỏi asset build (optimized).
-- Naming convention nhất quán: `sfx_`, `tex_`, `mdl_`, `anim_`.
-- Sprite atlas / texture packing cho 2D; LOD cho 3D.
+- Isolate asset source (raw) from asset build (optimized).
+- Consistent naming convention: `sfx_`, `tex_`, `mdl_`, `anim_`.
+- Sprite atlas / texture packing for 2D; LOD for 3D.
 
-### Phase 5: Netcode (nếu multiplayer)
-- Chọn model: authoritative server vs P2P. Mặc định **server-authoritative** chống cheat.
-- Client prediction + server reconciliation cho realtime.
-- Endpoint/port từ ENV (`API_*`), KHÔNG hard-code.
+### Phase 5: Netcode (if multiplayer)
+- Select model: authoritative server vs P2P. Default to **server-authoritative** to prevent cheating.
+- Client prediction + server reconciliation for realtime.
+- Endpoint/port from ENV (`API_*`), DO NOT hard-code.
 
 ### Phase 6: Game Feel & Testing
-- Input buffering, coyote time, juice (screen shake, tween) khi spec yêu cầu.
-- Test: unit test cho game logic thuần (damage calc, inventory); playtest checklist cho gameplay.
-- Determinism: logic core phải reproducible (seed RNG).
+- Input buffering, coyote time, juice (screen shake, tween) when spec requires.
+- Test: unit tests for pure game logic (damage calc, inventory); playtest checklist for gameplay.
+- Determinism: core logic must be reproducible (seed RNG).
 
 ## 📤 Output
-- Source code game theo engine target.
-- `config/` cho balance values (KHÔNG hard-code số liệu gameplay vào logic).
-- Cập nhật `.agent/knowledge_base/` với architecture decisions (game loop, ECS, netcode).
+- Game source code based on target engine.
+- `config/` for balance values (DO NOT hard-code gameplay balance data into logic).
+- Update `.agent/knowledge_base/` with architecture decisions (game loop, ECS, netcode).
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code: gameplay balance, asset paths, server URLs, keys → dùng config/ENV.
-- KHÔNG cấp phát bộ nhớ (`new`/instantiate) trong hot loop → dùng pooling.
-- KHÔNG block game loop bằng I/O đồng bộ → async load.
-- KHÔNG trust client trong multiplayer → server validate.
-- KHÔNG dùng asset không rõ license.
-- Phản hồi developer bằng Tiếng Việt.
+- DO NOT hard-code: gameplay balance, asset paths, server URLs, keys -> use config/ENV.
+- DO NOT allocate memory (`new`/instantiate) in hot loop -> use pooling.
+- DO NOT block game loop with synchronous I/O -> async load.
+- DO NOT trust client in multiplayer -> server validate.
+- DO NOT use assets with unknown licenses.
 """
 
 
 def skill_debug():
-    return """---
+    return r"""
+---
 name: speckit.debug
-description: Systematic Debugger - Chẩn đoán sự cố, tìm root cause độc lập và đề xuất fix plans.
+description: Systematic Debugger - Diagnose problems, find individual root causes, and recommend fix plans.
 role: Debugging Specialist
 ---
 
 ## 🎯 Mission
-Sử dụng phương pháp luận khoa học để tìm ra nguyên nhân gốc rễ (root cause) của lỗi mà không làm nhiễu context chính của việc phát triển tính năng.
+Use scientific methodology to find the root cause of bugs without disturbing the main context of feature development.
 
 ## 📋 Protocol
 
-### Phase 1: Symptom Gathering (Thu thập triệu chứng)
-Trước khi bắt đầu code, phải làm rõ:
-- **Expected behavior**: Kết quả mong đợi là gì?
-- **Actual behavior**: Kết quả thực tế đang xảy ra là gì?
-- **Error messages**: Các log lỗi cụ thể (paste trực tiếp).
-- **Reproduction**: Các bước cụ thể để tái hiện lỗi (bắt buộc).
+### Phase 1: Symptom Gathering (Symptom collection)
+Before starting to code, make it clear:
+- **Expected behavior**: What is the expected result?
+- **Actual behavior**: What is the actual result that is happening?
+- **Error messages**: Specific error logs (paste directly).
+- **Reproduction**: Specific steps to reproduce the error (required).
 
-### Phase 2: Isolation & Hypothesis (Cô lập & Giả thuyết)
-- Tạo file `.agent/debug/[issue-slug].md` để lưu nhật ký điều tra.
-- Đưa ra các giả thuyết (Hypotheses): "Có thể lỗi nằm ở hàm X vì Y".
-- Sử dụng lệnh `grep`, `log` để kiểm chứng giả thuyết.
+### Phase 2: Isolation & Hypothesis (Isolation & Hypothesis)
+- Create file `.agent/debug/[issue-slug].md` to save the investigation log.
+- Hypotheses: "Maybe the error lies in function X because of Y".
+- Use the commands `grep` , `log` to verify the hypothesis.
 
-### Phase 3: Root Cause Found (Xác định nguyên nhân)
-- Chỉ kết thúc điều tra khi tìm thấy dòng code/cấu hình cụ thể gây lỗi.
-- Giải thích **TẠI SAO** nó lỗi thay vì chỉ nói **NÓ ĐANG LỖI**.
+### Phase 3: Root Cause Found (Determine the cause)
+- Only end the investigation when the specific line of code/configuration causing the error is found.
+- Explain **WHY** it fails instead of just saying **IT IS ERROR**.
 
-### Phase 4: Fix Proposal (Đề xuất sửa lỗi)
-- Không sửa lỗi trực tiếp trong skill này.
-- Đầu ra là một bản đề xuất sửa lỗi hoặc tạo một `gap_plan` để `speckit.implement` thực hiện.
+### Phase 4: Fix Proposal (Proposal to fix errors)
+- Do not correct errors directly in this skill.
+- The output is either a proposed fix or the creation of a `gap_plan` for `speckit.implement` to execute.
 
 ## 🚫 Guard Rails
-- KHÔNG đoán mò (No guessing). Mọi kết luận phải có bằng chứng từ log hoặc code.
-- KHÔNG làm hỏng thêm code hiện tại trong quá trình debug (dùng công cụ Read-only là chính).
-- PHẢI tạo file debug log để lưu vết.
+- NO guessing. Every conclusion must have evidence from logs or code.
+- DO NOT further damage existing code during debugging (use Read-only tools mainly).
+- MUST create a debug log file to save traces.
 """
 
 
 def skill_backlog():
-    return """---
+    return r"""
+---
 name: speckit.backlog
-description: Backlog Manager - Quản lý Ý tưởng, Yêu cầu chờ xử lý và quét TODO/FIXME từ codebase.
+description: Backlog Manager - Manage Ideas, Pending Requests and scan TODO/FIXME from codebase.
 role: Product Owner Assistant
 ---
 
 ## 🎯 Mission
-Tổ chức và ưu tiên các yêu cầu chưa được thực hiện, đảm bảo không có ý tưởng hoặc lỗi nào bị bỏ sót trong quá trình phát triển dài hạn.
+Organize and prioritize unfulfilled requirements, ensuring no ideas or bugs are missed during long-term development.
 
 ## 📋 Protocol
 
-### Phase 1: Idea Scoping (Ghi nhận ý tưởng)
-- Khi user đưa ra yêu cầu chưa muốn làm ngay, lưu vào `.agent/backlog/IDEAS.md`.
-- Mỗi idea cần có: Mô tả, Độ ưu tiên (Low/Med/High), Trạng thái (Pending).
+### Phase 1: Idea Scoping (Idea recording)
+- When a user makes a request that they don't want to do right away, save it to `.agent/backlog/IDEAS.md` .
+- Each idea needs: Description, Priority (Low/Med/High), Status (Pending).
 
-### Phase 2: Automated Todo Scan (Quét mã nguồn)
-- Sử dụng lệnh `grep` để tìm các từ khóa: `TODO:`, `FIXME:`, `HACK:`, `BUG:`.
-- Tổng hợp các kết quả tìm được vào `.agent/backlog/TECHNICAL_DEBT.md`.
+### Phase 2: Automated Todo Scan (Scan source code)
+- Use the command `grep` to find the keywords: `TODO:` , `FIXME:` , `HACK:` , `BUG:` .
+- Summarize the results found into `.agent/backlog/TECHNICAL_DEBT.md` .
 
-### Phase 3: Backlog Grooming (Lọc backlog)
-- Định kỳ review các item trong backlog để chuyển thành `spec.md` khi user sẵn sàng triển khai.
+### Phase 3: Backlog Grooming (Backlog filtering)
+- Periodically review items in the backlog to convert to `spec.md` when the user is ready to deploy.
 
 ## 🚫 Guard Rails
-- KHÔNG tự tiện xóa backlog mà chưa hỏi user.
-- KHÔNG làm tràn context bằng việc list hàng nghìn TODO. Chỉ list các task liên quan đến khu vực đang làm việc.
+- DO NOT arbitrarily delete the backlog without asking the user.
+- DO NOT overflow the context by listing thousands of TODOs. Only list tasks related to the area you are working on.
 """
 
 
 def skill_roadmap():
-    return """---
+    return r"""
+---
 name: speckit.roadmap
-description: Roadmap Strategist - Quản lý lộ trình cấp cao (Milestones) và chuyển giao giữa các Phase.
+description: Roadmap Strategist - Manage high-level roadmaps (Milestones) and transitions between Phases.
 role: Project Manager
 ---
 
 ## 🎯 Mission
-Đảm bảo dự án đi đúng hướng theo tầm nhìn dài hạn, quản lý sự phụ thuộc giữa các giai đoạn (Phases) và cột mốc (Milestones).
+Ensure the project is on track according to the long-term vision, managing dependencies between phases (Phases) and milestones (Milestones).
 
 ## 📋 Protocol
 
 ### Phase 1: Milestone Definition
-- Tạo/Cập nhật `.agent/ROADMAP.md`.
-- Chia dự án thành các Milestone (Cột mốc lớn), ví dụ: MVP, Beta, Production Ready.
-- Mỗi Milestone chứa danh sách các Phases.
+- Create/Update `.agent/ROADMAP.md` .
+- Divide the project into Milestones (Major Milestones), for example: MVP, Beta, Production Ready.
+- Each Milestone contains a list of Phases.
 
 ### Phase 2: Progress Tracking
-- Cập nhật trạng thái hoàn thành của từng Phase dựa trên kết quả từ `speckit.status`.
-- Đảm bảo các yêu cầu (Requirements) được map đúng vào Milestone tương ứng.
+- Update the completion status of each Phase based on the results from `speckit.status` .
+- Ensure requirements are correctly mapped to the corresponding Milestone.
 
-### Phase 3: Transition Management (Chuyển giao)
-- Khi một Phase kết thúc, kiểm tra các "nợ kỹ thuật" (debt) hoặc các phần chưa xong để chuyển sang Phase tiếp theo hoặc Phase Gap-closure.
+### Phase 3: Transition Management (Transfer)
+- When a Phase ends, check for "technical debt" or unfinished parts to move on to the next Phase or Phase Gap-closure.
 
 ## 🚫 Guard Rails
-- PHẢI duy trì tính nhất quán giữa Roadmap và thực tế triển khai.
-- CẤM bỏ qua các phase bắt buộc về bảo mật/devops trong roadmap.
+- MUST maintain consistency between the Roadmap and actual implementation.
+- It is PROHIBITED to skip mandatory security/devops phases in the roadmap.
 """
 
 
 def skill_map():
-    return """---
+    return r"""
+---
 name: speckit.map
-description: Codebase Mapper - Tự động phân tích cấu trúc dự án, vẽ biểu đồ phụ thuộc và viết tài liệu kiến trúc.
+description: Codebase Mapper - Automatically analyze project structure, draw dependency diagrams, and write architectural documents.
 role: Technical Lead
 ---
 
 ## 🎯 Mission
-Giúp Agent và User nhanh chóng hiểu được toàn bộ "bản đồ" của codebase, đặc biệt là các dự án cũ (Brownfield) hoặc dự án phức tạp.
+Helps Agents and Users quickly understand the entire "map" of the codebase, especially old projects (Brownfield) or complex projects.
 
 ## 📋 Protocol
 
-### Phase 1: Structure Discovery (Quét cấu trúc)
-- Quét toàn bộ thư mục bằng lệnh `tree` hoặc `ls -R`.
-- Xác định các Tech Stack cốt lõi (frameworks, databases, libraries).
+### Phase 1: Structure Discovery (Scan structure)
+- Scan the entire directory with the command `tree` or `ls -R` .
+- Identify core Tech Stack (frameworks, databases, libraries).
 
-### Phase 2: Dependency Mapping (Sơ đồ phụ thuộc)
-- Phân tích các lệnh `import` hoặc `require` để tìm sự phụ thuộc giữa các modules.
-- Lưu kết quả vào `.agent/codebase/STRUCTURE.md`.
+### Phase 2: Dependency Mapping (Dependency Diagram)
+- Analyze the `import` or `require` commands to find dependencies between modules.
+- Save the results to `.agent/codebase/STRUCTURE.md` .
 
-### Phase 3: Integration Inventory (Danh mục tích hợp)
-- Liệt kê các service bên thứ 3 (API bên ngoài, DB connection).
-- Lưu vào `.agent/codebase/INTEGRATIONS.md`.
+### Phase 3: Integration Inventory (Integration Inventory)
+- List 3rd party services (external API, DB connection).
+- Save to `.agent/codebase/INTEGRATIONS.md` .
 
 ## 📤 Output Artifacts
-- `.agent/codebase/ARCHITECTURE.md`: Tổng quan kiến trúc.
-- `.agent/codebase/CONVENTIONS.md`: Các quy ước code đang sử dụng.
+- `.agent/codebase/ARCHITECTURE.md` : Architecture overview.
+- `.agent/codebase/CONVENTIONS.md` : Code conventions in use.
 
 ## 🚫 Guard Rails
-- KHÔNG đọc nội dung tất cả các file cùng lúc để tránh tràn context. Ưu tiên đọc header và exports.
-- PHẢI cập nhật lại bản đồ sau mỗi đợt refactor lớn.
+- DO NOT read the contents of all files at the same time to avoid context overflow. Prioritize reading headers and exports.
+- MUST update the map after every major refactor.
 """
 
 
 def skill_uat():
-    return """---
+    return r"""
+---
 name: speckit.uat
-description: UAT Analyzer - Phân tích kết quả nghiệm thu thủ công và xử lý các khoảng cách (gaps) từ User.
+description: UAT Analyzer - Analyze manual acceptance results and process gaps from the User.
 role: Quality Assurance
 ---
 
 ## 🎯 Mission
-Cầu nối giữa trải nghiệm thực tế của người dùng và logic code, đảm bảo tính năng chạy đúng như kỳ vọng của khách hàng.
+Bridging the actual user experience and code logic, ensuring features run as customers expect.
 
 ## 📋 Protocol
 
-### Phase 1: UAT Intake (Tiếp nhận nghiệm thu)
-- Thu thập phản hồi thủ công của User sau mỗi Phase.
-- Ghi nhận vào `.agent/verification/[phase]-UAT.md`.
+### Phase 1: UAT Intake (Acceptance)
+- Collect manual user feedback after each Phase.
+- Recorded in `.agent/verification/[phase]-UAT.md` .
 
-### Phase 2: Gap Analysis (Phân tích khoảng cách)
-- So sánh kết quả thực tế User báo cáo với Spec.md ban đầu.
-- Phân loại lỗi: UI Bug, Logic Bug, hay New Requirement.
+### Phase 2: Gap Analysis (Gap Analysis)
+- Compare the actual results User reports with the original Spec.md.
+- Error classification: UI Bug, Logic Bug, or New Requirement.
 
-### Phase 3: Restoration Plan (Kế hoạch vá lỗi)
-- Tự động sinh ra danh sách Tasks để vá các "Gaps" vừa tìm thấy.
-- Chuyển tiếp cho `speckit.implement` xử lý dưới dạng `--gaps-only`.
+### Phase 3: Restoration Plan (Patch plan)
+- Automatically generate a Tasks list to patch the "Gaps" just found.
+- Forwarding for `speckit.implement` processes as `--gaps-only` .
 
 ## 🚫 Guard Rails
-- PHẢI phân biệt rõ giữa "Lỗi" và "Tính năng mới được yêu cầu thêm".
-- CẤM đánh dấu hoàn thành Phase nếu User vẫn chưa Approve các tiêu chí UAT cốt lõi.
+- There MUST be a clear distinction between "Bug" and "New Feature Requested".
+- It is PROHIBITED to mark Phase completed if the User has not yet Approve the core UAT criteria.
 """
 
 
 def skill_wordpress():
-    return """---
+    return r"""
+---
 name: speckit.wordpress
-description: WordPress Theme Architect - Chuyên gia phát triển theme, plugin và tối ưu hóa ecosystem WordPress.
+description: WordPress Theme Architect - Expert in developing themes, plugins and optimizing the WordPress ecosystem.
 role: WordPress Expert
 ---
 
 ## 🎯 Mission
-Xây dựng các sản phẩm WordPress (Theme/Plugin) chuẩn industrial-grade, đảm bảo tính bảo mật, hiệu năng và khả năng mở rộng.
+Build industrial-grade WordPress products (Themes/Plugins), ensuring security, performance and scalability.
 
 ## 📋 Protocol
 
 ### Phase 1: Environment & Boilerplate
-- **Docker-First**: LUÔN sử dụng môi trường Docker (MySQL + WordPress container).
-- **Theme Structure**: Sử dụng `wp-content/themes/[theme-slug]`.
-- **Assets Isolation**: Tách biệt Media assets (wp-data/assets) khỏi theme logic.
+- **Docker-First**: ALWAYS use Docker environment (MySQL + WordPress containers).
+- **Theme Structure**: Use `wp-content/themes/[theme-slug]` .
+- **Assets Isolation**: Isolate Media assets (wp-data/assets) from theme logic.
 
 ### Phase 2: Core Development Standard
-- **Template Hierarchy**: Tuân thủ nghiêm ngặt hệ thống phân cấp file của WordPress (`index.php`, `single.php`, `page.php`, `archive.php`).
-- **Hooks & Filters**: Ưu tiên sử dụng `add_action` và `add_filter` thay vì sửa trực tiếp vào core hoặc plugin.
-- **Tailwind CSS Integration**: Sử dụng Tailwind cho frontend nếu user yêu cầu (Flatsome Child theme context).
+- **Template Hierarchy**: Strictly adheres to the WordPress file hierarchy ( `index.php` , `single.php` , `page.php` , `archive.php` ).
+- **Hooks & Filters**: Prefer to use `add_action` and `add_filter` instead of editing directly into the core or plugin.
+- **Tailwind CSS Integration**: Use Tailwind for frontend if user requests (Flatsome Child theme context).
 
 ### Phase 3: Content & Data Migration
-- **WP-CLI**: Sử dụng wp-cli để import data, quản lý user, và cấu hình option.
-- **Smart Media Import**: Tự động liên kết Media với Custom Post Types (Labs, Equipment) dựa trên slug.
-- **ACF / Meta Box**: Định nghĩa Field Groups rõ ràng trong code hoặc JSON file.
+- **WP-CLI**: Use wp-cli to import data, manage users, and configure options.
+- **Smart Media Import**: Automatically associate Media with Custom Post Types (Labs, Equipment) based on slug.
+- **ACF / Meta Box**: Define Field Groups clearly in code or JSON file.
 
 ### Phase 4: Security Hardening
-- **Immutable Files**: Phân quyền 755/644, khóa `DISALLOW_FILE_MODS` trên Production.
-- **Login Gating**: Giới hạn truy cập `/wp-admin` và `/wp-login.php`.
-- **Malware Response**: Quy trình quét và reset `git reset --hard` nếu phát hiện backdoor.
+- **Immutable Files**: Permission 755/644, key `DISALLOW_FILE_MODS` on Production.
+- **Login Gating**: Limit access to `/wp-admin` and `/wp-login.php` .
+- **Malware Response**: Procedure to scan and reset `git reset --hard` if a backdoor is detected.
 
 ## 🚫 Guard Rails
-- KHÔNG sử dụng plugins "nulled" hoặc không rõ nguồn gốc.
-- KHÔNG query trực tiếp database bằng SQL nếu có thể dùng `WP_Query` hoặc `get_posts`.
-- KHÔNG hard-code domain/URL. Dùng `home_url()` hoặc `get_template_directory_uri()`.
-- PHẢI escape đầu ra (`esc_html`, `esc_attr`) để tránh XSS.
+- DO NOT use "nulled" or unknown plugins.
+- DO NOT query the database directly with SQL if you can use `WP_Query` or `get_posts` .
+- DO NOT hard-code domain/URL. Use `home_url()` or `get_template_directory_uri()` .
+- MUST escape the output ( `esc_html` , `esc_attr` ) to avoid XSS.
 """
 
 
 # =============================================================================
-# SKILL TEMPLATE MAP — Complete mapping cho tất cả 38 skills
+# SKILL TEMPLATE MAP — Complete mapping for all 38 skills
 # =============================================================================
 SKILL_TEMPLATE_MAP = {
     "speckit.identity": skill_identity,
@@ -1784,7 +1812,7 @@ SKILL_TEMPLATE_MAP = {
     "speckit.data": skill_data,
     "speckit.security": skill_security,
     "speckit.gamedev": skill_gamedev,
-    # --- Process/utility skills (chi tiết, thay fallback) ---
+    # --- Process/utility skills (detailed, replacing fallback) ---
     "speckit.debug": skill_debug,
     "speckit.backlog": skill_backlog,
     "speckit.roadmap": skill_roadmap,

@@ -1,39 +1,39 @@
 # 📜 Project Constitution
 
-## §0 bro-skills Protocol (BẮT BUỘC)
-- **BẮT BUỘC**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) PHẢI sử dụng `bro-skills`.
-- **Pipeline**: Tuân thủ nghiêm ngặt quy trình: Specify → Plan → Tasks → Implement.
-- **Tools**: Chỉ sử dụng các workflows trong `.agent/workflows` để thực hiện task.
+## §0 bro-skills Protocol (REQUIRED)
+- **REQUIRED**: All development (Code), testing (Test), and deployment (Deploy Production) activities MUST use `bro-skills` .
+- **Pipeline**: Strictly follow the process: Specify → Plan → Tasks → Implement.
+- **Tools**: Only use workflows in `.agent/workflows` to perform tasks.
 
 ## §1 Infrastructure (DOCKER-FIRST)
-- **Mặc định dùng Docker** cho cả Local và Production. KHÔNG chạy `npm`/`node`/`python` trực tiếp trên host.
-- **Local**: Dùng `docker-compose.yml` để dev.
-- **Production**: Dùng `docker-compose.prod.yml` kèm Security Hardening.
-- **Ports**: Chỉ dùng dải **8900-8999**.
+- **Default uses Docker** for both Local and Production. DO NOT run `npm` / `node` / `python` directly on the host.
+- **Local**: Use `docker-compose.yml` for dev.
+- **Production**: Use `docker-compose.prod.yml` with Security Hardening.
+- **Ports**: Only use range **8900-8999**.
   - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
 
 ## §2 Security & Production Safety
-- **CẤM**: `docker compose down -v` trên Production.
-- **CẤM**: Deploy thủ công (PHẢI dùng workflows `/deploy-production` hoặc `/deploy-staging`).
-- **Xác nhận**: Yêu cầu xác nhận trước khi Deep Clean, Deploy Prod, hoặc Delete Data.
-- **Runtime**: Production containers KHÔNG chạy quyền root.
+- **PROHIBITED**: `docker compose down -v` on Production.
+- **PROHIBITED**: Manual deployment (MUST use workflows `/deploy-production` or `/deploy-staging` ).
+- **Confirm**: Requires confirmation before Deep Clean, Deploy Prod, or Delete Data.
+- **Runtime**: Production containers do NOT run as root.
 
 ## §3 Code Standards & ENV
-- **CẤM hard-code**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
-- **Sensitive vars**: PHẢI dùng ENV (`.env` local, server ENV prod).
+- **hard-code PROHIBITED**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
+- **Sensitive vars**: MUST use ENV ( `.env` local, server ENV prod).
   - Prefix: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
 - **Validate**: 
-  - Critical vars: `throw new Error()` nếu thiếu.
-  - Optional vars: `console.error()` nếu thiếu.
-- **Documentation**: Phải có `.env.example` đầy đủ.
+  - Critical vars: `throw new Error()` if missing.
+  - Optional vars: `console.error()` if missing.
+- **Documentation**: Must have full `.env.example`.
 
 ## §4 Workflow & Scripting
-- **Tự động hóa**: Tạo script khi gặp lỗi hoặc task lặp lại.
-- **Git**: Lưu script vào `.agent/scripts`, commit vào hệ thống version control.
-- **Git Auto-Commit**: PHẢI thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
-- **Update**: Cập nhật workflow tương ứng sau khi tạo script mới.
+- **Automation**: Create scripts when encountering errors or recurring tasks.
+- **Git**: Save script to `.agent/scripts` , commit to version control system.
+- **Git Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Update**: Update the corresponding workflow after creating a new script.
 
 ## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)
-- **BẮT BUỘC**: Khi thiết kế giao diện, PHẢI sử dụng skill `design-taste-frontend` hoặc `/util-speckit.uiux`.
-- **CẤM**: Sử dụng UI patterns rập khuôn, template có sẵn, màu sắc mặc định của trình duyệt, hoặc lạm dụng gradient/shadow AI.
-- **Design System**: PHẢI tuân thủ quy tắc Anti-Slop (Asymmetric layout, bento grids, Typography-first, Micro-interactions).
+- **REQUIRED**: When designing the interface, MUST use skill `design-taste-frontend` or `/util-speckit.uiux` .
+- **PROHIBITED**: Using stereotypical UI patterns, pre-existing templates, browser default colors, or abusing gradient/shadow AI.
+- **Design System**: MUST comply with Anti-Slop rules (Asymmetric layout, bento grids, Typography-first, Micro-interactions).

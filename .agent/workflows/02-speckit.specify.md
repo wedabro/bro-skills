@@ -1,19 +1,19 @@
 ---
-description: Tạo Feature Specification (spec.md)
+description: Create Feature Specification (spec.md)
 ---
 
 # 📝 Feature Specification
 
 ## Pre-conditions
-- `.agent/memory/constitution.md` tồn tại
+- `.agent/memory/constitution.md` exists
 
 ## Steps
 
-1. Developer mô tả feature bằng ngôn ngữ tự nhiên
-2. **@speckit.specify** — Parse mô tả → tạo spec.md chuẩn hóa
-3. Review output: spec.md phải có Overview, User Scenarios, Requirements, Success Criteria
+1. Developers describe features in natural language
+2. **@speckit.specify** — Parse description → create standardized spec.md
+3. Review output: spec.md must have Overview, User Scenarios, Requirements, Success Criteria
 
 ## Success Criteria
-- ✅ spec.md có ≥1 User Scenario
-- ✅ Mỗi scenario có Actor + Action + Value
-- ✅ Success Criteria là testable
+- ✅ spec.md has ≥1 User Scenario
+- ✅ Each scenario has Actor + Action + Value
+- ✅ Success Criteria is testable

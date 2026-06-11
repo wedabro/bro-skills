@@ -1,48 +1,48 @@
 ---
 name: speckit.constitution
-description: Governance Manager - Thiết lập & quản lý Constitution (Source of Law).
+description: Governance Manager - Set up & manage Constitution (Source of Law).
 role: Governance Architect
 ---
 
 ## 🎯 Mission
-Tạo và duy trì constitution.md — "luật tối cao" mà mọi agent phải tuân thủ.
+Create and maintain constitution.md — the "supreme law" that every agent must comply with.
 
 ## 📥 Input
-- Developer cung cấp: tech stack, principles, constraints
-- `.agent/knowledge_base/infrastructure.md` (nếu có)
+- Developer provides: tech stack, principles, constraints
+- `.agent/knowledge_base/infrastructure.md` (if available)
 
 ## 📋 Protocol
-1. Thu thập từ developer:
+1. Collected from developers:
    - Tech stack (frameworks, DB, language)
    - Docker ports (trong range 8900-8999)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
-2. Tạo/cập nhật `.agent/memory/constitution.md` với sections BẮT BUỘC:
+2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
    - **§1 Infrastructure**: Docker-first policy, port allocation, environments
    - **§2 Security**: No root containers, no hardcoded secrets, multi-stage builds
    - **§3 Code Standards**: Language, naming conventions, ENV policy
-   - **§4 Non-Negotiables**: Danh sách rules KHÔNG BAO GIỜ được vi phạm
-   - **§5 Monorepo Rules** (nếu monorepo):
-     - Shared Package Contract: type exports là source of truth
-     - Build Independence: mỗi app phải compile độc lập
-     - Package exports phải match actual file structure
+   - **§4 Non-Negotiables**: List of rules that should NEVER be violated
+   - **§5 Monorepo Rules** (if monorepo):
+     - Shared Package Contract: type exports is the source of truth
+     - Build Independence: each app must be compiled independently
+     - Package exports must match actual file structure
    - **§6 Docker Deployment Rules**:
-     - CẤM volume shadowing (`- .:/app`) trong production/beta
-     - Dockerfile COPY paths phải tồn tại
-     - CMD entrypoint phải match với build output
-     - Next.js apps phải có thư mục `public/`
-   - **§7 Build-time Safety** (nếu Next.js):
-     - SSG pages (sitemap, generateStaticParams): API calls phải try-catch
-     - fetchApi phải return null/empty nếu API_URL undefined
+     - Volume shadowing ( `- .:/app` ) is PROHIBITED in production/beta
+     - Dockerfile COPY paths must exist
+     - CMD entrypoint must match build output
+     - Next.js apps must have a `public/` folder
+   - **§7 Build-time Safety** (if Next.js):
+     - SSG pages (sitemap, generateStaticParams): API calls must be try-catch
+     - fetchApi must return null/empty if API_URL is undefined
    - **§8 Pre-Deploy Checklist**:
-     - `docker compose build` thành công
-     - Tất cả services `Up` (không `Restarting`)
+     - `docker compose build` succeeded
+     - All services `Up` (not `Restarting` )
      - Health check: 200 OK
-3. Validate: Mỗi section phải có ít nhất 1 rule cụ thể, không chung chung.
+3. Validate: Each section must have at least 1 specific rule, not general.
 
 ## 📤 Output
 - File: `.agent/memory/constitution.md`
 
 ## 🚫 Guard Rails
-- Constitution KHÔNG chứa implementation details (HOW) — chỉ chứa rules (WHAT).
-- Mỗi rule phải testable (có thể verify bằng code/check).
+- Constitution does NOT contain implementation details (HOW) — only rules (WHAT).
+- Each rule must be testable (can be verified with code/check).

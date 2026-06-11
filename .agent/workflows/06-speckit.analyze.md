@@ -1,20 +1,20 @@
 ---
-description: Phân tích tính nhất quán giữa artifacts
+description: Analyze consistency between artifacts
 ---
 
 # 🔬 Consistency Analysis
 
 ## Pre-conditions
-- spec.md, plan.md, tasks.md tồn tại
+- spec.md, plan.md, tasks.md exist
 
 ## Steps
 
 1. **@speckit.analyze** — Cross-check 3 artifacts:
-   - Mỗi User Scenario → có tasks?
-   - Mỗi data model → có tasks?
-   - Conflicts giữa plan và constitution?
+   - Each User Scenario → has tasks?
+   - Each data model → has tasks?
+   - Conflicts between plan and constitution?
 2. Output: Gap Analysis table + Coverage Score
 
 ## Success Criteria
 - ✅ Coverage Score ≥ 90%
-- ✅ Không gaps CRITICAL
+- ✅ No CRITICAL gaps

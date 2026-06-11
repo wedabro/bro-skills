@@ -1,11 +1,11 @@
 ---
-description: Chạy Static Analysis
+description: Run Static Analysis
 ---
 
 # 🔍 Static Analysis
 
 ## Pre-conditions
-- Code đã implement (≥1 task complete)
+- Implemented code (≥1 task completed)
 
 ## Steps
 
@@ -15,17 +15,17 @@ description: Chạy Static Analysis
    ```bash
    docker compose build 2>&1 | grep -iE "error|fail|TS[0-9]"
    ```
-   Hoặc:
+   Or:
    ```bash
    docker compose exec topdeli-web npx tsc --noEmit
    docker compose exec topdeli-admin npx tsc --noEmit
    docker compose exec topdeli-api npx tsc --noEmit
    ```
 
-2. **Dockerfile Integrity** — Kiểm tra COPY paths:
-   - Verify mọi thư mục được COPY tồn tại (đặc biệt `public/`)
-   - Verify CMD entrypoint khớp với build output structure
-   - Verify KHÔNG có volume mount `.:/app` trong production/beta compose
+2. **Dockerfile Integrity** — Check COPY paths:
+   - Verify any COPY directories exist (especially `public/` )
+   - Verify CMD entrypoint matches build output structure
+   - Verify does NOT have volume mount `.:/app` in production/beta compose
 
 3. **ENV Compliance** — Scan hard-coded values:
    ```bash
@@ -37,21 +37,21 @@ description: Chạy Static Analysis
    ```bash
    grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
    ```
-   Mỗi kết quả PHẢI nằm trong try-catch block.
+   Each result MUST be in a try-catch block.
 
 5. **Monorepo Type Contract** — @speckit.checker:
    - Cross-reference shared type exports vs component usage
    - Verify shared package exports match actual file structure
 
 6. **Security Scan**:
-   - Tìm `eval()`, `dangerouslySetInnerHTML`, exposed secrets
+   - Find `eval()` , `dangerouslySetInnerHTML` , exposed secrets
    - Docker compliance: ports trong range 8900-8999
 
 7. **Output Report** → `.agent/memory/checker-report.md`
 
 ## Success Criteria
 - ✅ TypeScript compile: 0 errors
-- ✅ Docker build: thành công hoàn toàn
+- ✅ Docker build: complete success
 - ✅ 0 issues CRITICAL (🔴)
-- ✅ Report file tồn tại
-- ❌ Nếu có bất kỳ 🔴 CRITICAL → BLOCK deploy
+- ✅ Report file existence
+- ❌ If there are any 🔴 CRITICAL → BLOCK deploy

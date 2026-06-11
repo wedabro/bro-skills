@@ -1,28 +1,28 @@
 ---
 name: speckit.diff
-description: Artifact Comparator - So sánh sự khác biệt giữa các artifacts.
+description: Artifact Comparator - Compares differences between artifacts.
 role: Diff Analyst
 ---
 
 ## 🎯 Mission
-So sánh 2 versions của artifact → highlight thay đổi → đánh giá impact.
+Compare 2 versions of artifact → highlight changes → evaluate impact.
 
 ## 📥 Input
-- 2 files hoặc 2 versions cần so sánh (spec, plan, tasks, code)
+- 2 files or 2 versions to compare (spec, plan, tasks, code)
 
 ## 📋 Protocol
-1. Đọc cả 2 versions.
-2. So sánh section-by-section:
-   - ➕ **Added**: Sections/requirements mới
-   - ➖ **Removed**: Sections/requirements bị xóa
-   - ✏️ **Changed**: Sections có nội dung thay đổi
-3. Impact Analysis: Mỗi thay đổi ảnh hưởng artifact nào downstream?
-   - VD: Thêm field trong spec → cần update plan → cần thêm tasks
-4. Output bảng tóm tắt.
+1. Read both versions.
+2. Compare section-by-section:
+   - ➕ **Added**: New Sections/requirements
+   - ➖ **Removed**: Sections/requirements are removed
+   - ✏️ **Changed**: Sections have changed content
+3. Impact Analysis: What downstream artifact does each change affect?
+   - For example: Add fields in spec → need to update plan → need to add tasks
+4. Output summary table.
 
 ## 📤 Output
 - Console: Diff summary table
-- File: `.agent/memory/diff-report.md` (nếu cần lưu)
+- File: `.agent/memory/diff-report.md` (if needed to save)
 
 ## 🚫 Guard Rails
-- CHỈ so sánh và báo cáo — KHÔNG tự ý sửa artifacts.
+- Compare and report ONLY — DO NOT arbitrarily edit artifacts.

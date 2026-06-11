@@ -1,8 +1,8 @@
 ---
-description: Vẽ bản đồ kiến trúc và sơ đồ phụ thuộc của Codebase
+description: Draw the architecture map and dependency diagram of the Codebase
 ---
 
 # 🗺️ Codebase Mapping
 
 ## Steps
-1. **@speckit.map** — Quét toàn bộ project và sinh tài liệu kiến trúc.
+1. **@speckit.map** — Scan the entire project and generate architectural documents.

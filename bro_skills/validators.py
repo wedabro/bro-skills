@@ -1,5 +1,5 @@
 """
-Validators - Validate cấu trúc .agent/ đã tạo.
+Validators - Validate generated .agent/ structure.
 """
 
 import os
@@ -11,7 +11,7 @@ from .registry import (
 
 
 def _load_project_config(agent_dir):
-    """Đọc project.json để biết project_type + attributes (nếu có)."""
+    """Read project.json to determine project_type + attributes (if any)."""
     cfg_path = os.path.join(agent_dir, "project.json")
     if not os.path.isfile(cfg_path):
         return None
@@ -24,25 +24,25 @@ def _load_project_config(agent_dir):
 
 def validate_agent_structure(agent_dir: str) -> list:
     """
-    Validate cấu trúc .agent/ directory.
+    Validate .agent/ directory structure.
     Returns list of check results: [{name, passed, details}]
 
-    Validate đúng tập skill/workflow theo project_type + attributes trong
-    project.json. Nếu không có project.json → fallback validate toàn bộ registry.
+    Validates correct set of skills/workflows according to project_type + attributes in
+    project.json. If project.json doesn't exist → fallback to validate the entire registry.
     """
     results = []
 
     # Check 1: .agent/ directory exists
     results.append({
-        "name": "Thư mục .agent/ tồn tại",
+        "name": "Directory .agent/ exists",
         "passed": os.path.isdir(agent_dir),
-        "details": [] if os.path.isdir(agent_dir) else ["Không tìm thấy thư mục .agent/"],
+        "details": [] if os.path.isdir(agent_dir) else ["Directory .agent/ not found"],
     })
 
     if not os.path.isdir(agent_dir):
         return results
 
-    # Xác định tập skill/workflow kỳ vọng theo project config
+    # Determine the expected skill set/workflow according to project config
     cfg = _load_project_config(agent_dir)
     if cfg and cfg.get("project_type"):
         ptype = cfg["project_type"]
@@ -61,9 +61,9 @@ def validate_agent_structure(agent_dir: str) -> list:
             missing_dirs.append(d)
 
     results.append({
-        "name": f"Thư mục core ({len(core_dirs)} dirs)",
+        "name": f"Core directories ({len(core_dirs)} dirs)",
         "passed": len(missing_dirs) == 0,
-        "details": [f"Thiếu: {d}" for d in missing_dirs],
+        "details": [f"Missing: {d}" for d in missing_dirs],
     })
 
     # Check 3: Skills directories & SKILL.md
@@ -82,8 +82,8 @@ def validate_agent_structure(agent_dir: str) -> list:
         "name": f"Skills ({len(expected_skills)} skills)",
         "passed": len(missing_skills) == 0 and len(incomplete_skills) == 0,
         "details": (
-            [f"Thiếu thư mục: {s}" for s in missing_skills] +
-            [f"Thiếu SKILL.md: {s}" for s in incomplete_skills]
+            [f"Missing folder: {s}" for s in missing_skills] +
+            [f"Missing SKILL.md: {s}" for s in incomplete_skills]
         ),
     })
 
@@ -97,7 +97,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": f"Workflows ({len(expected_workflows)} workflows)",
         "passed": len(missing_workflows) == 0,
-        "details": [f"Thiếu: {w}.md" for w in missing_workflows],
+        "details": [f"Missing: {w}.md" for w in missing_workflows],
     })
 
     # Check 5: Template files
@@ -115,7 +115,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": f"Templates ({len(template_files)} templates)",
         "passed": len(missing_templates) == 0,
-        "details": [f"Thiếu: {t}" for t in missing_templates],
+        "details": [f"Missing: {t}" for t in missing_templates],
     })
 
     # Check 6: Script files
@@ -133,7 +133,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": f"Scripts ({len(script_files)} scripts)",
         "passed": len(missing_scripts) == 0,
-        "details": [f"Thiếu: {s}" for s in missing_scripts],
+        "details": [f"Missing: {s}" for s in missing_scripts],
     })
 
     # Check 7: Constitution file
@@ -141,7 +141,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": "Constitution (memory/constitution.md)",
         "passed": os.path.isfile(constitution_file),
-        "details": [] if os.path.isfile(constitution_file) else ["Thiếu constitution.md"],
+        "details": [] if os.path.isfile(constitution_file) else ["Missing constitution.md"],
     })
 
     # Check 8: README.md
@@ -149,7 +149,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": "README.md",
         "passed": os.path.isfile(readme_file),
-        "details": [] if os.path.isfile(readme_file) else ["Thiếu README.md"],
+        "details": [] if os.path.isfile(readme_file) else ["Missing README.md"],
     })
 
     # Check 9: SKILL.md content quality (basic check)
@@ -164,7 +164,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": "SKILL.md content quality (>100 bytes each)",
         "passed": len(empty_skills) == 0,
-        "details": [f"Quá ngắn: {s}" for s in empty_skills],
+        "details": [f"Too short: {s}" for s in empty_skills],
     })
 
     # Check 10: Workflow frontmatter
@@ -182,7 +182,7 @@ def validate_agent_structure(agent_dir: str) -> list:
     results.append({
         "name": "Workflow frontmatter (YAML header)",
         "passed": len(invalid_frontmatter) == 0,
-        "details": [f"Thiếu frontmatter: {f}" for f in invalid_frontmatter],
+        "details": [f"Missing frontmatter: {f}" for f in invalid_frontmatter],
     })
 
     return results

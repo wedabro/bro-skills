@@ -1,19 +1,19 @@
 ---
-description: Giải quyết mơ hồ trong Specification
+description: Resolve ambiguity in Specification
 ---
 
 # 🔍 Ambiguity Resolution
 
 ## Pre-conditions
-- `.agent/specs/[feature]/spec.md` tồn tại
+- `.agent/specs/[feature]/spec.md` exists
 
 ## Steps
 
-1. **@speckit.clarify** — Scan spec.md tìm ambiguity
-2. Hỏi developer tối đa 3 câu CRITICAL (bảng A/B/C options)
+1. **@speckit.clarify** — Scan spec.md for ambiguity
+2. Ask the developer up to 3 CRITICAL questions (table A/B/C options)
 3. Auto-fix MINOR issues
-4. Update spec.md với `[CLARIFIED]` markers
+4. Update spec.md with `[CLARIFIED]` markers
 
 ## Success Criteria
-- ✅ Không còn vague language trong spec.md
-- ✅ Mọi boundary conditions defined
+- ✅ No more vague language in spec.md
+- ✅ All boundary conditions defined

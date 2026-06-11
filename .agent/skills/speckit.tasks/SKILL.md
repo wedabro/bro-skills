@@ -1,41 +1,41 @@
 ---
 name: speckit.tasks
-description: Task Breaker - Tạo tasks.md atomic, có thứ tự dependency từ plan.
+description: Task Breaker - Create atomic tasks.md, with dependency order from plan.
 role: Execution Strategist
 ---
 
 ## 🎯 Mission
-Chuyển plan.md thành danh sách tasks atomic, có thứ tự dependency, mỗi task ≤15 phút.
+Convert plan.md into a list of atomic tasks, ordered by dependency, each task ≤15 minutes.
 
 ## 📥 Input
 - `.agent/specs/[feature]/plan.md`
 - `.agent/specs/[feature]/spec.md`
 
 ## 📋 Protocol
-1. Đọc plan.md → breakdown mỗi component thành atomic tasks.
-2. Format BẮT BUỘC cho mỗi task:
+1. Read plan.md → break down each component into atomic tasks.
+2. REQUIRED format for each task:
    ```
    - [ ] T001 [P] Setup project structure per plan.md
    - [ ] T002 [P] Create database schema in prisma/schema.prisma
    - [ ] T003 [P] [US1] Implement user registration API in src/api/auth.ts
    ```
    - `[P]`: Priority (blocking task)
-   - `[US1]`: Link đến User Scenario
-   - Path: File chính bị ảnh hưởng
-3. Phase Structure BẮT BUỘC:
+   - `[US1]` : Link to User Scenario
+   - Path: Main file affected
+3. Phase Structure REQUIRED:
    - **Phase 1: Setup** — Project init, configs, boilerplate
    - **Phase 2: Foundation** — DB, auth, shared utilities (blocking)
-   - **Phase 3+**: Mỗi User Story = 1 phase (theo priority từ spec)
+   - **Phase 3+**: Each User Story = 1 phase (according to priority from spec)
    - **Final Phase: Polish** — Error handling, optimization, cleanup
 4. Dependency Rules:
-   - Task phụ thuộc task khác → phải đặt SAU.
-   - Foundation tasks luôn ở Phase 2.
-5. **15-Minute Rule**: Mỗi task ≤ 15 phút, ảnh hưởng ≤ 3 files.
+   - Task depends on another task → must be placed AFTER.
+   - Foundation tasks are always in Phase 2.
+5. **15-Minute Rule**: Each task takes ≤ 15 minutes, affects ≤ 3 files.
 
 ## 📤 Output
 - File: `.agent/specs/[feature]/tasks.md`
 
 ## 🚫 Guard Rails
-- KHÔNG tạo task quá lớn (>3 files hoặc >15 phút).
-- KHÔNG tạo task trùng lặp.
-- Mỗi task PHẢI có file path cụ thể.
+- DO NOT create tasks that are too large (>3 files or >15 minutes).
+- DO NOT create duplicate tasks.
+- Each task MUST have a specific file path.

@@ -1,23 +1,23 @@
 ---
 name: speckit.specify
-description: Feature Definer - Tạo spec.md từ mô tả ngôn ngữ tự nhiên.
+description: Feature Definer - Generates spec.md from natural language description.
 role: Domain Scribe
 ---
 
 ## 🎯 Mission
-Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không phải HOW).
+Pass natural language description → standardized spec.md (WHAT, not HOW).
 
 ## 📥 Input
-- Mô tả feature từ developer (text tự do)
+- Feature description from developer (free text)
 - `.agent/memory/constitution.md` (constraints)
 
 ## 📋 Protocol
-1. Đọc mô tả → trích xuất:
-   - **Actors**: Ai tương tác? (User, Admin, System, Guest)
-   - **Actions**: Làm gì? (CRUD, search, filter, export)
-   - **Data**: Dữ liệu gì? (entities, fields, relationships)
-   - **Constraints**: Giới hạn gì? (auth, permissions, limits)
-2. Tạo `.agent/specs/[feature]/spec.md` với format BẮT BUỘC:
+1. Read description → extract:
+   - **Actors**: Who interacts? (User, Admin, System, Guest)
+   - **Actions**: Do what? (CRUD, search, filter, export)
+   - **Data**: What data? (entities, fields, relationships)
+   - **Constraints**: What limits? (auth, permissions, limits)
+2. Create `.agent/specs/[feature]/spec.md` with REQUIRED format:
    ```markdown
    ---
    title: [Feature Name]
@@ -26,14 +26,14 @@ Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không
    created: [date]
    ---
    ## 1. Overview
-   [1-2 câu mô tả]
+   [1-2 sentence description]
 
    ## 2. User Scenarios
    - **US1**: As a [actor], I want to [action], so that [value].
    - **US2**: ...
 
    ## 3. Functional Requirements
-   - FR01: [requirement cụ thể, measurable]
+   - FR01: [specific, measurable requirement]
 
    ## 4. Non-Functional Requirements
    - NFR01: Response time < 2s
@@ -41,13 +41,13 @@ Chuyển mô tả ngôn ngữ tự nhiên → spec.md chuẩn hóa (WHAT, không
    ## 5. Success Criteria
    - [ ] SC01: [testable criterion]
    ```
-3. Mỗi User Scenario PHẢI có: Actor + Action + Value.
-4. Mỗi Functional Requirement PHẢI measurable (có số liệu cụ thể).
+3. Each User Scenario MUST have: Actor + Action + Value.
+4. Each Functional Requirement MUST be measurable (have specific data).
 
 ## 📤 Output
 - File: `.agent/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
-- KHÔNG viết implementation details (HOW) — chỉ mô tả WHAT.
-- KHÔNG dùng technical jargon trong User Scenarios (business language).
-- KHÔNG bỏ qua error cases — mỗi action phải có "khi thất bại thì sao?"
+- DO NOT write implementation details (HOW) — just describe WHAT.
+- DO NOT use technical jargon in User Scenarios (business language).
+- DO NOT ignore error cases — each action must have a "what if it fails?"

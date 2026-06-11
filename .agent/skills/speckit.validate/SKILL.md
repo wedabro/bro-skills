@@ -1,40 +1,40 @@
 ---
 name: speckit.validate
-description: Implementation Validator - Validate implementation vs spec tổng thể.
+description: Implementation Validator - Validate implementation vs overall spec.
 role: Validation Oracle
 ---
 
 ## 🎯 Mission
-Kiểm tra TOÀN BỘ implementation có đáp ứng spec.md hay không — final gate trước deploy.
+Check whether the ENTIRE implementation meets spec.md or not — final gate before deploying.
 
 ## 📥 Input
-- Tất cả artifacts: spec.md, plan.md, tasks.md
+- All artifacts: spec.md, plan.md, tasks.md
 - Source code (implementation)
 - `.agent/memory/constitution.md`
 
 ## 📋 Protocol
-1. **Tasks Completion**: Mọi task trong tasks.md đã `[X]`?
-2. **Success Criteria**: Mọi SC trong spec.md đã đạt?
-3. **Build Verification** (PHẢI chạy actual command):
+1. **Tasks Completion**: All tasks in tasks.md have `[X]` ?
+2. **Success Criteria**: All SCs in spec.md passed?
+3. **Build Verification** (MUST run actual command):
    ```bash
    docker compose -f docker-compose.beta.yml build 2>&1 | tail -n 100
    ```
-   Nếu fail → ❌ BLOCKED
-4. **Runtime Verification** (PHẢI chạy actual command):
+   If failed → ❌ BLOCKED
+4. **Runtime Verification** (MUST run actual command):
    ```bash
    docker compose -f docker-compose.beta.yml up -d
    sleep 15
    docker compose -f docker-compose.beta.yml ps
    ```
-   - Tất cả services phải `Up` (KHÔNG `Restarting`)
-   - Nếu `Restarting` → chạy `docker compose logs <service>` → ❌ BLOCKED
-5. **Health Check** (PHẢI chạy actual command):
+   - All services must be `Up` (NOT `Restarting` )
+   - If `Restarting` → run `docker compose logs <service>` → ❌ BLOCKED
+5. **Health Check** (MUST run actual command):
    ```bash
    curl -s http://localhost:<web_port> | head -c 200
    curl -s http://localhost:<api_port>/health
    ```
-   Tất cả phải trả về 200
-6. **Constitution Check**: Không vi phạm rules nào?
+   All must return 200
+6. **Constitution Check**: No rules violated?
 7. **Final Verdict**:
    ```
    🏁 VALIDATION REPORT
@@ -50,10 +50,10 @@ Kiểm tra TOÀN BỘ implementation có đáp ứng spec.md hay không — fina
 
 ## 📤 Output
 - File: `.agent/memory/validation-report.md`
-- Verdict: ✅ PASS hoặc ❌ FAIL (kèm danh sách blockers)
+- Verdict: ✅ PASS or ❌ FAIL (with blockers list)
 
 ## 🚫 Guard Rails
-- KHÔNG approve nếu còn task chưa complete.
-- KHÔNG approve nếu build fail.
-- KHÔNG approve nếu bất kỳ service nào `Restarting`.
-- PHẢI chạy actual commands — không chỉ đọc code.
+- DO NOT approve if there are unfinished tasks.
+- DO NOT approve if build fails.
+- DO NOT approve if any service is `Restarting` .
+- MUST run actual commands — don't just read the code.

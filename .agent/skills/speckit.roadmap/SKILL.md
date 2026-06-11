@@ -1,26 +1,26 @@
 ---
 name: speckit.roadmap
-description: Roadmap Strategist - Quản lý lộ trình cấp cao (Milestones) và chuyển giao giữa các Phase.
+description: Roadmap Strategist - Manage high-level roadmaps (Milestones) and transitions between Phases.
 role: Project Manager
 ---
 
 ## 🎯 Mission
-Đảm bảo dự án đi đúng hướng theo tầm nhìn dài hạn, quản lý sự phụ thuộc giữa các giai đoạn (Phases) và cột mốc (Milestones).
+Ensure the project is on track according to the long-term vision, managing dependencies between phases (Phases) and milestones (Milestones).
 
 ## 📋 Protocol
 
 ### Phase 1: Milestone Definition
-- Tạo/Cập nhật `.agent/ROADMAP.md`.
-- Chia dự án thành các Milestone (Cột mốc lớn), ví dụ: MVP, Beta, Production Ready.
-- Mỗi Milestone chứa danh sách các Phases.
+- Create/Update `.agent/ROADMAP.md` .
+- Divide the project into Milestones (Major Milestones), for example: MVP, Beta, Production Ready.
+- Each Milestone contains a list of Phases.
 
 ### Phase 2: Progress Tracking
-- Cập nhật trạng thái hoàn thành của từng Phase dựa trên kết quả từ `speckit.status`.
-- Đảm bảo các yêu cầu (Requirements) được map đúng vào Milestone tương ứng.
+- Update the completion status of each Phase based on the results from `speckit.status` .
+- Ensure requirements are correctly mapped to the corresponding Milestone.
 
-### Phase 3: Transition Management (Chuyển giao)
-- Khi một Phase kết thúc, kiểm tra các "nợ kỹ thuật" (debt) hoặc các phần chưa xong để chuyển sang Phase tiếp theo hoặc Phase Gap-closure.
+### Phase 3: Transition Management (Transfer)
+- When a Phase ends, check for "technical debt" or unfinished parts to move on to the next Phase or Phase Gap-closure.
 
 ## 🚫 Guard Rails
-- PHẢI duy trì tính nhất quán giữa Roadmap và thực tế triển khai.
-- CẤM bỏ qua các phase bắt buộc về bảo mật/devops trong roadmap.
+- MUST maintain consistency between the Roadmap and actual implementation.
+- It is PROHIBITED to skip mandatory security/devops phases in the roadmap.

@@ -11,11 +11,11 @@ You follow **ASF 3.3** standards.
 - Enforcing the **Project Constitution** in every action.
 - Maintaining zero-regression standards through automated testing.
 
-## 🔍 SEO & GEO Awareness
-- Mọi page public phải có meta title, description, canonical URL.
-- Structured Data (JSON-LD) là BẮT BUỘC cho các trang sản phẩm, bài viết.
-- Tối ưu cho AI Search (GEO): Nội dung phải fact-dense, có nguồn trích dẫn.
-- Cung cấp file `llms.txt` tại root để AI crawlers hiểu cấu trúc site.
+## 🔍 SEO ​​& GEO Awareness
+- Every public page must have a meta title, description, and canonical URL.
+- Structured Data (JSON-LD) is REQUIRED for product pages and articles.
+- Optimized for AI Search (GEO): Content must be fact-dense, with cited sources.
+- Provide the `llms.txt` file at the root so AI crawlers understand the site structure.
 
 ## 🤝 Collaboration Style
 - Proactive but cautious.
@@ -27,4 +27,4 @@ You follow **ASF 3.3** standards.
 2. **Security is non-negotiable**: Production environments must be hardened.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
-5. **bro-skills First**: Mọi thay đổi và vận hành phải thông qua bro-skills workflows.
+5. **bro-skills First**: All changes and operations must go through bro-skills workflows.

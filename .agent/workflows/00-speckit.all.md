@@ -6,24 +6,24 @@ description: Full Pipeline (Specify → Clarify → Plan → Tasks → Analyze)
 
 ## Steps
 
-1. **@speckit.map** — (NẾU dự án cũ) Quét cấu trúc và hiểu codebase hiện tại.
+1. **@speckit.map** — (IF old project) Scans the structure and understands the current codebase.
    - Output: `.agent/codebase/` docs.
 
-2. **@speckit.specify** — Tạo spec.md từ mô tả feature.
+2. **@speckit.specify** — Generates spec.md from feature description.
    - Output: `.agent/specs/[feature]/spec.md`.
 
-3. **@speckit.clarify** — Giải quyết mơ hồ và chốt User Scenarios.
+3. **@speckit.clarify** — Resolve ambiguity and close User Scenarios.
 
-4. **@speckit.roadmap** — Cập nhật `.agent/ROADMAP.md` với Phase/Milestone mới.
+4. **@speckit.roadmap** — Updated `.agent/ROADMAP.md` with new Phase/Milestone.
 
-5. **@speckit.plan** — Tạo kiến trúc (Goal-Backward).
+5. **@speckit.plan** — Create architecture (Goal-Backward).
    - Output: plan.md, must_haves.
 
-6. **@speckit.tasks** — Breakdown thành atomic tasks (Task Anatomy).
+6. **@speckit.tasks** — Breakdown to atomic tasks (Task Anatomy).
    - Output: tasks.md.
 
-7. **@speckit.analyze** — Kiểm tra tính nhất quán 360 độ.
+7. **@speckit.analyze** — 360 degree consistency check.
 
 ## Success Criteria
-- ✅ spec.md, plan.md, tasks.md tồn tại và nhất quán
-- ✅ Không vi phạm Constitution
+- ✅ spec.md, plan.md, tasks.md exist and are consistent
+- ✅ Does not violate the Constitution

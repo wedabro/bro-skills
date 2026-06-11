@@ -22,7 +22,7 @@ Generate a `DESIGN.md` file that encodes:
 4. **Component behaviors** — buttons, cards, inputs with interaction states
 5. **Layout principles** — grid systems, spacing philosophy, responsive strategy
 6. **Motion philosophy** — animation engine specs, spring physics, perpetual micro-interactions
-7. **Anti-patterns** — explicit list of banned AI design clichés
+7. **Anti-patterns** — explicit list of banned AI design clicheés
 
 ## Analysis & Synthesis Instructions
 
@@ -107,7 +107,7 @@ Encode these as explicit "NEVER DO" rules in the DESIGN.md:
 - No 3-column equal card layouts
 - No generic names ("John Doe", "Acme", "Nexus")
 - No fake round numbers (`99.99%`, `50%`)
-- No AI copywriting clichés ("Elevate", "Seamless", "Unleash", "Next-Gen")
+- No AI copywriting clicheés ("Elevate", "Seamless", "Unleash", "Next-Gen")
 - No filler UI text: "Scroll to explore", "Swipe down", scroll arrows, bouncing chevrons
 - No broken Unsplash links — use `picsum.photos` or SVG avatars
 - No centered Hero sections (for high-variance projects)
@@ -157,7 +157,7 @@ transforms only. Isolated Client Components for CPU-heavy animations.)
 
 ## 7. Anti-Patterns (Banned)
 (Explicit list of forbidden patterns: no emojis, no Inter, no pure black,
-no neon glows, no 3-column equal grids, no AI copywriting clichés,
+no neon glows, no 3-column equal grids, no AI copywriting clicheés,
 no generic placeholder names, no broken image links.)
 ```
 

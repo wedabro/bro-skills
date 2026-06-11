@@ -780,7 +780,7 @@ Allowed:
 
 Avoid:
 - irrelevant scenery
-- stock-photo cliches
+- stock-photo clichees
 - decorative junk
 - visuals that overpower the page hierarchy
 
@@ -926,7 +926,7 @@ When the user asks for a frontend design:
 11. lock one consistent palette across all images
 12. apply §18 EXTRA CREATIVITY & IMPLEMENTATION EDGE
 13. keep spacing generous, even, and clean
-14. remove AI slop (including marquee / fake KPI clichés unless requested)
+14. remove AI slop (including marquee / fake KPI clicheés unless requested)
 15. run §17 CLARITY CHECK
 16. **generate every per-section horizontal image, labeled "Section X of N: <name>"**, until the full set is delivered. Do not stop early. Do not summarize. Do not return only one image.
 
@@ -946,7 +946,7 @@ Interpretation:
 - Background Mode: full-bleed image with dark tonal overlay
 - CTA Variation: outlined inline + small label hint
 - Palette: Deep Dark or Bold Studio Solid, one consistent accent
-- no cliche dashboard spam, no purple AI glow
+- no clichee dashboard spam, no purple AI glow
 
 ### Example 2
 User: "design 8 sections for a fintech website"

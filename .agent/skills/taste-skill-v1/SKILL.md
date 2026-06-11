@@ -33,7 +33,7 @@ Unless the user explicitly specifies a different stack, adhere to these structur
 
 
 ## 3. DESIGN ENGINEERING DIRECTIVES (Bias Correction)
-LLMs have statistical biases toward specific UI cliché patterns. Proactively construct premium interfaces using these engineered rules:
+LLMs have statistical biases toward specific UI clicheé patterns. Proactively build premium interfaces using these engineered rules:
 
 **Rule 1: Deterministic Typography**
 * **Display/Headlines:** Default to `text-4xl md:text-6xl tracking-tighter leading-none`.
@@ -118,7 +118,7 @@ To guarantee a premium, non-generic output, you MUST strictly avoid these common
 * **NO Generic Avatars:** DO NOT use standard SVG "egg" or Lucide user icons for avatars. Use creative, believable photo placeholders or specific styling.
 * **NO Fake Numbers:** Avoid predictable outputs like `99.99%`, `50%`, or basic phone numbers (`1234567`). Use organic, messy data (`47.2%`, `+1 (312) 847-1928`).
 * **NO Startup Slop Names:** "Acme", "Nexus", "SmartFlow". Invent premium, contextual brand names.
-* **NO Filler Words:** Avoid AI copywriting clichés like "Elevate", "Seamless", "Unleash", or "Next-Gen". Use concrete verbs.
+* **NO Filler Words:** Avoid AI copywriting clicheés like "Elevate", "Seamless", "Unleash", or "Next-Gen". Use concrete verbs.
 
 ### External Resources & Components
 * **NO Broken Unsplash Links:** Do not use Unsplash. Use absolute, reliable placeholders like `https://picsum.photos/seed/{random_string}/800/600` or SVG UI Avatars.

@@ -5,7 +5,7 @@ role: Backend Engineer
 ---
 
 ## 🎯 Mission
-Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logic tách lớp, auth/authz chắc, integration ổn định. Khớp `knowledge_base/api_standards.md`.
+Build backend/API production: standard REST/GraphQL endpoint, layered business logic, solid auth/authz, stable integration. Match `knowledge_base/api_standards.md` .
 
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md` + `plan.md` (data model, API contracts)
@@ -15,35 +15,35 @@ Xây dựng backend/API production: endpoint chuẩn REST/GraphQL, business logi
 ## 📋 Protocol
 
 ### 1. API Layer
-- Tuân thủ `api_standards.md`: versioning (`/v1`), naming, status codes, error envelope nhất quán.
-- Validation input ở biên (DTO/schema). Reject sớm, message rõ.
-- Pagination/filtering/sorting chuẩn hóa cho list endpoints.
+- `api_standards.md` compliance: versioning ( `/v1` ), naming, status codes, error envelope consistency.
+- Validation of input at the edge (DTO/schema). Reject soon, clear message.
+- Standardized pagination/filtering/sorting for list endpoints.
 
 ### 2. Architecture (Layered)
-- Tách `controller → service → repository`. KHÔNG để business logic trong controller.
-- Dependency injection, không khởi tạo cứng dependency.
-- Idempotency cho operations nhạy cảm (payment, create).
+- Detach `controller → service → repository` . DO NOT put business logic in the controller.
+- Dependency injection, no hard initialization of dependencies.
+- Idempotency for sensitive operations (payment, create).
 
 ### 3. Auth & Security
-- AuthN (JWT/session) + AuthZ (RBAC/policy) ở middleware.
-- Parameterized query (chống SQLi). KHÔNG nối chuỗi SQL.
+- AuthN (JWT/session) + AuthZ (RBAC/policy) in middleware.
+- Parameterized query (anti-SQLi). DO NOT concatenate SQL strings.
 - Rate limiting + input sanitization cho public endpoints.
 
 ### 4. Data & Transaction
-- Transaction boundary rõ ràng; rollback khi lỗi.
+- Transaction boundary is clear; rollback on error.
 - N+1 query check; index theo `data_schema.md`.
 
 ### 5. Observability
-- Structured logging (request id), health check endpoint, metrics cơ bản.
-- Error handling tập trung, KHÔNG nuốt exception.
+- Structured logging (request id), health check endpoint, basic metrics.
+- Error handling is centralized, NOT exception swallowing.
 
 ## 📤 Output
 - API code + contract (OpenAPI/GraphQL schema).
-- Cập nhật `knowledge_base/api_standards.md` nếu thêm pattern.
+- Update `knowledge_base/api_standards.md` if pattern is added.
 
 ## 🚫 Guard Rails
-- KHÔNG hard-code URL/secret/port → ENV (`API_*`, `DB_*`).
-- KHÔNG trả raw error/stacktrace ra client.
-- KHÔNG bỏ qua authz check trên endpoint nhạy cảm.
-- KHÔNG để endpoint public không auth mà không cảnh báo.
-- Phản hồi bằng Tiếng Việt.
+- DO NOT hard-code URL/secret/port → ENV ( `API_*` , `DB_*` ).
+- DO NOT return raw error/stacktrace to the client.
+- DO NOT bypass authz check on sensitive endpoints.
+- DO NOT let public endpoints fail to authenticate without warning.
+- Feedback in Vietnamese.

@@ -4,274 +4,274 @@
 
 # ⚡ bro-skills - Spec-Driven Development CLI
 
-> **Python CLI tool** để khởi tạo bất kỳ project nào theo chuẩn Spec-Driven Development (SDD) của Antigravity.
+> **Python CLI tool** to initialize any project according to Antigravity's Spec-Driven Development (SDD) standard.
 
-## 🎯 Mục đích
+## 🎯 Purpose
 
-Tool này tự động tạo cấu trúc `.agent/` chuẩn cho Antigravity IDE, bao gồm:
+This tool automatically creates the standard `.agent/` structure for Antigravity IDE, including:
 
-- **Skills** (38 skills) — Khả năng AI tự trị cho từng phase SDLC + builder theo domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) và Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
-- **Workflows** (33 workflows) — Orchestration commands với pre-conditions, gate checks, success criteria
+- **Skills** (38 skills) — Autonomous AI capabilities for each phase of SDLC + builder by domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) and Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
+- **Workflows** (33 workflows) — Orchestration commands with pre-conditions, gate checks, success criteria
 - **Templates** — Spec, Plan, Tasks, Constitution, Infrastructure, SEO, **UI/UX Standards** templates
 - **Scripts** — 4 bash utilities (create-feature, setup-plan, check-prerequisites, update-context)
 
 ## 📋 Requirements
 
 - Python 3.9+ (Windows, Linux, macOS)
-- Node.js 16+ nếu muốn chạy bằng `npx`
-- Không cần thêm thư viện ngoài (Pure Python stdlib)
+- Node.js 16+ if you want to run using `npx`
+- No need to add external libraries (Pure Python stdlib)
 
 ---
 
-## 📦 Cài đặt / chạy CLI (Mọi OS)
+## 📦 Install/run CLI (Any OS)
 
-### Cách 1: Chạy bằng `npx` (không cài global)
+### Method 1: Run with `npx` (do not install globally)
 
 ```bash
-# Chạy trực tiếp từ GitHub qua npm/npx
+# Run directly from GitHub via npm/npx
 npx github:wedabro/bro-skills version
 npx github:wedabro/bro-skills init --target /path/to/project
 
-# Truyền tham số như CLI bình thường
+# Pass parameters like normal CLI
 npx github:wedabro/bro-skills init --name "My Project" --type fullstack
 
-# Sau khi package được publish lên npm registry
+# After the package is published to the npm registry
 npx bro-skills version
 npx bro-skills init --target /path/to/project
 ```
 
-Ghi chú:
-- `npx` cần Node.js/npm và Python 3.9+ có trong PATH.
-- Wrapper npm chỉ gọi lại Python CLI gốc, không cài dependency npm riêng.
-- Nếu muốn cố định Python executable, đặt ENV `PYTHON=/path/to/python`.
+Note:
+- `npx` needs Node.js/npm and Python 3.9+ to be in the PATH.
+- Wrapper npm only calls back to the original Python CLI, does not install a separate npm dependency.
+- If you want to make Python executable permanent, set ENV `PYTHON=/path/to/python` .
 
-### Cách 2: `pip install` từ GitHub (Khuyến nghị cho dùng lâu dài)
+### Method 2: `pip install` from GitHub (Recommended for long-term use)
 
 ```bash
-# Windows / Linux / macOS — Cài global, lệnh `bro-skills` dùng được ở mọi nơi
+# Windows / Linux / macOS — Install globally, `bro-skills` command can be used everywhere
 pip install git+https://github.com/wedabro/bro-skills.git
 
-# Kiểm tra
+# Check
 bro-skills version
 # → bro-skills v1.3.0
 ```
 
-### Cách 3: `pipx install` (Isolated - Không ảnh hưởng system Python)
+### Method 3: `pipx install` (Isolated - Does not affect system Python)
 
 ```bash
-# Cài pipx nếu chưa có
+# Install pipx if you don't have it yet
 pip install pipx
 pipx ensurepath
 
-# Cài bro-skills
+# Install bro-skills
 pipx install git+https://github.com/wedabro/bro-skills.git
 
-# Kiểm tra
+# Check
 bro-skills version
 ```
 
-### Cách 4: Clone + Install (Development)
+### Method 4: Clone + Install (Development)
 
 ```bash
 git clone https://github.com/wedabro/bro-skills.git
 cd bro-skills
 
-# Cài editable mode (thay đổi code tự động có hiệu lực)
+# Set editable mode (code changes take effect automatically)
 pip install -e .
 
-# Hoặc chạy trực tiếp không cần install
+# Or run directly without installing
 python ssd.py init
 ```
 
-### Cách 5: Chạy trực tiếp (Không cài)
+### Method 5: Run directly (No installation)
 
 ```bash
-# Clone về và chạy trực tiếp
+# Clone and run directly
 git clone https://github.com/wedabro/bro-skills.git
 python bro-skills/ssd.py init --target /path/to/project
 ```
 
-### Gỡ cài đặt
+### Uninstall
 
 ```bash
 pip uninstall bro-skills
-# hoặc
+# or
 pipx uninstall bro-skills
-# hoặc nếu cài global bằng npm từ GitHub
+# or if installed globally using npm from GitHub
 npm uninstall -g bro-skills
 ```
 
 ---
 
-## 🚀 Cách sử dụng
+## 🚀 How to use
 
 ```bash
-# Init project mới
+# Init new project
 bro-skills init
 
-# Init tại thư mục cụ thể
+# Init at specific directory
 bro-skills init --target /path/to/project
 
-# Init với project name
+# Init with project name
 bro-skills init --name "My Awesome Project"
 
-# Init và ghi đè không hỏi
+# Init and override don't ask
 bro-skills init --force
 
-# Xem danh sách skills
+# See list of skills
 bro-skills list-skills
 
-# Xem danh sách workflows
+# See list of workflows
 bro-skills list-workflows
 
-# Validate cấu trúc .agent
+# Validate the .agent structure
 bro-skills validate --target /path/to/project
 
 # Xem version
 bro-skills version
 bro-skills -v
 
-# Cập nhật lên phiên bản mới nhất (tự động phát hiện cài đặt qua pip hay npm)
+# Update to the latest version (automatically detects installation via pip or npm)
 bro-skills update
 ```
 
-### Chọn nhanh skill/workflow cho AI
+### Quickly select skills/workflow for AI
 
-| Nhu cầu | Dùng workflow/skill |
+| Demand | Use workflow/skill |
 |---|---|
-| Thiết lập luật dự án, tech stack, nguyên tắc bắt buộc | `/01-speckit.constitution` |
-| Viết spec từ mô tả tự nhiên | `/02-speckit.specify` |
-| Làm rõ yêu cầu mơ hồ trước khi code | `/03-speckit.clarify` |
-| Tạo kiến trúc, data model, API contracts | `/04-speckit.plan` |
+| Set up project rules, tech stack, and mandatory principles | `/01-speckit.constitution` |
+| Write spec from natural description | `/02-speckit.specify` |
+| Clarify ambiguous requirements before coding | `/03-speckit.clarify` |
+| Create architecture, data model, API contracts | `/04-speckit.plan` |
 | Chia task atomic theo 15-Minute Rule | `/05-speckit.tasks` |
-| Implement có kiểm soát blast radius và test | `/07-speckit.implement` |
+| Implement controls blast radius and testing | `/07-speckit.implement` |
 | Review, static check, test, validate sau implement | `/08-speckit.checker`, `/09-speckit.tester`, `/10-speckit.reviewer`, `/11-speckit.validate` |
-| Migration dự án có sẵn | `/util-speckit.migrate` |
-| Debug sự cố, quản lý backlog/roadmap, map codebase, UAT | `/speckit.debug`, `/speckit.backlog`, `/speckit.roadmap`, `/speckit.map`, `/speckit.uat` |
+| Project migration available | `/util-speckit.migrate` |
+| Debug problems, manage backlog/roadmap, codebase map, UAT | `/speckit.debug`, `/speckit.backlog`, `/speckit.roadmap`, `/speckit.map`, `/speckit.uat` |
 | Web SEO/GEO/Content/UIUX/WordPress | `/12-speckit.seo`, `/13-speckit.geo`, `/util-speckit.content`, `/util-speckit.uiux`, `/speckit.wordpress` |
 
 ---
 
-## 🆕 Quy trình A: Dự án MỚI (Greenfield)
+## 🆕 Process A: NEW Project (Greenfield)
 
-> Dùng khi bạn bắt đầu từ con số 0 — chưa có code.
+> Use when you start from 0 — no code yet.
 
-### Bạn cần chuẩn bị gì?
+### What do you need to prepare?
 
-| # | Thông tin | Ví dụ | Bắt buộc? |
+| # | Information | For example | Obligatory? |
 |---|-----------|-------|-----------|
-| 1 | **Tên project** | "E-Commerce Platform" | ✅ Có |
-| 2 | **Mô tả feature** bằng ngôn ngữ tự nhiên | "Hệ thống đặt hàng hải sản online..." | ✅ Có |
-| 3 | **Tech stack** (ngôn ngữ, framework) | Next.js 15, Python, Go... | ✅ Có (bước Constitution) |
-| 4 | **Nguyên tắc project** (principles) | "Docker-first", "No hardcode"... | ✅ Có (bước Constitution) |
-| 5 | **User stories** chi tiết | Các kịch bản người dùng cụ thể | ⚪ Không (AI suy luận) |
+| 1 | **Project name** | "E-Commerce Platform" | ✅ Yes |
+| 2 | **Feature description** in natural language | "Online seafood ordering system..." | ✅ Yes |
+| 3 | **Tech stack** (language, framework) | Next.js 15, Python, Go... | ✅ Yes (Constitution step) |
+| 4 | **Project principles** (principles) | "Docker-first", "No hardcode"... | ✅ Yes (Constitution step) |
+| 5 | **User stories** details | Specific user scenarios | ⚪ No (AI inference) |
 
-### Pipeline (7 bước)
+### Pipeline (7 steps)
 
 ```
-Bước 0: Init         →  bro-skills init --name "My Project"
-    ↓                    Tạo ~90 files trong .agent/
+Step 0: Init → bro-skills init --name "My Project"
+    ↓ Create ~90 files in .agent/
     ↓
-Bước 1: Constitution  →  /01-speckit.constitution
-    ↓                    Thiết lập "luật" cho project (tech stack, principles)
-    ↓                    ⚠️ KHÔNG ĐƯỢC BỎ QUA — đây là "Context Anchor"
+Step 1: Constitution → /01-speckit.constitution
+    ↓ Set up "rules" for the project (tech stack, principles)
+    ↓ ⚠️ DON'T MISS — this is the "Context Anchor"
     ↓
-Bước 2: Specify       →  /02-speckit.specify "Mô tả feature bằng tiếng Việt hoặc Anh"
-    ↓                    AI tạo spec.md — CHỈ nói WHAT (cái gì), KHÔNG nói HOW
+Step 2: Specify → /02-speckit.specify "Describe feature in Vietnamese or English"
+    ↓ WHO created spec.md — ONLY says WHAT, NOT HOW
     ↓                    Output: User scenarios, functional requirements, success criteria
     ↓
-Bước 3: Clarify       →  /03-speckit.clarify
-    ↓                    AI phát hiện chỗ mơ hồ, hỏi tối đa 3 câu (bảng A/B/C)
-    ↓                    Update lại spec.md sau khi bạn trả lời
+Step 3: Clarify → /03-speckit.clarify
+    ↓ AI detects ambiguity, asks up to 3 questions (table A/B/C)
+    ↓ Update spec.md again after you answer
     ↓
-Bước 4: Plan          →  /04-speckit.plan
-    ↓                    AI tạo plan.md — Technical architecture
+Step 4: Plan → /04-speckit.plan
+    ↓ AI creates plan.md — Technical architecture
     ↓                    Output: data-model.md, contracts/, research.md
-    ↓                    Gate Check: Kiểm tra Constitution compliance
+    ↓ Gate Check: Check Constitution compliance
     ↓
-Bước 5: Tasks         →  /05-speckit.tasks
-    ↓                    AI tạo tasks.md — Atomic tasks (15-Minute Rule)
+Step 5: Tasks → /05-speckit.tasks
+    ↓ AI creates tasks.md — Atomic tasks (15-Minute Rule)
     ↓                    Format: - [ ] T001 [US1] Description with file path
-    ↓                    Organized by User Story, có dependency graph
+    ↓ Organized by User Story, with dependency graph
     ↓
-Bước 6: Implement     →  /07-speckit.implement
-                         AI code theo tasks.md với 4 IRONCLAD Protocols
+Step 6: Implement → /07-speckit.implement
+                         AI code according to tasks.md with 4 IRONCLAD Protocols
                          (Blast Radius → Strangler Pattern → TDD → Context Anchoring)
 ```
 
 ### Shortcut
 
 ```bash
-# Chạy pipeline Specify → Clarify → Plan → Tasks → Analyze trong 1 lệnh:
-/00-speckit.all "Mô tả feature..."
+# Run pipeline Specify → Clarify → Plan → Tasks → Analyze in 1 command:
+/00-speckit.all "Feature description..."
 
-# Hoặc chạy prep pipeline (không có Implement):
-/speckit.prepare "Mô tả feature..."
+# Or run the prep pipeline (without Implement):
+/speckit.prepare "Feature description..."
 ```
 
-### Chi tiết từng bước
+### Details step by step
 
-#### Bước 0 — `bro-skills init`
+#### Step 0 — `bro-skills init`
 
 ```bash
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` (~90 files: 38 skills, 33 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
-- Mở project trong Antigravity IDE — agent tự động nhận diện `.agent/` folder
+- Create structure `.agent/` (~90 files: 38 skills, 33 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
+- Open the project in Antigravity IDE — the agent automatically detects the `.agent/` folder
 
-#### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
+#### Step 1 — `/01-speckit.constitution` ⚠️ REQUIRED
 
-- **Input**: Bạn cung cấp tech stack, coding principles, non-negotiables
-- **Output**: `constitution.md` — "Source of Law" cho toàn bộ project
-- **Tại sao quan trọng**: Mọi bước sau đều check lại Constitution để AI không hallucinate
-- **Ví dụ input**:
+- **Input**: You provide tech stack, coding principles, non-negotiables
+- **Output**: `constitution.md` — "Source of Law" for the entire project
+- **Why it's important**: Every subsequent step checks Constitution so the AI ​​doesn't hallucinate
+- **Input example**:
 
   ```
   /01-speckit.constitution
   Tech: Next.js 15, Prisma, PostgreSQL
   Principles:
-  1. Docker-first — mọi thứ chạy trong Docker
-  2. No hardcode — dùng ENV vars
-  3. API-first — backend API trước, frontend sau
+  1. Docker-first — everything runs in Docker
+  2. No hardcode — use ENV vars
+  3. API-first — API backend first, frontend later
   ```
 
-#### Bước 2 — `/02-speckit.specify`
+#### Step 2 — `/02-speckit.specify`
 
-- **Input**: Mô tả feature bằng ngôn ngữ tự nhiên
-- **Output**: `spec.md` — Feature specification (WHAT, không phải HOW)
-- **AI tự động**: Extract actors, actions, data, constraints → User scenarios → Functional requirements → Success criteria
-- **Ví dụ**:
+- **Input**: Describe the feature in natural language
+- **Output**: `spec.md` — Feature specification (WHAT, not HOW)
+- **Automatic AI**: Extract actors, actions, data, constraints → User scenarios → Functional requirements → Success criteria
+- **For example**:
 
   ```
-  /02-speckit.specify "Xây dựng hệ thống quản lý đơn hàng hải sản 
-  với giỏ hàng, thanh toán COD/chuyển khoản, và tracking đơn hàng"
+  /02-speckit.specify "Building a seafood order management system
+  with shopping cart, COD payment/bank transfer, and order tracking"
   ```
 
-#### Bước 3 — `/03-speckit.clarify`
+#### Step 3 — `/03-speckit.clarify`
 
-- **Input**: Không cần — AI tự đọc spec.md
-- **Output**: Updated `spec.md` với mọi mơ hồ được giải quyết
-- **Quy trình**:
-  1. AI scan spec → phát hiện vague language, missing boundaries, undefined error handling
-  2. Phân loại: 🔴 CRITICAL / 🟡 IMPORTANT / 🟢 MINOR
-  3. Hỏi bạn tối đa 3 câu CRITICAL (bảng options A/B/C)
-  4. Auto-fix các vấn đề MINOR
+- **Input**: Not needed — AI reads spec.md itself
+- **Output**: Updated `spec.md` with all ambiguities resolved
+- **Procedure**:
+  1. AI scan spec → detect vague language, missing boundaries, undefined error handling
+  2. Classification: 🔴 CRITICAL / 🟡 IMPORTANT / 🟢 MINOR
+  3. Ask you up to 3 CRITICAL questions (options A/B/C table)
+  4. Auto-fix MINOR problems
 
-#### Bước 4 — `/04-speckit.plan`
+#### Step 4 — `/04-speckit.plan`
 
-- **Input**: Không cần — AI đọc spec.md + constitution.md
+- **Input**: Not needed — AI reads spec.md + constitution.md
 - **Output**: `plan.md`, `data-model.md`, `contracts/`, `research.md`
 - **2 Phases**:
-  - Phase 0 (Research): Giải quyết mọi "NEEDS CLARIFICATION" → `research.md`
+  - Phase 0 (Research): Resolve all "NEEDS CLARIFICATION" → `research.md`
   - Phase 1 (Design): Entity extraction → API contracts → `data-model.md`, `contracts/`
-- **Gate Check**: Kiểm tra plan có vi phạm Constitution không → ERROR nếu có
+- **Gate Check**: Check if the plan violates the Constitution → ERROR if yes
 
-#### Bước 5 — `/05-speckit.tasks`
+#### Step 5 — `/05-speckit.tasks`
 
-- **Input**: Không cần — AI đọc plan.md + spec.md
+- **Input**: Not needed — AI reads plan.md + spec.md
 - **Output**: `tasks.md` — Atomic, dependency-ordered task list
-- **Format bắt buộc**:
+- **Required format**:
 
   ```markdown
   - [ ] T001 Create project structure per implementation plan
@@ -282,82 +282,82 @@ bro-skills init --target /path/to/project --name "My Project"
 - **Phase structure**:
   - Phase 1: Setup (project init)
   - Phase 2: Foundation (blocking prerequisites)
-  - Phase 3+: Mỗi User Story 1 phase (priority order từ spec)
+  - Phase 3+: 1 phase per User Story (priority order from spec)
   - Final: Polish & cross-cutting
 
-#### Bước 6 — `/07-speckit.implement`
+#### Step 6 — `/07-speckit.implement`
 
-- **Input**: Không cần — AI đọc tasks.md + plan.md
-- **Quy trình cho MỖI task**:
+- **Input**: Not needed — AI reads tasks.md + plan.md
+- **Process for EACH task**:
   1. 🔍 **Blast Radius Analysis**: Scan affected files → report risk level
-  2. 🏗️ **Strategy**: LOW risk → inline edit, HIGH risk → Strangler Pattern (tạo file mới)
-  3. 🧪 **TDD**: Tạo `repro_task_[ID]` script → chạy fail → code fix → chạy pass
+  2. 🏗️ **Strategy**: LOW risk → inline edit, HIGH risk → Strangler Pattern (create new file)
+  3. 🧪 **TDD**: Create `repro_task_[ID]` script → run fail → code fix → run pass
   4. ✅ **Mark complete**: `- [X] T001 ...` trong tasks.md
-- **Anti-Hallucination**: Không import magic, strict diff-only, stop & ask nếu sửa >3 files
+- **Anti-Hallucination**: No import magic, strict diff-only, stop & ask if editing >3 files
 
 ---
 
-## 🔄 Quy trình B: Dự án CÓ SẴN (Legacy Migration)
+## 🔄 Process B: AVAILABLE Project (Legacy Migration)
 
-> Dùng khi bạn đã có codebase và muốn áp dụng SDD methodology lên project hiện tại.
+> Use when you already have a codebase and want to apply SDD methodology to your current project.
 
-### Khác biệt với Dự án Mới
+### Different from New Project
 
-| Aspect | Dự án MỚI | Dự án CÓ SẴN |
+| Aspect | NEW project | Project AVAILABLE |
 |--------|-----------|--------------|
-| Xuất phát | Từ ý tưởng → code | Từ code → spec |
-| Bước đặc biệt | `/02-speckit.specify` | `/util-speckit.migrate` |
-| Constitution | Thiết lập từ đầu | Reverse-engineer từ codebase |
-| Tasks | Tạo mới 100% | Mix: migration tasks + new features |
+| Departure | From idea → code | From code → spec |
+| Special step | `/02-speckit.specify` | `/util-speckit.migrate` |
+| Constitution | Set up from scratch | Reverse-engineer from codebase |
+| Tasks | Create 100% new | Mix: migration tasks + new features |
 
-### Pipeline (7 bước)
+### Pipeline (7 steps)
 
 ```
-Bước 0: Init          →  bro-skills init --target /path/to/existing --name "Legacy Project"
-    ↓                     Tạo .agent/ BÊN TRONG project hiện tại
+Step 0: Init → bro-skills init --target /path/to/existing --name "Legacy Project"
+    ↓ Create .agent/ INSIDE the current project
     ↓
-Bước 1: Constitution   →  /01-speckit.constitution
-    ↓                     Khai báo tech stack HIỆN TẠI + principles MỚI
+Step 1: Constitution → /01-speckit.constitution
+    ↓ Declare CURRENT tech stack + NEW principles
     ↓
-Bước 2: Migrate        →  /util-speckit.migrate
-    ↓                     AI scan codebase → reverse-engineer spec + plan sơ bộ
+Step 2: Migrate → /util-speckit.migrate
+    ↓ AI scan codebase → reverse-engineer spec + preliminary plan
     ↓                     Output: Technical debt inventory, migration risk assessment
     ↓
-Bước 3: Specify        →  /02-speckit.specify "Feature mới cần thêm..."
-    ↓                     Spec cho feature MỚI, kế thừa context từ migrate
+Step 3: Specify → /02-speckit.specify "New feature to add..."
+    ↓ Spec for NEW feature, inherits context from migrate
     ↓
-Bước 4: Plan → Tasks   →  /04-speckit.plan → /05-speckit.tasks
+Step 4: Plan → Tasks → /04-speckit.plan → /05-speckit.tasks
     ↓
-Bước 5: Implement      →  /07-speckit.implement
-                          Code với Strangler Pattern — KHÔNG phá code cũ
+Step 5: Implement → /07-speckit.implement
+                          Code with Strangler Pattern — DO NOT break old code
 ```
 
-### Chi tiết bước Migrate
+### Migrate step details
 
-**`/util-speckit.migrate`** thực hiện:
+** `/util-speckit.migrate` ** does:
 
 1. **Scan codebase**: Detect languages, frameworks, project structure
-2. **Extract entities**: Tìm data models, routes, endpoints từ code hiện tại
-3. **Reverse-engineer spec**: Tạo `spec.md` ban đầu từ code
-4. **Assess technical debt**: Inventory các vấn đề cần fix
-5. **Recommend migration sequence**: Đề xuất thứ tự migrate features
+2. **Extract entities**: Find data models, routes, endpoints from current code
+3. **Reverse-engineer spec**: Generate the original `spec.md` from code
+4. **Assess technical debt**: Inventory of issues that need to be fixed
+5. **Recommend migration sequence**: Recommended order to migrate features
 
-### Ví dụ thực tế
+### Real-life example
 
 ```bash
-# 1. Init — tạo .agent/ trong project hiện tại
+# 1. Init — creates .agent/ in the current project
 bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
-# 2. Constitution — khai báo stack hiện tại
+# 2. Constitution — declares the current stack
 /01-speckit.constitution
 # → "Next.js 15, Prisma 6, PostgreSQL, Docker-first, Port 8900-8999"
 
-# 3. Migrate — AI đọc và phân tích code hiện tại
+# 3. Migrate — AI reads and analyzes existing code
 /util-speckit.migrate
-# → AI tạo spec.md từ features đã có + technical debt report
+# → AI creates spec.md from existing features + technical debt report
 
-# 4. Thêm feature mới trên nền tảng hiện tại
-/02-speckit.specify "Sync data từ API cũ tomhum.com.vn"
+# 4. Add new features on the current platform
+/02-speckit.specify "Sync data from old API tomhum.com.vn"
 
 # 5. Plan + Tasks + Implement
 /04-speckit.plan
@@ -367,27 +367,27 @@ bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 ---
 
-## 🛡️ IRONCLAD Protocols (Áp dụng cho cả 2 quy trình)
+## 🛡️ IRONCLAD Protocols (Applies to both processes)
 
-Mỗi khi AI implement code, 4 protocols này được thực thi **bắt buộc**:
+Every time AI implements code, these 4 protocols are implemented **mandatory**:
 
-| Protocol | Mục đích | Khi nào |
+| Protocol | Purpose | When |
 |----------|----------|---------|
-| **1. Blast Radius Analysis** | Đánh giá ảnh hưởng trước khi sửa | TRƯỚC mỗi modification |
-| **2. Strangler Pattern** | Tạo file mới thay vì sửa file critical | Khi >2 files bị ảnh hưởng |
-| **3. Reproduction Script First** | Chứng minh bug/feature trước khi code | TRƯỚC mỗi implementation |
-| **4. Context Anchoring** | Re-orient project structure | Mỗi 3 tasks |
+| **1. Blast Radius Analysis** | Evaluate the impact before repairing | BEFORE each modification |
+| **2. Strangler Pattern** | Create a new file instead of editing the critical file | When >2 files are affected |
+| **3. Reproduction Script First** | Prove bugs/features before coding | BEFORE each implementation |
+| **4. Context Anchoring** | Re-orient project structure | Every 3 tasks |
 
 ---
 
-## 📂 Cấu trúc .agent/ được tạo
+## 📂 The .agent/ structure is created
 
 ```
 .agent/
-├── identity/                  # Tầng nhân cách AI
+├── identity/ # AI personality layer
 │   └── master-identity.md     # Persona, Soul, Core Capabilities
 │
-├── knowledge_base/            # Tầng tri thức dự án (auto-populated)
+├── knowledge_base/ # Project knowledge base (auto-populated)
 │   ├── infrastructure.md      # Docker, ports, environments
 │   ├── data_schema.md         # DB models, relationships
 │   ├── api_standards.md       # Routes, conventions, auth
@@ -522,35 +522,35 @@ bro-skills/
 bro-skills validate --target /path/to/project
 ```
 
-| # | Check | Mô tả |
+| # | Check | Describe |
 |---|-------|-------|
-| 1 | Thư mục .agent/ | Tồn tại |
+| 1 | .agent/ directory | Exist |
 | 2 | Core directories | skills/, workflows/, templates/, scripts/, memory/ |
-| 3 | Skills | 38 thư mục + SKILL.md |
+| 3 | Skills | 38 folders + SKILL.md |
 | 4 | Workflows | 33 .md files |
 | 5 | Templates | 4 document templates |
 | 6 | Scripts | 4 bash scripts |
 | 7 | Constitution | memory/constitution.md |
 | 8 | README | .agent/README.md |
-| 9 | Content quality | Mỗi SKILL.md > 100 bytes |
-| 10 | Frontmatter | Mỗi workflow có YAML header |
+| 9 | Content quality | Each SKILL.md > 100 bytes |
+| 10 | Frontmatter | Each workflow has a YAML header |
 
 ---
 
 ## 🌟 Best Practices
 
-1. **❌ Không bao giờ bỏ qua Constitution** — Đây là anchor ngăn AI hallucinate
-2. **🛡️ Layered Defense** — Mỗi bước validate bước trước (Specify → Clarify → Plan → Tasks → Analyze)
-3. **⏱️ 15-Minute Rule** — Mỗi task phải hoàn thành trong ≤15 phút
-4. **🔄 Refine, Don't Rewind** — Build incrementally, không bao giờ bắt đầu lại từ đầu
-5. **📊 Spec trước Code** — WHAT trước, HOW sau. Business stakeholders đọc được spec.md
+1. **❌ Never ignore Constitution** — This is the anchor that prevents AI from hallucinate
+2. **🛡️ Layered Defense** — Each step validates the previous step (Specify → Clarify → Plan → Tasks → Analyze)
+3. **⏱️ 15-Minute Rule** — Each task must be completed in ≤15 minutes
+4. **🔄 Refine, Don't Rewind** — Build incrementally, never start from scratch
+5. **📊 Spec before Code** — WHAT first, HOW next. Business stakeholders can read spec.md
 
 ---
 
 ## CI/CD
 
-- CI: GitHub Actions chạy `pytest` cho pull requests và mọi push.
-- Release: tạo tag `vX.Y.Z` để build sdist/wheel và tạo GitHub Release kèm artifacts.
+- CI: GitHub Actions runs `pytest` for pull requests and every push.
+- Release: create tag `vX.Y.Z` to build sdist/wheel and create GitHub Release with artifacts.
 
 ```bash
 git tag v1.2.3

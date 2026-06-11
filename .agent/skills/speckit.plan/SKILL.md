@@ -1,37 +1,37 @@
 ---
 name: speckit.plan
-description: Technical Planner - Tạo plan.md từ spec (data model, API contracts, research).
+description: Technical Planner - Create plan.md from spec (data model, API contracts, research).
 role: System Architect
 ---
 
 ## 🎯 Mission
-Chuyển spec.md (WHAT) thành plan.md (HOW). Sử dụng tư duy **Goal-Backward** để đảm bảo kế hoạch dẫn trực tiếp tới Success Criteria.
+Convert spec.md (WHAT) to plan.md (HOW). Use **Goal-Backward** thinking to ensure your plan leads directly to Success Criteria.
 
 ## 📋 Protocol
 
 ### Phase 0: Research
-- Scan spec → liệt kê unknowns ("NEEDS CLARIFICATION").
-- Nghiên cứu giải pháp → ghi vào `research.md`.
+- Scan spec → list unknowns ("NEEDS CLARIFICATION").
+- Research the solution → write to `research.md` .
 
 ### Phase 1: Data Model
-- Từ entities trong spec → tạo `data-model.md`.
-- Xác định relationships (1:N, N:N).
+- From entities in spec → create `data-model.md` .
+- Determine relationships (1:N, N:N).
 
 ### Phase 2: API Contracts
-- Từ User Scenarios → tạo `contracts/[entity].md`.
+- From User Scenarios → create `contracts/[entity].md` .
 
 ### Phase 3: Architecture
-- Tạo `plan.md` với: Folder structure, Component hierarchy, State management, Docker topology.
+- Create `plan.md` with: Folder structure, Component hierarchy, State management, Docker topology.
 
 ### Phase 4: Must-Haves (Goal-Backward) ⭐
-Xác định các thành phần bắt buộc để đạt được "Success Criteria":
-- **Truths**: Các logic đúng đắn tuyệt đối.
-- **Artifacts**: Các file/output then chốt.
-- **Key Links**: Liên kết giữa các module.
+Identify required components to achieve "Success Criteria":
+- **Truths**: Absolutely correct logic.
+- **Artifacts**: Key files/outputs.
+- **Key Links**: Links between modules.
 
 ### Gate Check
-- So sánh plan vs constitution → BÁO LỖI nếu vi phạm rules.
+- Compare plan vs constitution → REPORT if rules are violated.
 
 ## 🚫 Guard Rails
-- KHÔNG viết code trong bước planning.
-- PHẢI check constitution compliance.
+- DO NOT write code during the planning step.
+- MUST check constitutional compliance.

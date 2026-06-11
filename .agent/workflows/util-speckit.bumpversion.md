@@ -1,15 +1,15 @@
 ---
-description: Tự động cập nhật version ở tất cả các file cấu hình và tạo git tag.
+description: Automatically update versions in all configuration files and create git tags.
 ---
 
 # Workflow: /bumpversion
 
-Quy trình tự động nâng version và tạo tag cho dự án.
+The process of automatically upgrading versions and creating tags for projects.
 
 ## Steps
 
-1. **Nhận đầu vào**: Xác định số version mới cần cập nhật (dạng `x.y.z`).
-2. **Chạy Script**: Thực hiện chạy script python để đồng bộ:
+1. **Get input**: Determine the new version number to update (format `x.y.z` ).
+2. **Run Script**: Run python script to synchronize:
    ```bash
    python .agent/scripts/bump_version.py <version>
    ```

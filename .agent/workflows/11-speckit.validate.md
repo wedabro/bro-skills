@@ -5,21 +5,21 @@ description: Validate Implementation vs Spec
 # ✅ Final Validation
 
 ## Pre-conditions
-- Mọi tasks complete, tests pass, review approved
+- All tasks completed, tests passed, review approved
 
 ## Steps
 
 // turbo-all
 
 1. **Tasks Completion Check**:
-   - Đọc `tasks.md` → mọi task phải `[X]`
-   - Nếu còn `[ ]` hoặc `[/]` → ❌ BLOCKED
+   - Read `tasks.md` → every task must be `[X]`
+   - If there is `[ ]` or `[/]` → ❌ BLOCKED
 
 2. **TypeScript Build Gate** (CRITICAL):
    ```bash
    docker compose -f docker-compose.beta.yml build 2>&1 | tail -n 100
    ```
-   Nếu build fail → ❌ BLOCKED, liệt kê errors
+   If build fails → ❌ BLOCKED, list errors
 
 3. **Runtime Verification**:
    ```bash
@@ -27,8 +27,8 @@ description: Validate Implementation vs Spec
    sleep 15
    docker compose -f docker-compose.beta.yml ps
    ```
-   - Tất cả services phải `Up` (KHÔNG `Restarting`)
-   - Nếu `Restarting` → chạy `docker compose logs <service>` → ❌ BLOCKED
+   - All services must be `Up` (NOT `Restarting` )
+   - If `Restarting` → run `docker compose logs <service>` → ❌ BLOCKED
 
 4. **Health Check**:
    ```bash
@@ -36,7 +36,7 @@ description: Validate Implementation vs Spec
    curl -s http://localhost:<admin_port> | head -c 200  # Admin Panel
    curl -s http://localhost:<api_port>/health  # API
    ```
-   Tất cả phải trả về 200
+   All must return 200
 
 5. **Constitution Compliance**:
    - Verify Monorepo Rules (type contracts)
@@ -58,4 +58,4 @@ description: Validate Implementation vs Spec
 
 ## Success Criteria
 - ✅ Verdict: READY FOR DEPLOY
-- ❌ Nếu BẤT KỲ step nào FAIL → BLOCKED (không được deploy)
+- ❌ If ANY step FAIL → BLOCKED (not deployed)

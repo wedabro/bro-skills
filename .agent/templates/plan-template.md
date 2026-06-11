@@ -7,7 +7,7 @@ depends_on: spec.md
 # 🏗️ Implementation Plan: [FEATURE_NAME]
 
 ## 1. Technical Architecture
-[Mô tả cách tiếp cận kỹ thuật]
+[Description of technical approach]
 
 ## 2. Data Model Changes
 ```prisma/sql
@@ -29,4 +29,4 @@ src/
 ```
 
 ## 5. Dependencies
-[Thư viện cần thêm — PHẢI có trong package.json]
+[Libraries to add — MUST be in package.json]

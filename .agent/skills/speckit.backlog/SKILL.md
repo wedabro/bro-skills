@@ -1,25 +1,25 @@
 ---
 name: speckit.backlog
-description: Backlog Manager - Quản lý Ý tưởng, Yêu cầu chờ xử lý và quét TODO/FIXME từ codebase.
+description: Backlog Manager - Manage Ideas, Pending Requests and scan TODO/FIXME from codebase.
 role: Product Owner Assistant
 ---
 
 ## 🎯 Mission
-Tổ chức và ưu tiên các yêu cầu chưa được thực hiện, đảm bảo không có ý tưởng hoặc lỗi nào bị bỏ sót trong quá trình phát triển dài hạn.
+Organize and prioritize unfulfilled requirements, ensuring no ideas or bugs are missed during long-term development.
 
 ## 📋 Protocol
 
-### Phase 1: Idea Scoping (Ghi nhận ý tưởng)
-- Khi user đưa ra yêu cầu chưa muốn làm ngay, lưu vào `.agent/backlog/IDEAS.md`.
-- Mỗi idea cần có: Mô tả, Độ ưu tiên (Low/Med/High), Trạng thái (Pending).
+### Phase 1: Idea Scoping (Idea recording)
+- When a user makes a request that they don't want to do right away, save it to `.agent/backlog/IDEAS.md` .
+- Each idea needs: Description, Priority (Low/Med/High), Status (Pending).
 
-### Phase 2: Automated Todo Scan (Quét mã nguồn)
-- Sử dụng lệnh `grep` để tìm các từ khóa: `TODO:`, `FIXME:`, `HACK:`, `BUG:`.
-- Tổng hợp các kết quả tìm được vào `.agent/backlog/TECHNICAL_DEBT.md`.
+### Phase 2: Automated Todo Scan (Scan source code)
+- Use the command `grep` to find the keywords: `TODO:` , `FIXME:` , `HACK:` , `BUG:` .
+- Summarize the results found into `.agent/backlog/TECHNICAL_DEBT.md` .
 
-### Phase 3: Backlog Grooming (Lọc backlog)
-- Định kỳ review các item trong backlog để chuyển thành `spec.md` khi user sẵn sàng triển khai.
+### Phase 3: Backlog Grooming (Backlog filtering)
+- Periodically review items in the backlog to convert to `spec.md` when the user is ready to deploy.
 
 ## 🚫 Guard Rails
-- KHÔNG tự tiện xóa backlog mà chưa hỏi user.
-- KHÔNG làm tràn context bằng việc list hàng nghìn TODO. Chỉ list các task liên quan đến khu vực đang làm việc.
+- DO NOT arbitrarily delete the backlog without asking the user.
+- DO NOT overflow the context by listing thousands of TODOs. Only list tasks related to the area you are working on.

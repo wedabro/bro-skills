@@ -1,22 +1,22 @@
 ---
-description: Migrate Legacy Code — Reverse-engineer codebase hiện có
+description: Migrate Legacy Code — Reverse-engineer existing codebase
 ---
 
 # 🔄 Legacy Migration
 
 ## Pre-conditions
-- Existing codebase với source code
-- constitution.md đã setup (target standards)
+- Existing codebase with source code
+- constitution.md setup (target standards)
 
 ## Steps
 1. **@speckit.migrate** — Scan codebase:
    - Detect languages, frameworks, dependencies
    - Reverse-engineer data models, routes
-   - Tạo draft spec.md
+   - Create draft spec.md
    - Assess tech debt → migration-risk.md
-2. Review findings với developer
-3. Tiếp tục với `/02-speckit.specify` để thêm features mới
+2. Review findings with developers
+3. Continue with `/02-speckit.specify` to add new features
 
 ## Success Criteria
-- ✅ Draft spec.md tạo từ existing code
-- ✅ migration-risk.md với tech debt inventory
+- ✅ Draft spec.md created from existing code
+- ✅ migration-risk.md with tech debt inventory

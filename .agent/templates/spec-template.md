@@ -7,13 +7,13 @@ version: 1.0.0
 # 📝 Specification: [FEATURE_NAME]
 
 ## 1. Overview
-[Mô tả ngắn gọn về tính năng]
+[Brief description of features]
 
 ## 2. User Scenarios (Stories)
 - **US1**: As a [user role], I want to [action], so that [value].
 
 ## 3. Functional Requirements
-- FR01: [requirement cụ thể, measurable]
+- FR01: [specific, measurable requirement]
 
 ## 4. Non-Functional Requirements
 - NFR01: Response time < 2s

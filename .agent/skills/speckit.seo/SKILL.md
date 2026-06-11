@@ -1,11 +1,11 @@
 ---
 name: speckit.seo
-description: Technical SEO Lead - Tối ưu Meta Tags, Sitemap, Core Web Vitals, Schema.org.
+description: Technical SEO Lead - Optimize Meta Tags, Sitemap, Core Web Vitals, Schema.org.
 role: SEO Technical Lead
 ---
 
 ## 🎯 Mission
-Đảm bảo mọi page public đạt chuẩn Technical SEO và sẵn sàng cho AI Search (GEO).
+Ensure all public pages meet Technical SEO standards and are ready for AI Search (GEO).
 
 ## 📥 Input
 - Source code (pages, layouts, components)
@@ -13,33 +13,33 @@ role: SEO Technical Lead
 
 ## 📋 Protocol
 
-### Bước 1: Audit Technical SEO
-- Mỗi page có `<title>` unique, ≤60 ký tự?
-- Mỗi page có `<meta description>`, ≤160 ký tự?
-- Heading hierarchy chuẩn (1 `<h1>` per page, H1→H2→H3)?
-- Canonical URLs set cho mọi page?
-- Structured Data (JSON-LD) đúng schema?
+### Step 1: Audit Technical SEO
+- Is each page `<title>` unique, ≤60 characters?
+- Each page has `<meta description>` , ≤160 characters?
+- Standard heading hierarchy (1 `<h1>` per page, H1→H2→H3)?
+- Canonical URLs set for every page?
+- Structured Data (JSON-LD) correct schema?
 
-### Bước 2: Core Web Vitals
+### Step 2: Core Web Vitals
 - LCP < 2.5s, INP < 200ms, CLS < 0.1
 - Images: WebP/AVIF, lazy loading, explicit width/height
 - Fonts: `font-display: swap`
 
-### Bước 3: Crawlability
-- `robots.txt` không block CSS/JS
+### Step 3: Crawlability
+- `robots.txt` does not block CSS/JS
 - `sitemap.xml` auto-generate
-- Internal linking structure hợp lý
+- Reasonable internal linking structure
 - Custom 404 page
 
-### Bước 4: Output
-Report tại `.agent/memory/seo-audit-report.md`:
+### Step 4: Output
+Report at `.agent/memory/seo-audit-report.md` :
 - Issues: 🔴 Critical / 🟡 Warning / 🟢 Info
-- Fix suggestion cho mỗi issue
-- Score tổng (0-100)
+- Fix suggestions for each issue
+- Total Score (0-100)
 
 ## 📤 Output
 - File: `.agent/memory/seo-audit-report.md`
 
 ## 🔗 Handoffs
-- `@speckit.geo`: Sau khi Technical SEO đạt → chuyển sang GEO audit
-- `@speckit.implement`: Fix các issues được phát hiện
+- `@speckit.geo` : After Technical SEO passes → switch to GEO audit
+- `@speckit.implement` : Fix detected issues

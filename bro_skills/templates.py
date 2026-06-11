@@ -1,6 +1,6 @@
 """
-Templates - Aggregator cho Document, Skill, Workflow, Script templates.
-Skill và Workflow templates được tách ra file riêng để dễ maintain.
+Templates - Aggregator for Document, Skill, Workflow, and Script templates.
+Skill and Workflow templates are separated into their own files for easier maintenance.
 """
 
 from datetime import datetime
@@ -22,13 +22,13 @@ version: 1.0.0
 # 📝 Specification: [FEATURE_NAME]
 
 ## 1. Overview
-[Mô tả ngắn gọn về tính năng]
+[Brief description of the feature]
 
 ## 2. User Scenarios (Stories)
 - **US1**: As a [user role], I want to [action], so that [value].
 
 ## 3. Functional Requirements
-- FR01: [requirement cụ thể, measurable]
+- FR01: [specific, measurable requirement]
 
 ## 4. Non-Functional Requirements
 - NFR01: Response time < 2s
@@ -47,7 +47,7 @@ depends_on: spec.md
 # 🏗️ Implementation Plan: [FEATURE_NAME]
 
 ## 1. Technical Architecture
-[Mô tả cách tiếp cận kỹ thuật]
+[Describe the technical approach]
 
 ## 2. Data Model Changes
 ```prisma/sql
@@ -69,7 +69,7 @@ src/
 ```
 
 ## 5. Dependencies
-[Thư viện cần thêm — PHẢI có trong package.json]
+[Libraries to be added — MUST be in package.json]
 """
 
 def doc_tasks_template():
@@ -108,10 +108,10 @@ def doc_identity_template(project_name="Project", project_type="fullstack", use_
     if project_type in ("web_public", "fullstack", "web_saas"):
         seo_section = """
 ## 🔍 SEO & GEO Awareness
-- Mọi page public phải có meta title, description, canonical URL.
-- Structured Data (JSON-LD) là BẮT BUỘC cho các trang sản phẩm, bài viết.
-- Tối ưu cho AI Search (GEO): Nội dung phải fact-dense, có nguồn trích dẫn.
-- Cung cấp file `llms.txt` tại root để AI crawlers hiểu cấu trúc site.
+- Every public page must have a meta title, description, and canonical URL.
+- Structured Data (JSON-LD) is REQUIRED for product pages and articles.
+- Optimize for AI Search (GEO): Content must be fact-dense, with cited sources.
+- Provide an `llms.txt` file at root so AI crawlers understand site structure.
 """
 
     docker_soul = "- Strictly follow Docker-First Policy." if use_docker else "- Flexibility-First: Infrastructure is project-specific."
@@ -140,59 +140,59 @@ You follow **ASF 3.3** standards.
 2. **Security is non-negotiable**: Production environments must be hardened.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
-5. **bro-skills First**: Mọi thay đổi và vận hành phải thông qua bro-skills workflows.
+5. **bro-skills First**: All changes and operations must go through bro-skills workflows.
 """
 
 def doc_constitution_template(use_docker=True, is_soft_rules=False):
-    must_label = "BẮT BUỘC" if not is_soft_rules else "KHUYẾN NGHỊ"
-    shall_label = "PHẢI" if not is_soft_rules else "NÊN"
-    forbidden_label = "CẤM" if not is_soft_rules else "HẠN CHẾ"
+    must_label = "REQUIRED" if not is_soft_rules else "RECOMMENDED"
+    shall_label = "MUST" if not is_soft_rules else "SHOULD"
+    forbidden_label = "FORBIDDEN" if not is_soft_rules else "RESTRICTED"
 
     docker_infra = f"""
 ## §1 Infrastructure (DOCKER-FIRST)
-- **Mặc định dùng Docker** cho cả Local và Production. KHÔNG chạy `npm`/`node`/`python` trực tiếp trên host.
-- **Local**: Dùng `docker-compose.yml` để dev.
-- **Production**: Dùng `docker-compose.prod.yml` kèm Security Hardening.
-- **Ports**: Chỉ dùng dải **8900-8999**.
+- **Docker-First Policy**: Use Docker by default for both Local and Production. DO NOT run `npm`/`node`/`python` directly on host.
+- **Local**: Use `docker-compose.yml` for development.
+- **Production**: Use `docker-compose.prod.yml` with Security Hardening.
+- **Ports**: Only use port range **8900-8999**.
   - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
 """ if use_docker else f"""
 ## §1 Environment (CUSTOM)
-- **Hạ tầng dự án**: Được định nghĩa cụ thể theo từng nhu cầu, không nhất thiết chạy trong Docker.
-- **Port**: Tùy chọn dựa trên sự sẵn có của hệ thống mục tiêu.
+- **Project Infrastructure**: Specifically defined by requirements, not necessarily running in Docker.
+- **Port**: Optional, based on targeted system availability.
 """
 
     return f"""# 📜 Project Constitution
 
 ## §0 bro-skills Protocol ({must_label})
-- **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test), và triển khai (Deploy Production) {shall_label} sử dụng `bro-skills`.
-- **Pipeline**: Tuân thủ nghiêm ngặt quy trình: Specify → Plan → Tasks → Implement.
-- **Tools**: Chỉ sử dụng các workflows trong `.agent/workflows` để thực hiện task.
+- **{must_label}**: All development (Code), testing (Test), and deployment (Deploy Production) activities {shall_label} use `bro-skills`.
+- **Pipeline**: Strictly adhere to the SDLC pipeline: Specify → Plan → Tasks → Implement.
+- **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
 {docker_infra}
 ## §2 Security & Production Safety
-- **{forbidden_label}**: `docker compose down -v` trên Production.
-- **{forbidden_label}**: Deploy thủ công ({shall_label} dùng workflows `/deploy-production` hoặc `/deploy-staging`).
-- **Xác nhận**: Yêu cầu xác nhận trước khi Deep Clean, Deploy Prod, hoặc Delete Data.
-- **Runtime**: Production containers KHÔNG chạy quyền root.
+- **{forbidden_label}**: Running `docker compose down -v` on Production.
+- **{forbidden_label}**: Manual deployment ({shall_label} use workflows `/deploy-production` or `/deploy-staging`).
+- **Confirmation**: Require user confirmation before Deep Clean, Deploy Prod, or Delete Data.
+- **Runtime**: Production containers MUST NOT run as root.
 
 ## §3 Code Standards & ENV
-- **{forbidden_label} hard-code**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
-- **Sensitive vars**: {shall_label} dùng ENV (`.env` local, server ENV prod).
+- **{forbidden_label} hardcoding**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
+- **Sensitive variables**: {shall_label} use ENV (`.env` local, server ENV prod).
   - Prefix: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
 - **Validate**: 
-  - Critical vars: `throw new Error()` nếu thiếu.
-  - Optional vars: `console.error()` nếu thiếu.
-- **Documentation**: Phải có `.env.example` đầy đủ.
+  - Critical variables: `throw new Error()` if missing.
+  - Optional variables: `console.error()` if missing.
+- **Documentation**: Must have a complete `.env.example` file.
 
 ## §4 Workflow & Scripting
-- **Tự động hóa**: Tạo script khi gặp lỗi hoặc task lặp lại.
-- **Git**: Lưu script vào `.agent/scripts`, commit vào hệ thống version control.
-- **Git Auto-Commit**: {shall_label} thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
-- **Update**: Cập nhật workflow tương ứng sau khi tạo script mới.
+- **Automation**: Create scripts when encountering errors or repetitive tasks.
+- **Git**: Save scripts in `.agent/scripts` and commit them to version control.
+- **Git Auto-Commit**: {shall_label} perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Update**: Update corresponding workflows after creating new scripts.
 
 ## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)
-- **{must_label}**: Khi thiết kế giao diện, {shall_label} sử dụng skill `design-taste-frontend` hoặc `/util-speckit.uiux`.
-- **{forbidden_label}**: Sử dụng UI patterns rập khuôn, template có sẵn, màu sắc mặc định của trình duyệt, hoặc lạm dụng gradient/shadow AI.
-- **Design System**: {shall_label} tuân thủ quy tắc Anti-Slop (Asymmetric layout, bento grids, Typography-first, Micro-interactions).
+- **{must_label}**: Use the `design-taste-frontend` skill or `/util-speckit.uiux` for UI design.
+- **{forbidden_label}**: Using standard template-like UI patterns, default browser colors, or overused AI gradients/shadows.
+- **Design System**: {shall_label} comply with Anti-Slop principles (Asymmetric layout, bento grids, Typography-first, Micro-interactions).
 """
 
 def doc_infrastructure_template():
@@ -212,26 +212,26 @@ def doc_infrastructure_template():
 def doc_seo_standards_template():
     return """# 🔍 SEO & GEO Standards
 
-## 📋 Technical SEO Checklist (Bắt buộc)
-- [ ] Mỗi page có `<title>` unique, tối đa 60 ký tự
-- [ ] Mỗi page có `<meta description>`, tối đa 160 ký tự
-- [ ] Chỉ 1 `<h1>` per page, heading hierarchy chuẩn (H1 → H2 → H3)
-- [ ] Canonical URL cho mọi page để tránh duplicate content
-- [ ] `sitemap.xml` tự động generate và submit lên Google Search Console
-- [ ] `robots.txt` cấu hình đúng (không block CSS/JS)
-- [ ] Image: `alt` text mô tả, lazy loading, format WebP/AVIF
-- [ ] URL slug: lowercase, dấu gạch ngang, không dấu tiếng Việt
+## 📋 Technical SEO Checklist (Required)
+- [ ] Each page has a unique `<title>`, max 60 characters
+- [ ] Each page has a `<meta description>`, max 160 characters
+- [ ] Only one `<h1>` per page, standard heading hierarchy (H1 → H2 → H3)
+- [ ] Canonical URL for every page to avoid duplicate content
+- [ ] `sitemap.xml` automatically generated and submitted to Google Search Console
+- [ ] `robots.txt` correctly configured (does not block CSS/JS)
+- [ ] Image: descriptive `alt` text, lazy loading, WebP/AVIF format
+- [ ] URL slug: lowercase, hyphens, no accents
 - [ ] Mobile-first responsive design
 - [ ] Core Web Vitals targets: LCP < 2.5s, INP < 200ms, CLS < 0.1
 
 ## 🤖 GEO (Generative Engine Optimization)
-- [ ] File `llms.txt` tại root domain
-- [ ] Structured Data (JSON-LD) cho Article, Product, FAQ, BreadcrumbList
-- [ ] E-E-A-T signals: Author bio, nguồn trích dẫn, ngày publish/update
+- [ ] File `llms.txt` at root domain
+- [ ] Structured Data (JSON-LD) for Article, Product, FAQ, BreadcrumbList
+- [ ] E-E-A-T signals: Author bio, source citations, publish/update dates
 - [ ] Content format: short paragraphs, bullet points, numbered lists
-- [ ] Fact-density: Mỗi đoạn văn ≥1 data point hoặc trích dẫn
-- [ ] FAQ sections dạng "People Also Ask"
-- [ ] Topic clusters: Liên kết nội bộ giữa bài viết cùng chủ đề
+- [ ] Fact-density: Each paragraph has ≥1 data point or citation
+- [ ] FAQ sections matching "People Also Ask" queries
+- [ ] Topic clusters: Internal linking between related posts
 
 ## 📊 Schema.org (JSON-LD Templates)
 
@@ -248,8 +248,6 @@ def doc_seo_standards_template():
 ### FAQ
 ```json
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"...","acceptedAnswer":{"@type":"Answer","text":"..."}}]}
-```json
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"...","acceptedAnswer":{"@type":"Answer","text":"..."}}]}
 ```
 """
 
@@ -257,36 +255,36 @@ def doc_ui_ux_standards_template():
     return """# 🎨 UI/UX Standards (Anti-Slop & Premium)
 
 ## 🌈 Brand Palette & Color Calibration
-- **Anti-Default**: CẤM dùng các màu mặc định của trình duyệt (red/blue/green nguyên bản). CẤM lạm dụng "AI Purple" gradient.
-- **Premium Consumer Ban**: Tránh dùng palette kem/be + đồng/đất sét (beige + brass/clay) mặc định của AI trừ khi brief yêu cầu rõ. Sử dụng các palette thay thế như Cold Luxury (silver-grey + chrome), Forest (deep green + bone), hoặc Black and Tan.
-- **Quy tắc 1 Accent**: Chọn 1 màu nhấn (Accent) duy nhất và dùng nhất quán trên toàn bộ trang.
+- **Anti-Default**: FORBIDDEN to use default browser colors (pure red/blue/green). FORBIDDEN to overuse "AI Purple" gradients.
+- **Premium Consumer Ban**: Avoid AI default beige + brass/clay palettes unless explicitly requested. Use alternatives like Cold Luxury (silver-grey + chrome), Forest (deep green + bone), or Black and Tan.
+- **1 Accent Rule**: Choose a single Accent color and use it consistently across the entire site.
 
 ## 🔡 Typography (Anti-Slop)
-- **Display Font**: CẤM dùng `Inter` làm mặc định cho các heading sáng tạo. Hãy dùng `Geist`, `Satoshi`, `Cabinet Grotesk`, `Outfit` hoặc một font phù hợp dự án.
-- **Serif Discipline**: KHÔNG dùng font có chân (Serif) làm mặc định trừ khi brand yêu cầu phong cách editorial/luxury/vintage. Cấm mix chữ có chân và không chân trong cùng 1 tiêu đề.
-- **Hierarchy**: Tiêu đề H1 tối đa 2 dòng. Phụ đề (subtext) tối đa 20 từ.
+- **Display Font**: FORBIDDEN to use `Inter` as default for creative headings. Use `Geist`, `Satoshi`, `Cabinet Grotesk`, `Outfit`, or a project-specific font.
+- **Serif Discipline**: DO NOT use Serif fonts as default unless brand requires editorial/luxury/vintage styles. Forbidden to mix serif and sans-serif fonts in the same heading.
+- **Hierarchy**: H1 headings max 2 lines. Subtext max 20 words.
 
 ## 📏 Layout & Rhythm
-- **Hero Section**: Hạn chế top padding (max `pt-24` trên desktop).
-- **Anti-Center Bias**: Tránh căn giữa Hero một cách nhàm chán nếu không phải là trang manifesto. Ưu tiên bố cục Split Screen hoặc Asymmetric.
-- **Eyebrow Restraint**: CẤM lạm dụng "eyebrow" (tiêu đề nhỏ in hoa phía trên) ở mọi section. Tối đa 1 eyebrow trên mỗi 3 sections.
-- **Bento Grid**: Lưới Bento phải có nhịp điệu. Số lượng ô bằng đúng số lượng content. Không để ô trống. Cần đa dạng hoá cell (ảnh thực tế, gradient, chữ).
-- **Zigzag Ban**: Tối đa 2 section liên tiếp dùng layout "trái-ảnh phải-chữ" đảo ngược (zigzag).
+- **Hero Section**: Limit top padding (max `pt-24` on desktop).
+- **Anti-Center Bias**: Avoid boring centered Hero layout unless it's a manifesto page. Prefer Split Screen or Asymmetric layouts.
+- **Eyebrow Restraint**: FORBIDDEN to overuse "eyebrow" headings. Max 1 eyebrow per 3 sections.
+- **Bento Grid**: Bento grids must have rhythm. Number of cells must match content. No empty cells. Diversify cells (real images, gradients, text).
+- **Zigzag Ban**: Max 2 consecutive sections using alternating image-text (zigzag) layouts.
 
 ## 🧱 Core Components (Atomic) & Accessibility
 - **Buttons (CTAs)**:
-  - CẤM text trên button bị rớt dòng (wrap text) trên desktop. Label button tối đa 3 từ (ví dụ: `Get Started`).
-  - CẤM 2 CTA có cùng mục đích (cùng intent) xuất hiện trên cùng một trang (chỉ chọn 1 label).
-  - Tỉ lệ tương phản WCAG AA tối thiểu 4.5:1 (Không dùng chữ trắng trên nền xám nhạt).
+  - FORBIDDEN to wrap button text on desktop. Button labels max 3 words (e.g., `Get Started`).
+  - FORBIDDEN to have 2 CTAs with the same intent on the same page (choose only one label).
+  - Minimum WCAG AA contrast ratio 4.5:1 (Do not use white text on light grey background).
 - **Interactive UI States**:
-  - Skeletal loaders cho dữ liệu loading (không dùng spinner chung chung).
-  - Tactile Feedback: Thêm `-translate-y-[1px]` hoặc `scale-[0.98]` khi `:active` để tạo cảm giác bấm vật lý.
-- **Images**: BẮT BUỘC có hình ảnh thật (từ image gen tool, unsplash, picsum). CẤM dùng các `div` fake screenshot.
+  - Skeletal loaders for loading states (do not use generic spinners).
+  - Tactile Feedback: Add `-translate-y-[1px]` or `scale-[0.98]` on `:active` states for a physical button feel.
+- **Images**: REQUIRED to have real images (from image gen tools, Unsplash, Picsum). FORBIDDEN to use div fake screenshots.
 
 ## ✨ Micro-animations
-- Sử dụng `framer-motion` hoặc `gsap` có chủ đích.
-- Motion phải hỗ trợ `prefers-reduced-motion`.
-- CẤM lặp marquee (chữ chạy ngang) quá 1 lần trên 1 trang.
+- Use `framer-motion` or `gsap` intentionally.
+- Animations must respect `prefers-reduced-motion`.
+- FORBIDDEN to repeat marquee texts more than once per page.
 """
 
 
@@ -362,46 +360,45 @@ echo "✅ Context update complete"
 
 
 # =============================================================================
-# IDE RULES TEMPLATES — Chuẩn format cho từng IDE
-# Research date: 2026-02-21
+# IDE RULES TEMPLATES - Standard formats for each IDE
 # =============================================================================
 
 def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=False):
-    """Nội dung rules chung — được tái sử dụng cho mọi IDE."""
-    must_label = "Tuân thủ" if not is_soft_rules else "Nên tuân thủ"
-    shall_label = "phải" if not is_soft_rules else "nên"
-    forbidden_label = "KHÔNG" if not is_soft_rules else "Hạn chế"
+    """Core rules content - reused for all IDE rules."""
+    must_label = "Strictly follow" if not is_soft_rules else "Should follow"
+    shall_label = "must" if not is_soft_rules else "should"
+    forbidden_label = "DO NOT" if not is_soft_rules else "Avoid"
     
-    docker_rule = f"- Docker-First: Mọi hoạt động code và chạy app {shall_label} diễn ra trong container. {forbidden_label} chạy node/python trên host." if use_docker else "- Flexibility: Chạy app trực tiếp hoặc qua Docker tùy nhu cầu dự án."
-    port_rule = f"- Ports: Sử dụng dải port 8900-8999. {must_label} lấy port từ biến môi trường (.env)." if use_docker else "- Ports: Sử dụng port khả dụng trên hệ thống."
+    docker_rule = f"- Docker-First: All coding and app running activities {shall_label} take place in the container. {forbidden_label} run node/python on the host." if use_docker else "- Flexibility: Run app directly or via Docker based on project needs."
+    port_rule = f"- Ports: Use port range 8900-8999. {must_label} retrieve port from environment variables (.env)." if use_docker else "- Ports: Use available ports on the system."
 
-    return f"""Dự án: {project_name}
+    return f"""Project: {project_name}
 
-## 1. PHÁP LỆNH TỐI CAO
-- {must_label} nghiêm ngặt file `.agent/memory/constitution.md`.
+## 1. SUPREME ORDER
+- {must_label} the `.agent/memory/constitution.md` file.
 {docker_rule}
 {port_rule}
 
 ## 2. bro-skills PROTOCOL
-- Mọi task {shall_label} đi qua quy trình: Specify → Plan → Tasks → Implement.
-- Sử dụng Workflows trong `.agent/workflows/` và Skills trong `.agent/skills/`.
+- Every task {shall_label} go through the process: Specify → Plan → Tasks → Implement.
+- Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
 
-## 3. NGÔN NGỮ & CODE
-- Phản hồi developer hoàn toàn bằng Tiếng Việt.
-- 15-Minute Rule: Mỗi task {shall_label} atomic, ≤ 15 phút, ảnh hưởng ≤ 3 files.
-- PowerShell 5.1+, ngăn cách lệnh bằng dấu `;` ({forbidden_label} dùng `&&`).
-- {forbidden_label} hard-code URLs, Tokens, Keys. Dùng ENV vars (`.env`).
+## 3. LANGUAGE & CODE
+- Respond in the language used by the user (supports Vietnamese and English).
+- 15-Minute Rule: Each task {shall_label} be atomic, ≤ 15 minutes, affecting ≤ 3 files.
+- PowerShell 5.1+, separate commands with `;` ({forbidden_label} use `&&`).
+- {forbidden_label} hardcoding URLs, Tokens, Keys. Use ENV vars (`.env`).
 
-## 4. AN TOÀN
-- {forbidden_label} chạy `docker compose down -v` trên Production.
-- Tạo script tự động (`.agent/scripts/`) cho lỗi lặp lại.
-- Kiểm tra logs ngay khi lỗi: `docker compose logs -f <service>`.
-- **Auto-Commit**: PHẢI thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
+## 4. SAFETY
+- {forbidden_label} run `docker compose down -v` on Production.
+- Generate automatic scripts (`.agent/scripts/`) for recurring errors.
+- Check logs immediately on error: `docker compose logs -f <service>`.
+- **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
-- **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
-- **Planning Artifacts**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 files).
-- **Verification**: Sau khi hoàn thành task, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
+- **Task Tracking**: Use `task_boundary` to synchronize status with `@speckit.tasks` (tasks.md).
+- **Planning Artifacts**: Always create `implementation_plan.md` when making large changes (atomic > 3 files).
+- **Verification**: After completing the task, use `walkthrough.md` to compare the results with `spec.md`.
 """
 
 
@@ -410,7 +407,7 @@ def doc_antigravity_rules_template(project_name="Project", use_docker=True, is_s
     return f"""---
 trigger: always_on
 glob: "**/*"
-description: bro-skills Workspace Rules cho {project_name} - ASF 3.3 Standard
+description: bro-skills Workspace Rules for {project_name} - ASF 3.3 Standard
 ---
 
 # 🛡️ bro-skills Workspace Rules
@@ -464,11 +461,7 @@ def doc_jetbrains_rules_template(project_name="Project", use_docker=True, is_sof
 
 
 def doc_kiro_mcp_template():
-    """Kiro IDE (AWS) — .kiro/settings/mcp.json (scaffold mặc định, merge-safe).
-
-    Trả về dict; generator sẽ MERGE vào file hiện có (không ghi đè server đã có).
-    Server scaffold để disabled=true để user tự bật khi cần.
-    """
+    """Kiro IDE (AWS) — .kiro/settings/mcp.json (default scaffold, merge-safe)."""
     return {
         "mcpServers": {
             "fetch": {
@@ -503,7 +496,7 @@ Shell: PowerShell 5.1+ (Windows)
 - No hardcoded URLs, Tokens, Keys, or Credentials.
 
 ## Language
-- Respond in Vietnamese (Tiếng Việt).
+- Respond in the language used by the user (supports Vietnamese and English).
 
 ## Safety
 - NEVER run `docker compose down -v` on Production.
@@ -534,20 +527,16 @@ def doc_agents_md_template(project_name="Project", use_docker=True, is_soft_rule
 {_core_rules_content(project_name, use_docker, is_soft_rules)}
 
 ## Build & Test
-- Build: `docker compose build` (Nếu dùng Docker)
-- Run: `docker compose up -d` (Nếu dùng Docker)
+- Build: `docker compose build` (If using Docker)
+- Run: `docker compose up -d` (If using Docker)
 - Logs: `docker compose logs -f <service>`
 - Stop: `docker compose down`
 """
 
 
 # =============================================================================
-# TEMPLATE MAPS — Re-exported from sub-modules + local definitions
+# TEMPLATE MAPS
 # =============================================================================
-
-# Re-export from sub-modules (for backward compat)
-# SKILL_TEMPLATE_MAP imported from skill_templates
-# WORKFLOW_TEMPLATE_MAP imported from workflow_templates
 
 DOCUMENT_TEMPLATE_MAP = {
     "spec-template.md": doc_spec_template,
@@ -565,4 +554,3 @@ SCRIPT_TEMPLATE_MAP = {
     "check-prerequisites.sh": script_check_prerequisites,
     "update-agent-context.sh": script_update_context,
 }
-

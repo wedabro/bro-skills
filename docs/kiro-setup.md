@@ -24,7 +24,7 @@ Each skill needs valid frontmatter (`name` + `description`) so Kiro can discover
 ```yaml
 ---
 name: speckit.specify
-description: Feature Definer - Tạo spec.md từ mô tả ngôn ngữ tự nhiên.
+description: Feature Definer - Generates spec.md from natural language description.
 role: Domain Scribe
 ---
 ```
@@ -61,12 +61,12 @@ Hook file schema (`.kiro/hooks/<id>.kiro.hook`):
 {
   "enabled": true,
   "name": "Speckit: Specify",
-  "description": "Tạo spec.md từ mô tả feature",
+  "description": "Generate spec.md from feature description",
   "version": "1",
   "when": { "type": "userTriggered" },
   "then": {
     "type": "askAgent",
-    "prompt": "Đọc và thực thi `.agent/workflows/02-speckit.specify.md`..."
+    "prompt": "Read and execute `.agent/workflows/02-speckit.specify.md` ..."
   }
 }
 ```

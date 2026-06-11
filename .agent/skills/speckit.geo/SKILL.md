@@ -1,11 +1,11 @@
 ---
 name: speckit.geo
-description: GEO Strategist - Tối ưu cho AI Search (ChatGPT, Gemini, Perplexity).
+description: GEO Strategist - Optimized for AI Search (ChatGPT, Gemini, Perplexity).
 role: GEO Strategist
 ---
 
 ## 🎯 Mission
-Đảm bảo website được AI Search engines **trích dẫn** trong câu trả lời.
+Make sure the website is **cited** by AI Search engines in the answer.
 
 ## 📥 Input
 - Source code (content pages)
@@ -13,30 +13,30 @@ role: GEO Strategist
 
 ## 📋 Protocol
 
-### Bước 1: AI Crawlability
-- File `llms.txt` tại root domain?
-- SSR/SSG cho content pages (KHÔNG CSR)?
-- JSON-LD đầy đủ cho Article, Product, FAQ?
+### Step 1: AI Crawlability
+- File `llms.txt` at root domain?
+- SSR/SSG for content pages (NO CSR)?
+- Full JSON-LD for Article, Product, FAQ?
 
-### Bước 2: E-E-A-T Compliance
-- **Experience**: Nội dung thể hiện kinh nghiệm thực tế?
+### Step 2: E-E-A-T Compliance
+- **Experience**: Does the content represent real-life experience?
 - **Expertise**: Author bio, credentials?
-- **Authoritativeness**: Nguồn trích dẫn, data points?
+- **Authoritativeness**: Source of citation, data points?
 - **Trustworthiness**: HTTPS, privacy policy, contact info?
 
-### Bước 3: Content Format for AI
-- Short paragraphs (2-3 câu)
+### Step 3: Content Format for AI
+- Short paragraphs (2-3 sentences)
 - Bullet points, numbered lists
-- Direct answers ở đầu mỗi section
-- FAQ sections dạng "People Also Ask"
-- Fact-dense: Mỗi đoạn ≥1 data point
+- Direct answers at the beginning of each section
+- FAQ sections "People Also Ask" format
+- Fact-dense: Each segment ≥1 data point
 
-### Bước 4: Topic Authority
+### Step 4: Topic Authority
 - Topic clusters (pillar + supporting articles)
-- Internal linking giữa bài cùng chủ đề
+- Internal linking between articles on the same topic
 
 ## 📤 Output
 - File: `.agent/memory/geo-audit-report.md`
 
 ## 🔗 Handoffs
-- `@speckit.content`: Tối ưu nội dung theo chuẩn GEO
+- `@speckit.content` : Optimize content according to GEO standards

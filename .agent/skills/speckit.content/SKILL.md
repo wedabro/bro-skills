@@ -5,33 +5,33 @@ role: Content Strategist
 ---
 
 ## 🎯 Mission
-Đảm bảo nội dung website đạt chuẩn cho cả người đọc VÀ AI search engines.
+Ensure website content meets standards for both readers AND AI search engines.
 
 ## 📥 Input
-- Content pages (bài viết, sản phẩm, landing pages)
+- Content pages (articles, products, landing pages)
 - `.agent/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
-### Bước 1: Heading Structure
-- Mỗi page chỉ 1 `<h1>` duy nhất
-- Hierarchy: H1→H2→H3 (không nhảy cấp)
-- Heading mô tả nội dung section cụ thể
+### Step 1: Heading Structure
+- Each page has only one `<h1>`
+- Hierarchy: H1→H2→H3 (no level jump)
+- Heading describes the specific section content
 
-### Bước 2: Readability
-- Đoạn văn: Tối đa 3-4 câu
-- Bullet points thay cho đoạn dài
+### Step 2: Readability
+- Paragraph: Maximum 3-4 sentences
+- Bullet points instead of long paragraphs
 - Highlight key terms (bold/italic)
 
-### Bước 3: Multimodal Content
-- Image: `alt` text mô tả chi tiết
-- Video: Transcript hoặc description
-- Tables: Responsive, có caption
+### Step 3: Multimodal Content
+- Image: `alt` text detailed description
+- Video: Transcript or description
+- Tables: Responsive, with captions
 
-### Bước 4: Fact-density
-- Mỗi section ≥1 statistic/data point
-- Trích dẫn nguồn khi đưa claims
-- Quotes từ experts khi phù hợp
+### Step 4: Fact-density
+- Each section ≥1 statistic/data point
+- Cite sources when submitting claims
+- Quotes from experts when appropriate
 
 ## 📤 Output
 - File: `.agent/memory/content-guidelines.md`

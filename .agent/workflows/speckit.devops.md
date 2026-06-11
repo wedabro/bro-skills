@@ -5,45 +5,45 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 # 🐳 DevOps Infrastructure Setup
 
 ## Pre-conditions
-- `.agent/memory/constitution.md` tồn tại
-- Docker Desktop (local) hoặc Docker Engine (server) đã cài đặt
+- `.agent/memory/constitution.md` exists
+- Docker Desktop (local) or Docker Engine (server) installed
 
 ## Steps
 
 // turbo-all
 
-### Step 1: Xác định Environment
+### Step 1: Determine Environment
 - Detect environment: **local** / **staging** / **beta** / **production**
-- Đọc `constitution.md` → port range (mặc định 8900-8999)
+- Read `constitution.md` → port range (default 8900-8999)
 
 ### Step 2: Port Allocation (ENV-first) ⭐
 
-**Quy tắc Port — LUÔN cấu hình qua ENV:**
-- Port PHẢI được khai báo trong `.env` (local) hoặc server ENV (prod)
-- `docker-compose.yml` đọc port từ ENV vars (`${PUBLIC_PORT}`, `${ADMIN_PORT}`, `${API_PORT}`)
-- KHÔNG hard-code port number trong bất kỳ file nào
+**Port Rules — ALWAYS configure via ENV:**
+- Port MUST be declared in `.env` (local) or server ENV (prod)
+- `docker-compose.yml` reads port from ENV vars ( `${PUBLIC_PORT}` , `${ADMIN_PORT}` , `${API_PORT}` )
+- DO NOT hard-code port number in any file
 
-**Quy tắc quét port theo môi trường:**
+**Port scanning rules according to environment:**
 
-| Môi trường | Docker đã chạy? | Hành động |
+| Environment | Docker running? | Act |
 |---|---|---|
-| **Local** | ❌ Chưa (lần đầu) | Quét dải `8900-8999` bằng socket/helper → chọn 3 ports trống liên tiếp |
-| **Local** | ✅ Đã chạy | **BỎ QUA** quét — dùng ports hiện tại từ `.env` / docker |
-| **Staging/Beta/Prod** | Bất kỳ | **LUÔN** quét lần đầu để cấu hình → ghi vào `.env` |
+| **Local** | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
+| **Local** | ✅ Already running | **SKIP** scan — use current ports from `.env` / docker |
+| **Staging/Beta/Prod** | Any | **ALWAYS** initial scan for configuration → write to `.env` |
 
-**Check Docker đã chạy (Local):**
+**Check Docker is running (Local):**
 ```bash
 docker compose ps --format json 2>$null
-# Nếu có containers → Docker đã chạy → SKIP port scan
-# Nếu trống/error → Docker chưa chạy → RUN port scan
+# If there are containers → Docker is already running → SKIP port scan
+# If empty/error → Docker is not running → RUN port scan
 ```
 
-**Port scan khi cần:**
+**Port scan when needed:**
 ```text
 Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
 ```
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
-- Ghi luôn vào `.env`:
+- Always write in `.env` :
   ```env
   PUBLIC_PORT=8920
   ADMIN_PORT=8921
@@ -51,40 +51,40 @@ Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
   ```
 
 ### Step 3: Docker Compose (Local)
-- Tạo/cập nhật `docker-compose.yml`:
-  - Ports đọc từ ENV: `"${PUBLIC_PORT:-8920}:3000"`
+- Create/update `docker-compose.yml` :
+  - Ports read from ENV: `"${PUBLIC_PORT:-8920}:3000"`
   - Volume mounts cho hot-reload
   - Named volumes cho `node_modules`
-  - Health checks cho mỗi service
+  - Health checks for each service
 
 ### Step 4: Docker Compose (Production/Staging/Beta)
-- Tạo/cập nhật `docker-compose.prod.yml` / `docker-compose.beta.yml`:
+- Create/update `docker-compose.prod.yml` / `docker-compose.beta.yml` :
   - Multi-stage builds (builder → runner)
-  - `USER node` hoặc `USER appuser` (KHÔNG chạy root)
-  - Loại bỏ devDependencies trong final image
+  - `USER node` or `USER appuser` (DO NOT run as root)
+  - Remove devDependencies in the final image
   - Alpine/Slim base images
-  - Ports đọc từ ENV (KHÔNG hard-code)
+  - Ports read from ENV (NO hard-code)
 
 ### Step 5: Security Checklist
 - `.dockerignore`: block `.env`, `.git`, `node_modules`
-- KHÔNG hard-code secrets trong Dockerfile
-- Chỉ EXPOSE ports cần thiết
+- DO NOT hard-code secrets in Dockerfile
+- Only EXPOSE ports are needed
 
 ### Step 6: Documentation
-- Cập nhật `.agent/knowledge_base/infrastructure.md`
-- Cập nhật `.env.example` với tất cả port vars
+- Update `.agent/knowledge_base/infrastructure.md`
+- Update `.env.example` with all port vars
 
 ## Success Criteria
-- ✅ Ports cấu hình qua ENV (không hard-code)
-- ✅ `docker-compose.yml` hoạt động local
-- ✅ `docker-compose.prod.yml` tuân thủ security checklist
-- ✅ `.dockerignore` tồn tại và đầy đủ
-- ✅ `.env.example` document tất cả port vars
-- ✅ `infrastructure.md` cập nhật
+- ✅ Ports configured via ENV (no hard-code)
+- ✅ `docker-compose.yml` works locally
+- ✅ `docker-compose.prod.yml` complies with security checklist
+- ✅ `.dockerignore` exists and is complete
+- ✅ `.env.example` document all port vars
+- ✅ `infrastructure.md` updated
 
 ## 🚫 Guard Rails
-- KHÔNG dùng port ngoài dải 8900-8999
-- KHÔNG hard-code port number — LUÔN ENV vars
-- KHÔNG chạy `docker compose down -v` trên production
-- KHÔNG hard-code credentials vào Dockerfile
-- KHÔNG quét port khi Docker local đã chạy
+- DO NOT use ports outside the 8900-8999 range
+- DO NOT hard-code port number — ALWAYS ENV vars
+- DO NOT run `docker compose down -v` on production
+- DO NOT hard-code credentials into the Dockerfile
+- DO NOT scan ports when Docker local is already running

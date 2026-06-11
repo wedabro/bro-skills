@@ -64,7 +64,7 @@ Standard AI mobile output tends to collapse into repetitive defaults:
 - fake complexity instead of good mobile hierarchy
 - sterile flat backgrounds with no texture or visual atmosphere
 - generic palettes
-- default purple-blue startup color clichés
+- default purple-blue startup color clicheés
 - random bright colors
 - generic developer-tool icon sets
 - overly simplistic layouts that feel empty instead of elegant
