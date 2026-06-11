@@ -312,12 +312,12 @@ def cmd_update(args):
     print(f"Installation method: {install_method.upper()}")
 
     if install_method == "npm":
-        cmd = ["npm", "install", "-g", "bro-skills"]
+        cmd = ["npm", "install", "-g", "github:wedabro/bro-skills"]
     else:
         pip_cmd = "pip"
         if not shutil.which("pip") and shutil.which("pip3"):
             pip_cmd = "pip3"
-        cmd = [sys.executable, "-m", pip_cmd, "install", "--upgrade", "bro-skills"]
+        cmd = [sys.executable, "-m", pip_cmd, "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
 
     print(f"Running command: {' '.join(cmd)}")
     try:
@@ -330,9 +330,9 @@ def cmd_update(args):
         print(f"\n❌ Error executing update command: {e}")
         print(f"💡 You can run the following command to update manually:")
         if install_method == "npm":
-            print("   npm install -g bro-skills")
+            print("   npm install -g github:wedabro/bro-skills")
         else:
-            print("   pip install --upgrade bro-skills")
+            print("   pip install --upgrade git+https://github.com/wedabro/bro-skills.git")
 
 
 def main():
