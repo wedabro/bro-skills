@@ -110,15 +110,6 @@ def cmd_init(args):
                 print("❌ Canceled.")
                 return
 
-    # PROJECT TYPE SELECTION
-    if not project_type:
-        print()
-        project_type, type_info = _ask_project_type()
-        print(f"\n✅ Selected: {type_info['label']}")
-    else:
-        type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
-        print(f"  🏗️ Project Type: {type_info['label']}")
-
     # LANGUAGE SELECTION
     lang = getattr(args, 'lang', None)
     if not lang:
@@ -127,6 +118,15 @@ def cmd_init(args):
         print(f"\n✅ Selected language: {lang}")
     else:
         print(f"  🌐 Agent Language: {lang}")
+
+    # PROJECT TYPE SELECTION
+    if not project_type:
+        print()
+        project_type, type_info = _ask_project_type()
+        print(f"\n✅ Selected: {type_info['label']}")
+    else:
+        type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
+        print(f"  🏗️ Project Type: {type_info['label']}")
 
     # Filter skills by project type
     filtered_skills = get_skills_for_project_type(project_type)
