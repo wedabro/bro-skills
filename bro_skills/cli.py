@@ -166,25 +166,44 @@ def cmd_init(args):
     )
     generator.generate()
 
-    print(f"\n✅ Initialization/Upgrade successful!")
-    print(f"  📁 .agent/ has been optimized at: {agent_dir}")
-    print(f"  🏗️ Type:      {type_info['label']}")
-    print(f"  🎯 Skills:    {len(filtered_skills)} skills (ASF 3.3 Standard)")
-    print(f"  🔄 Workflows: {len(filtered_workflows)} workflows")
-
-    # Display tips by project type
-    print(f"\n💡 Next steps:")
-    print(f"  1. Check '.agent/identity/master-identity.md' to let AI identify the project")
-    print(f"  2. Run /01-speckit.constitution to update Tech Stack & Docker Ports")
-
-    if project_type in ("web_public", "fullstack"):
-        print(f"  3. Run @speckit.seo to audit Technical SEO")
-        print(f"  4. Run @speckit.geo to optimize for AI Search (ChatGPT, Gemini)")
-        print(f"  5. Check '.agent/knowledge_base/seo_standards.md' for SEO checklist")
-    elif project_type == "web_saas":
-        print(f"  3. Run @speckit.seo for Landing Page & Blog")
+    is_vi = lang.strip().lower() in ("vi", "vietnamese")
+    
+    if is_vi:
+        print(f"\n✅ Khởi tạo/Nâng cấp thành công!")
+        print(f"  📁 Thư mục .agent/ đã được tối ưu tại: {agent_dir}")
+        print(f"  🏗️ Loại dự án: {type_info['label']}")
+        print(f"  🎯 Kỹ năng:    {len(filtered_skills)} skills (Chuẩn ASF 3.3)")
+        print(f"  🔄 Quy trình:  {len(filtered_workflows)} workflows")
+        
+        print(f"\n💡 Các bước tiếp theo:")
+        print(f"  1. Kiểm tra '.agent/identity/master-identity.md' để AI nhận diện dự án")
+        print(f"  2. Chạy /01-speckit.constitution để cập nhật Tech Stack & Docker Ports")
+        if project_type in ("web_public", "fullstack"):
+            print(f"  3. Chạy @speckit.seo để kiểm tra Technical SEO")
+            print(f"  4. Chạy @speckit.geo để tối ưu hóa cho công cụ tìm kiếm AI (ChatGPT, Gemini)")
+            print(f"  5. Kiểm tra '.agent/knowledge_base/seo_standards.md' để xem danh sách SEO checklist")
+        elif project_type == "web_saas":
+            print(f"  3. Chạy @speckit.seo cho Landing Page & Blog")
+        else:
+            print(f"  3. Chạy @speckit.devops để tạo môi trường Docker chuẩn bảo mật")
     else:
-        print(f"  3. Run @speckit.devops to create a Security-standard Docker environment")
+        print(f"\n✅ Initialization/Upgrade successful!")
+        print(f"  📁 .agent/ has been optimized at: {agent_dir}")
+        print(f"  🏗️ Type:      {type_info['label']}")
+        print(f"  🎯 Skills:    {len(filtered_skills)} skills (ASF 3.3 Standard)")
+        print(f"  🔄 Workflows: {len(filtered_workflows)} workflows")
+        
+        print(f"\n💡 Next steps:")
+        print(f"  1. Check '.agent/identity/master-identity.md' to let AI identify the project")
+        print(f"  2. Run /01-speckit.constitution to update Tech Stack & Docker Ports")
+        if project_type in ("web_public", "fullstack"):
+            print(f"  3. Run @speckit.seo to audit Technical SEO")
+            print(f"  4. Run @speckit.geo to optimize for AI Search (ChatGPT, Gemini)")
+            print(f"  5. Check '.agent/knowledge_base/seo_standards.md' for SEO checklist")
+        elif project_type == "web_saas":
+            print(f"  3. Run @speckit.seo for Landing Page & Blog")
+        else:
+            print(f"  3. Run @speckit.devops to create a Security-standard Docker environment")
 
     print()
 
