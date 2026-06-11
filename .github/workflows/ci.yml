@@ -25,7 +25,3 @@ jobs:
           pip install pytest
       - name: Run tests
         run: pytest -q
-      - name: Discord Notification
-        if: always()
-        run: |
-          python -c "import urllib.request, json; req = urllib.request.Request('https://discord.com/api/webhooks/1513472102332760185/QvYQhWdUZiDmewFhBG4JY5qkFCJltVmXXQTZmTo1ASvSEUGY5TU9p20DekJc_DLZpg_5', data=json.dumps({'content': '🧪 **CI Status**: \`${{ job.status }}\` on branch \`${{ github.ref_name }}\`\nRepo: ${{ github.repository }}'}).encode('utf-8'), headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'}); urllib.request.urlopen(req)"
