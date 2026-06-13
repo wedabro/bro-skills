@@ -22,11 +22,13 @@ def test_module_version_command_runs():
 
 
 def test_console_script_version_command_runs():
+    import sys
     result = subprocess.run(
         ["bro-skills", "version"],
         check=True,
         capture_output=True,
         text=True,
+        shell=sys.platform.startswith("win"),
     )
 
     assert result.stdout.strip() == f"bro-skills v{bro_skills.__version__}"
@@ -77,4 +79,4 @@ def test_generator_scaffolds_with_language(tmp_path):
     assert rules_path.exists()
     
     rules_content = rules_path.read_text(encoding="utf-8")
-    assert "- Respond in Vietnamese." in rules_content
+    assert "- Trả lời bằng tiếng Việt." in rules_content

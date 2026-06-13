@@ -310,7 +310,7 @@ class ProjectGenerator:
     def _create_identity(self):
         """Create Master Identity - aware of Project Type + scan information."""
         filepath = os.path.join(self.agent_dir, "identity", "master-identity.md")
-        content = doc_identity_template(self.project_name, self.project_type, self.use_docker)
+        content = doc_identity_template(self.project_name, self.project_type, self.use_docker, self.lang)
 
         # Append context from scanner
         if self.scan_profile and self.scan_profile.get("has_existing_code"):
@@ -554,7 +554,7 @@ No tag -> inferred from keyword + project_type.
     def _create_memory(self):
         filepath = os.path.join(self.agent_dir, "memory", "constitution.md")
         template_fn = DOCUMENT_TEMPLATE_MAP.get("constitution-template.md")
-        self._write_file(filepath, template_fn(self.use_docker, self.is_soft_rules))
+        self._write_file(filepath, template_fn(self.use_docker, self.is_soft_rules, self.lang))
 
     def _create_scripts(self):
         for filename, script_fn in SCRIPT_TEMPLATE_MAP.items():

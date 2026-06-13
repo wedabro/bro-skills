@@ -92,7 +92,7 @@ def doc_tasks_template():
 - [ ] T003 Error handling & edge cases
 """
 
-def doc_identity_template(project_name="Project", project_type="fullstack", use_docker=True):
+def doc_identity_template(project_name="Project", project_type="fullstack", use_docker=True, lang="dynamic"):
     type_labels = {
         "web_public": "Web Public (B2C)",
         "web_saas": "Web SaaS (B2B)",
@@ -103,6 +103,47 @@ def doc_identity_template(project_name="Project", project_type="fullstack", use_
         "custom_infra": "Custom Infrastructure",
     }
     label = type_labels.get(project_type, "Full-stack")
+
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        seo_section = ""
+        if project_type in ("web_public", "fullstack", "web_saas"):
+            seo_section = """
+## 🔍 Nhận thức SEO & GEO
+- Mọi trang công khai phải có tiêu đề (meta title), mô tả (description) và URL canonical độc nhất.
+- Bắt buộc phải có dữ liệu cấu trúc (JSON-LD) cho các trang sản phẩm và bài viết.
+- Tối ưu hóa cho tìm kiếm AI (GEO): Nội dung phải giàu thông tin thực tế và dẫn nguồn rõ ràng.
+- Cung cấp tệp `llms.txt` tại tên miền gốc để các trình thu thập thông tin AI hiểu được cấu trúc trang.
+"""
+
+        docker_soul = "- Tuân thủ nghiêm ngặt Chính sách Docker-First." if use_docker else "- Linh hoạt: Hạ tầng được xác định cụ thể theo dự án."
+        docker_belief = "1. **Docker là tối cao**: Mọi thứ chạy trong container." if use_docker else "1. **Môi trường tùy chỉnh**: Chạy code trực tiếp theo yêu cầu."
+
+        return f"""# 🧠 Định danh Tác nhân AI: {project_name} Agent
+
+## 🎭 Vai trò
+Bạn là **Kiến trúc sư trưởng & Nhà phát triển cấp cao** chịu trách nhiệm cho dự án **{project_name}**.
+Loại hình dự án: **{label}**
+{docker_soul}
+Bạn tuân thủ các tiêu chuẩn của **ASF 3.3**.
+
+## 🛠️ Năng lực cốt lõi
+- Thấu hiểu các logic nghiệp vụ phức tạp và chuyển đổi thành mã nguồn dễ mở rộng.
+- Thực thi **Hiến pháp Dự án** trong mọi hành động lập trình.
+- Duy trì các tiêu chuẩn chống lỗi hồi quy thông qua kiểm thử tự động.
+{seo_section}
+## 🤝 Phong cách cộng tác
+- Chủ động nhưng thận trọng.
+- Hỏi lại rõ ràng khi phát hiện yêu cầu mơ hồ hoặc chưa rõ nghĩa.
+- Đưa ra "Phân tích mức độ ảnh hưởng" (Blast Radius Analysis) trước khi thực hiện các thay đổi lớn.
+
+## 📜 Quy tắc linh hồn (Linh hồn cốt lõi)
+{docker_belief}
+2. **An toàn là tối thượng**: Môi trường sản xuất (production) phải được củng cố bảo mật tối đa.
+3. **Định hướng Đặc tả**: Không viết code khi chưa có kế hoạch cụ thể.
+4. **Ngữ cảnh là số một**: Tuyệt đối không lập trình khi chưa hiểu rõ lý do "Tại sao".
+5. **bro-skills trước tiên**: Mọi thay đổi và vận hành phải đi qua luồng xử lý của bro-skills.
+"""
 
     seo_section = ""
     if project_type in ("web_public", "fullstack", "web_saas"):
@@ -143,7 +184,60 @@ You follow **ASF 3.3** standards.
 5. **bro-skills First**: All changes and operations must go through bro-skills workflows.
 """
 
-def doc_constitution_template(use_docker=True, is_soft_rules=False):
+def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynamic"):
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        must_label = "BẮT BUỘC" if not is_soft_rules else "KHUYẾN NGHỊ"
+        shall_label = "bắt buộc phải" if not is_soft_rules else "nên"
+        forbidden_label = "NGHIÊM CẤM" if not is_soft_rules else "HẠN CHẾ"
+
+        docker_infra = f"""
+## §1 Hạ tầng & Môi trường (DOCKER-FIRST)
+- **Chính sách Docker-First**: Sử dụng Docker theo mặc định cho cả môi trường Local và Production. TUYỆT ĐỐI KHÔNG chạy trực tiếp `npm`/`node`/`python` trên máy host.
+- **Local**: Sử dụng `docker-compose.yml` để phát triển.
+- **Production**: Sử dụng `docker-compose.prod.yml` với cấu hình bảo mật được tăng cường.
+- **Cổng kết nối**: Chỉ sử dụng dải cổng từ **8900-8999**.
+  - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
+""" if use_docker else f"""
+## §1 Môi trường (CUSTOM)
+- **Hạ tầng dự án**: Được định nghĩa cụ thể theo yêu cầu nghiệp vụ, không nhất thiết phải chạy trong Docker.
+- **Cổng kết nối**: Tùy chọn dựa trên sự sẵn có của hệ thống đích.
+"""
+
+        return f"""# 📜 Hiến pháp Dự án
+
+## §0 Giao thức bro-skills ({must_label})
+- **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test) và triển khai (Deploy Production) {shall_label} sử dụng tiện ích `bro-skills`.
+- **Quy trình**: Tuân thủ nghiêm ngặt quy trình SDLC: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
+- **Công cụ**: Chỉ sử dụng các workflow trong thư mục `.agent/workflows` để thực hiện công việc.
+{docker_infra}
+## §2 An toàn Production & Bảo mật
+- **{forbidden_label}**: Chạy lệnh `docker compose down -v` trên môi trường Production.
+- **{forbidden_label}**: Triển khai thủ công ({shall_label} sử dụng các workflow `/deploy-production` hoặc `/deploy-staging`).
+- **Xác nhận**: Yêu cầu xác nhận rõ ràng từ người dùng trước khi thực hiện Dọn dẹp sâu (Deep Clean), Triển khai Prod (Deploy Prod), hoặc Xóa dữ liệu (Delete Data).
+- **Tài khoản chạy**: Các container trong môi trường Production KHÔNG ĐƯỢC chạy dưới quyền root.
+
+## §3 Tiêu chuẩn Code & ENV (Biến môi trường)
+- **{forbidden_label} viết cứng (hard-code)**: Các đường dẫn URLs, Tokens, Keys, Credentials, Endpoints, và các văn bản mặc định.
+- **Biến nhạy cảm**: {shall_label} sử dụng biến môi trường (ENV) (tệp `.env` ở local, ENV server ở prod).
+  - Tiền tố bắt buộc: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
+- **Xác thực cấu hình**: 
+  - Biến quan trọng (Critical): `throw new Error()` nếu thiếu.
+  - Biến tùy chọn (Optional): `console.error()` nếu thiếu.
+- **Tài liệu**: Phải có tệp `.env.example` đầy đủ.
+
+## §4 Quy trình & Viết Script
+- **Tự động hóa**: Chủ động tạo các script khi gặp lỗi lặp lại hoặc các công việc lặp đi lặp lại.
+- **Git**: Lưu trữ các script trong thư mục `.agent/scripts` và commit vào hệ thống kiểm soát phiên bản.
+- **Tự động Commit**: BẮT BUỘC thực hiện git commit & push ngay sau khi hoàn thành bất kỳ tính năng hoặc tác vụ nào theo chuẩn Conventional Commits.
+- **Cập nhật**: Cập nhật lại các workflow tương ứng sau khi tạo script mới.
+
+## §5 UI/UX & Chống cẩu thả (PREMIUM DESIGN)
+- **{must_label}**: Sử dụng năng lực `design-taste-frontend` hoặc workflow `/util-speckit.uiux` để thiết kế giao diện.
+- **{forbidden_label}**: Sử dụng các mẫu thiết kế giao diện có sẵn nhàm chán, màu sắc mặc định của trình duyệt, hoặc lạm dụng các dải màu gradient/shadow do AI tự sinh.
+- **Hệ thống thiết kế**: {shall_label} tuân thủ các nguyên tắc chống cẩu thả (Bố cục bất đối xứng, lưới bento, Ưu tiên kiểu chữ, Vi tương tác).
+"""
+
     must_label = "REQUIRED" if not is_soft_rules else "RECOMMENDED"
     shall_label = "MUST" if not is_soft_rules else "SHOULD"
     forbidden_label = "FORBIDDEN" if not is_soft_rules else "RESTRICTED"
@@ -375,8 +469,43 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
     # Language instruction generation
     l_lower = lang.strip().lower()
     if l_lower in ("vi", "vietnamese"):
-        lang_instruction = "- Respond in Vietnamese."
-    elif l_lower in ("en", "english"):
+        must_label_vi = "Bắt buộc tuân thủ" if not is_soft_rules else "Nên tuân thủ"
+        shall_label_vi = "bắt buộc phải" if not is_soft_rules else "nên"
+        forbidden_label_vi = "TUYỆT ĐỐI KHÔNG" if not is_soft_rules else "Tránh"
+        
+        docker_rule_vi = f"- Docker-First: Toàn bộ hoạt động lập trình và chạy ứng dụng {shall_label_vi} diễn ra trong container. {forbidden_label_vi} chạy trực tiếp node/python trên host." if use_docker else "- Linh hoạt: Chạy ứng dụng trực tiếp hoặc qua Docker tùy thuộc vào nhu cầu."
+        port_rule_vi = f"- Cổng (Ports): Sử dụng dải cổng từ 8900-8999. {must_label_vi} lấy cấu hình cổng từ biến môi trường (.env)." if use_docker else "- Cổng (Ports): Sử dụng các cổng có sẵn trên hệ thống."
+        
+        return f"""Project: {project_name}
+
+## 1. MỆNH LỆNH TỐI THƯỢNG
+- {must_label_vi} tệp `.agent/memory/constitution.md`.
+{docker_rule_vi}
+{port_rule_vi}
+
+## 2. GIAO THỨC bro-skills
+- Mọi tác vụ {shall_label_vi} đi qua quy trình: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
+- Sử dụng các Workflow trong `.agent/workflows/` và các Skill trong `.agent/skills/`.
+
+## 3. NGÔN NGỮ & MÃ NGUỒN
+- Trả lời bằng tiếng Việt.
+- Quy tắc 15 phút: Mỗi tác vụ {shall_label_vi} mang tính nguyên tử, hoàn thành trong ≤ 15 phút, ảnh hưởng ≤ 3 tệp.
+- PowerShell 5.1+, ngăn cách các lệnh bằng dấu `;` ({forbidden_label_vi} dùng `&&`).
+- {forbidden_label_vi} viết cứng (hard-code) URLs, Tokens, Keys. Hãy dùng biến môi trường (`.env`).
+
+## 4. AN TOÀN HỆ THỐNG
+- {forbidden_label_vi} chạy lệnh `docker compose down -v` trên môi trường Production.
+- Tự động tạo script (`.agent/scripts/`) cho các lỗi lặp đi lặp lại.
+- Kiểm tra logs ngay lập tức khi xảy ra lỗi: `docker compose logs -f <service>`.
+- **Tự động Commit**: BẮT BUỘC thực hiện git commit & push ngay sau khi hoàn thành bất kỳ tính năng hoặc tác vụ nào theo chuẩn Conventional Commits.
+
+## 5. ĐỒNG BỘ HÓA ĐỒNG THỜI (Chỉ Antigravity)
+- **Theo dõi tác vụ**: Sử dụng lệnh `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
+- **Tài liệu Kế hoạch**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 tệp).
+- **Xác thực**: Sau khi hoàn thành tác vụ, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
+"""
+
+    if l_lower in ("en", "english"):
         lang_instruction = "- Respond in English."
     elif l_lower == "dynamic":
         lang_instruction = "- Respond in the language used by the user (supports Vietnamese and English)."
@@ -451,6 +580,18 @@ def doc_windsurf_rules_template(project_name="Project", use_docker=True, is_soft
 
 def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """VS Code (GitHub Copilot) — .github/copilot-instructions.md"""
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        return f"""# Hướng dẫn Copilot cho {project_name}
+
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
+
+## Tài liệu tham khảo
+- Hiến pháp: `.agent/memory/constitution.md`
+- Hạ tầng: `.agent/knowledge_base/infrastructure.md`
+- Quy trình (Workflows): `.agent/workflows/`
+- Năng lực (Skills): `.agent/skills/`
+"""
     return f"""# Copilot Instructions for {project_name}
 
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
@@ -490,8 +631,33 @@ def doc_kiro_steering_template(project_name="Project", lang="dynamic"):
     """Kiro IDE (AWS) — .kiro/steering/tech.md"""
     l_lower = lang.strip().lower()
     if l_lower in ("vi", "vietnamese"):
-        lang_instruction = "- Respond in Vietnamese."
-    elif l_lower in ("en", "english"):
+        return f"""# Tiêu chuẩn Công nghệ & Phát triển
+
+Dự án: {project_name}
+Hệ thống Build: Docker (docker compose)
+Dải cổng mạng: 8900-8999
+Shell: PowerShell 5.1+ (Windows)
+
+## Quy trình phát triển
+- Tuân thủ Spec-Driven Development (SDD): Đặc tả → Kế hoạch → Tác vụ → Thực thi.
+- Thư mục Đặc tả: `.agent/specs/`
+- Hiến pháp dự án: `.agent/memory/constitution.md`
+- Quy tắc 15 phút: Mỗi tác vụ phải mang tính nguyên tử, ≤ 15 phút, ảnh hưởng ≤ 3 tệp.
+
+## Môi trường
+- Docker-First: Mọi ứng dụng chạy trong container. Tuyệt đối không chạy trực tiếp npm/python trên host.
+- Yêu cầu biến môi trường cho mọi cấu hình nhạy cảm (tệp `.env`).
+- Không viết cứng (hard-code) URLs, Tokens, Keys hoặc thông tin đăng nhập.
+
+## Ngôn ngữ
+- Trả lời bằng tiếng Việt.
+
+## An toàn hệ thống
+- TUYỆT ĐỐI KHÔNG chạy `docker compose down -v` trên Production.
+- Luôn kiểm tra logs khi gặp lỗi: `docker compose logs -f <service>`.
+"""
+
+    if l_lower in ("en", "english"):
         lang_instruction = "- Respond in English."
     elif l_lower == "dynamic":
         lang_instruction = "- Respond in the language used by the user (supports Vietnamese and English)."
@@ -527,6 +693,20 @@ Shell: PowerShell 5.1+ (Windows)
 
 def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """Claude Code — CLAUDE.md (root)"""
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        return f"""# {project_name}
+
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
+
+## Cấu trúc dự án
+- `.agent/memory/constitution.md` — Hiến pháp dự án (Nguồn luật tối cao)
+- `.agent/identity/master-identity.md` — Định danh nhân vật & Linh hồn AI
+- `.agent/knowledge_base/` — Cơ sở tri thức nghiệp vụ (hạ tầng, dữ liệu, API)
+- `.agent/skills/` — Năng lực của Agent (gọi bằng @)
+- `.agent/workflows/` — Quy trình tự động hóa (gọi bằng /)
+- `.agent/specs/` — Đặc tả tính năng
+"""
     return f"""# {project_name}
 
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
@@ -543,6 +723,18 @@ def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rule
 
 def doc_agents_md_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
     """GitHub Copilot Coding Agent — AGENTS.md (root)"""
+    l_lower = lang.strip().lower()
+    if l_lower in ("vi", "vietnamese"):
+        return f"""# {project_name} — Hướng dẫn cho Agent
+
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
+
+## Biên dịch & Thử nghiệm
+- Build: `docker compose build` (Nếu sử dụng Docker)
+- Run: `docker compose up -d` (Nếu sử dụng Docker)
+- Logs: `docker compose logs -f <service>`
+- Stop: `docker compose down`
+"""
     return f"""# {project_name} — Agent Instructions
 
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
