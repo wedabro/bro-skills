@@ -67,6 +67,39 @@ def _ask_agent_language():
         print("⚠️ Please choose a number from 1 to 4")
 
 
+def _ask_agent_selection():
+    """Ask the user to select a target AI agent."""
+    agents = [
+        ("claude", "Claude Code (CLAUDE.md)"),
+        ("cursor", "Cursor (.cursor/rules/bro-skills.mdc)"),
+        ("windsurf", "Windsurf (.windsurf/rules/bro-skills.md)"),
+        ("antigravity", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)"),
+        ("copilot", "GitHub Copilot (.github/copilot-instructions.md)"),
+        ("kiro", "Kiro (.kiro/steering/tech.md + MCP)"),
+        ("codex", "Codex (skills.json in customizations root)"),
+        ("roocode", "Roo Code (.clinerules + .roomember)"),
+        ("qoder", "Qoder (.qoder/rules/bro-skills.md)"),
+        ("gemini", "Gemini CLI (.gemini/rules/bro-skills.md)"),
+        ("trae", "Trae (.traerules)"),
+        ("opencode", "OpenCode (.opencode/rules/bro-skills.md)"),
+        ("continue", "Continue (.continue/config.json)"),
+        ("all", "All Assistants"),
+    ]
+    print("\n🤖 Target AI Agent Configuration:")
+    for i, (key, desc) in enumerate(agents, 1):
+        print(f"  [{i}] {desc}")
+
+    while True:
+        try:
+            choice = input(f"\nSelect (1-{len(agents)}): ").strip()
+            idx = int(choice) - 1
+            if 0 <= idx < len(agents):
+                return agents[idx][0]
+        except (ValueError, IndexError):
+            pass
+        print(f"⚠️ Please choose a number from 1 to {len(agents)}")
+
+
 def cmd_init(args):
     """Initialize the .agent/ structure for the project."""
     target = os.path.abspath(args.target or os.getcwd())
@@ -119,6 +152,15 @@ def cmd_init(args):
     else:
         print(f"  🌐 Agent Language: {lang}")
 
+    # AGENT SELECTION
+    ai_agent = getattr(args, 'ai', None)
+    if not ai_agent:
+        print()
+        ai_agent = _ask_agent_selection()
+        print(f"\n✅ Selected AI Agent: {ai_agent}")
+    else:
+        print(f"  🤖 AI Agent: {ai_agent}")
+
     # PROJECT TYPE SELECTION
     if not project_type:
         print()
@@ -163,6 +205,7 @@ def cmd_init(args):
         project_type=project_type,
         scan_profile=scan_profile,
         lang=lang,
+        ai_agent=ai_agent,
     )
     generator.generate()
 
@@ -400,6 +443,7 @@ AVAILABLE project process:
     )
     init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ if it already exists")
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
+    init_parser.add_argument("--ai", help="Specify target AI agent (e.g., claude, cursor, windsurf, antigravity, copilot, kiro, codex, roocode, qoder, gemini, trae, opencode, continue, all)")
 
     # list-skills
     subparsers.add_parser("list-skills", help="List all skills")

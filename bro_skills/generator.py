@@ -30,6 +30,9 @@ from .templates import (
     doc_kiro_mcp_template,
     doc_claude_md_template,
     doc_agents_md_template,
+    doc_roocode_rules_template,
+    doc_trae_rules_template,
+    doc_continue_config_template,
 )
 from .scanner import ProjectScanner
 
@@ -37,7 +40,7 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic"):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all"):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
@@ -45,6 +48,7 @@ class ProjectGenerator:
         self.attributes = attributes or {}  # Multi-agent attributes (architecture/platforms/flags)
         self.agent_dir = os.path.join(target_dir, ".agent")
         self.lang = lang or "dynamic"
+        self.ai_agent = ai_agent or "all"
 
         # Filter skills/workflows by project type + attributes (multi-agent v2)
         self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
@@ -116,88 +120,197 @@ class ProjectGenerator:
         self._print_stats()
 
     def _create_ide_rules(self):
-        """Create standard rules files for 8 IDE/Agent — correct path + format for each IDE."""
+        """Create rule files selectively for chosen IDE/Agent or all of them."""
         name = self.project_name
+        agent = self.ai_agent.lower().strip()
 
         # ─── 1. Antigravity (Google) ────────────────────────
-        # Path: .agent/rules/bro-skills.md
-        self._write_file(
-            os.path.join(self.agent_dir, "rules", "bro-skills.md"),
-            doc_antigravity_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ Antigravity  → .agent/rules/bro-skills.md")
+        if agent in ("antigravity", "all"):
+            self._write_file(
+                os.path.join(self.agent_dir, "rules", "bro-skills.md"),
+                doc_antigravity_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            self._write_file(
+                os.path.join(self.target_dir, "AGENTS.md"),
+                doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Antigravity  → .agent/rules/bro-skills.md & AGENTS.md")
 
         # ─── 2. Cursor ──────────────────────────────────────
-        # Path: .cursor/rules/bro-skills.mdc (YAML frontmatter, .mdc extension)
-        cursor_dir = os.path.join(self.target_dir, ".cursor", "rules")
-        os.makedirs(cursor_dir, exist_ok=True)
-        self._write_file(
-            os.path.join(cursor_dir, "bro-skills.mdc"),
-            doc_cursor_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ Cursor       → .cursor/rules/bro-skills.mdc")
+        if agent in ("cursor", "all"):
+            cursor_dir = os.path.join(self.target_dir, ".cursor", "rules")
+            os.makedirs(cursor_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(cursor_dir, "bro-skills.mdc"),
+                doc_cursor_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Cursor       → .cursor/rules/bro-skills.mdc")
 
         # ─── 3. Windsurf (Codeium) ──────────────────────────
-        # Path: .windsurf/rules/bro-skills.md
-        windsurf_dir = os.path.join(self.target_dir, ".windsurf", "rules")
-        os.makedirs(windsurf_dir, exist_ok=True)
-        self._write_file(
-            os.path.join(windsurf_dir, "bro-skills.md"),
-            doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ Windsurf     → .windsurf/rules/bro-skills.md")
+        if agent in ("windsurf", "all"):
+            windsurf_dir = os.path.join(self.target_dir, ".windsurf", "rules")
+            os.makedirs(windsurf_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(windsurf_dir, "bro-skills.md"),
+                doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Windsurf     → .windsurf/rules/bro-skills.md")
 
         # ─── 4. VS Code (GitHub Copilot) ────────────────────
-        # Path: .github/copilot-instructions.md
-        github_dir = os.path.join(self.target_dir, ".github")
-        os.makedirs(github_dir, exist_ok=True)
-        self._write_file(
-            os.path.join(github_dir, "copilot-instructions.md"),
-            doc_vscode_copilot_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ VS Code      → .github/copilot-instructions.md")
+        if agent in ("copilot", "all"):
+            github_dir = os.path.join(self.target_dir, ".github")
+            os.makedirs(github_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(github_dir, "copilot-instructions.md"),
+                doc_vscode_copilot_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ VS Code      → .github/copilot-instructions.md")
 
         # ─── 5. JetBrains (PhpStorm, WebStorm, PyCharm) ────
-        # Path: .aiassistant/rules/bro-skills.md
-        jb_dir = os.path.join(self.target_dir, ".aiassistant", "rules")
-        os.makedirs(jb_dir, exist_ok=True)
-        self._write_file(
-            os.path.join(jb_dir, "bro-skills.md"),
-            doc_jetbrains_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ JetBrains    → .aiassistant/rules/bro-skills.md")
+        if agent in ("jetbrains", "all"):
+            jb_dir = os.path.join(self.target_dir, ".aiassistant", "rules")
+            os.makedirs(jb_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(jb_dir, "bro-skills.md"),
+                doc_jetbrains_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ JetBrains    → .aiassistant/rules/bro-skills.md")
 
         # ─── 6. Kiro (AWS) ──────────────────────────────────
-        # Path: .kiro/steering/tech.md
-        kiro_dir = os.path.join(self.target_dir, ".kiro", "steering")
-        os.makedirs(kiro_dir, exist_ok=True)
-        self._write_file(
-            os.path.join(kiro_dir, "tech.md"),
-            doc_kiro_steering_template(name, self.lang)
-        )
-        print("  ✅ Kiro         → .kiro/steering/tech.md")
-
-        # MCP config for Kiro (merge-safe)
-        self._create_kiro_mcp()
-
-        # Bridge skills for Kiro auto-load (.kiro/skills → .agent/skills)
-        self._create_kiro_skills_bridge()
+        if agent in ("kiro", "all"):
+            kiro_dir = os.path.join(self.target_dir, ".kiro", "steering")
+            os.makedirs(kiro_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(kiro_dir, "tech.md"),
+                doc_kiro_steering_template(name, self.lang)
+            )
+            self._create_kiro_mcp()
+            self._create_kiro_skills_bridge()
+            print("  ✅ Kiro         → .kiro/steering/tech.md & MCP & Skills Bridge")
 
         # ─── 7. Claude Code ─────────────────────────────────
-        # Path: CLAUDE.md (root)
-        self._write_file(
-            os.path.join(self.target_dir, "CLAUDE.md"),
-            doc_claude_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ Claude Code  → CLAUDE.md")
+        if agent in ("claude", "all"):
+            self._write_file(
+                os.path.join(self.target_dir, "CLAUDE.md"),
+                doc_claude_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Claude Code  → CLAUDE.md")
 
-        # ─── 8. GitHub Copilot Agent ────────────────────────
-        # Path: AGENTS.md (root)
-        self._write_file(
-            os.path.join(self.target_dir, "AGENTS.md"),
-            doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
-        )
-        print("  ✅ GitHub Agent → AGENTS.md")
+        # ─── 8. Roo Code ────────────────────────────────────
+        if agent in ("roocode", "all"):
+            self._write_file(
+                os.path.join(self.target_dir, ".clinerules"),
+                doc_roocode_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            self._write_file(
+                os.path.join(self.target_dir, ".roomember"),
+                doc_roocode_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Roo Code     → .clinerules & .roomember")
+
+        # ─── 9. Trae ────────────────────────────────────────
+        if agent in ("trae", "all"):
+            self._write_file(
+                os.path.join(self.target_dir, ".traerules"),
+                doc_trae_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Trae         → .traerules")
+
+        # ─── 10. Qoder ──────────────────────────────────────
+        if agent in ("qoder", "all"):
+            qoder_dir = os.path.join(self.target_dir, ".qoder", "rules")
+            os.makedirs(qoder_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(qoder_dir, "bro-skills.md"),
+                doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Qoder        → .qoder/rules/bro-skills.md")
+
+        # ─── 11. OpenCode ───────────────────────────────────
+        if agent in ("opencode", "all"):
+            opencode_dir = os.path.join(self.target_dir, ".opencode", "rules")
+            os.makedirs(opencode_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(opencode_dir, "bro-skills.md"),
+                doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ OpenCode     → .opencode/rules/bro-skills.md")
+
+        # ─── 12. Gemini CLI ─────────────────────────────────
+        if agent in ("gemini", "all"):
+            gemini_dir = os.path.join(self.target_dir, ".gemini", "rules")
+            os.makedirs(gemini_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(gemini_dir, "bro-skills.md"),
+                doc_windsurf_rules_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Gemini CLI   → .gemini/rules/bro-skills.md")
+
+        # ─── 13. Continue ───────────────────────────────────
+        if agent in ("continue", "all"):
+            continue_dir = os.path.join(self.target_dir, ".continue")
+            os.makedirs(continue_dir, exist_ok=True)
+            self._write_file(
+                os.path.join(continue_dir, "config.json"),
+                doc_continue_config_template()
+            )
+            print("  ✅ Continue     → .continue/config.json")
+
+        # ─── 14. Codex ──────────────────────────────────────
+        if agent in ("codex", "all"):
+            self._create_codex_skills_bridge()
+            self._write_file(
+                os.path.join(self.target_dir, ".agents", "AGENTS.md"),
+                doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
+            )
+            print("  ✅ Codex        → .agents/AGENTS.md & Skills Bridge")
+
+    def _create_codex_skills_bridge(self):
+        """Bridge .agent/skills -> .agents/skills for Codex customizations root."""
+        import shutil
+
+        src = os.path.join(self.agent_dir, "skills")
+        dst = os.path.join(self.target_dir, ".agents", "skills")
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+        # Clean old links/dirs
+        if os.path.islink(dst) or os.path.isfile(dst):
+            os.unlink(dst)
+        elif os.path.isdir(dst):
+            if os.name == "nt":
+                try:
+                    os.rmdir(dst)
+                except OSError:
+                    shutil.rmtree(dst, ignore_errors=True)
+            else:
+                shutil.rmtree(dst, ignore_errors=True)
+
+        rel_src = os.path.relpath(src, os.path.dirname(dst))
+
+        # 1) POSIX: relative symlink
+        if os.name != "nt":
+            try:
+                os.symlink(rel_src, dst, target_is_directory=True)
+                print("  🔗 Codex Skills → .agents/skills (symlink → .agent/skills)")
+                return
+            except (OSError, NotImplementedError):
+                pass
+        else:
+            # 2) Windows: junction
+            try:
+                import subprocess
+                subprocess.run(
+                    ["cmd", "/c", "mklink", "/J", dst, src],
+                    check=True, capture_output=True, text=True,
+                )
+                print("  🔗 Codex Skills → .agents/skills (junction → .agent/skills)")
+                return
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
+
+        # 3) Fallback: copy
+        shutil.copytree(src, dst)
+        print("  📄 Codex Skills → .agents/skills (copy — symlink/junction unavailable)")
 
     def _create_kiro_mcp(self):
         """Create/merge .kiro/settings/mcp.json (merge-safe).

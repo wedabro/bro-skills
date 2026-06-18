@@ -747,6 +747,57 @@ def doc_agents_md_template(project_name="Project", use_docker=True, is_soft_rule
 """
 
 
+def doc_roocode_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
+    """Roo Code Coding Agent — .clinerules / .roomember"""
+    return f"""# Roo Code Rules for {project_name}
+
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
+"""
+
+
+def doc_trae_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
+    """Trae IDE — .traerules"""
+    return f"""# Trae Rules for {project_name}
+
+{_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
+"""
+
+
+def doc_continue_config_template():
+    """Continue Assistant — .continue/config.json"""
+    return """{
+  "models": [],
+  "customCommands": [
+    {
+      "name": "constitution",
+      "description": "Establish the project constitution",
+      "prompt": "Run the workflow /01-speckit.constitution"
+    },
+    {
+      "name": "specify",
+      "description": "Create a new feature specification",
+      "prompt": "Run the workflow /02-speckit.specify"
+    },
+    {
+      "name": "plan",
+      "description": "Create technical implementation plan",
+      "prompt": "Run the workflow /04-speckit.plan"
+    },
+    {
+      "name": "implement",
+      "description": "Deploy code according to tasks",
+      "prompt": "Run the workflow /07-speckit.implement"
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "codebase",
+      "params": {}
+    }
+  ]
+}"""
+
+
 # =============================================================================
 # TEMPLATE MAPS
 # =============================================================================
