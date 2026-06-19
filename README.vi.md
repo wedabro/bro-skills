@@ -53,7 +53,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Kiểm tra
 bro-skills version
-# → bro-skills v1.4.6
+# → bro-skills v1.4.7
 ```
 
 ### Cách 3: `pipx install` (Cô lập - Không ảnh hưởng đến Python hệ thống)
@@ -504,7 +504,7 @@ bro-skills/
 │   └── bro-skills.cjs        # Tệp entry point của npx → gọi python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Mã nguồn gói Python
-    ├── __init__.py            # Khai báo phiên bản: __version__ = "1.4.6"
+    ├── __init__.py            # Khai báo phiên bản: __version__ = "1.4.7"
     ├── __main__.py            # Điểm bắt đầu khi chạy `python -m bro_skills`
     ├── cli.py                 # Điểm bắt đầu của lệnh điều khiển `bro-skills`
     ├── registry.py            # Nguồn sự thật duy nhất — đăng ký 38 skills + 33 workflows + 8 loại dự án
@@ -553,8 +553,8 @@ bro-skills validate --target /path/to/project
 - Release: Tạo tag phiên bản `vX.Y.Z` để đóng gói thư viện và phát hành GitHub Release với đầy đủ các artifacts tương ứng.
 
 ```bash
-git tag v1.4.6
-git push origin v1.4.6
+git tag v1.4.7
+git push origin v1.4.7
 ```
 
 ---

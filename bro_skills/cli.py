@@ -437,6 +437,21 @@ def cmd_version(args):
     print(f"bro-skills v{__version__}")
 
 
+def _get_latest_github_version():
+    """Retrieve the latest version of bro-skills from GitHub raw package.json."""
+    import urllib.request
+    import json
+    
+    url = "https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json"
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'bro-skills-cli'})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            return data.get("version")
+    except Exception:
+        return None
+
+
 def cmd_update(args):
     """Upgrade bro-skills to the latest version."""
     import subprocess
@@ -444,7 +459,18 @@ def cmd_update(args):
 
     install_method = os.environ.get("BRO_SKILLS_INSTALL_METHOD", "pip")
 
-    print("\n⚡ bro-skills - Upgrading to the latest version...")
+    print("\n⚡ bro-skills - Checking for updates...")
+    latest_version = _get_latest_github_version()
+    
+    if latest_version:
+        if __version__ == latest_version:
+            print(f"✅ You are already on the latest version (v{__version__}). No update needed.\n")
+            return
+        else:
+            print(f"🔄 New version available: v{__version__} ➔ v{latest_version}")
+    else:
+        print("⚠️ Could not check for the latest version. Proceeding to update anyway...")
+
     print(f"Installation method: {install_method.upper()}")
 
     if install_method == "npm":

@@ -53,7 +53,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Check
 bro-skills version
-# → bro-skills v1.4.6
+# → bro-skills v1.4.7
 ```
 
 ### Method 3: `pipx install` (Isolated - Does not affect system Python)
@@ -504,7 +504,7 @@ bro-skills/
 │   └── bro-skills.cjs        # npx entry point → python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Python package
-    ├── __init__.py            # Version: __version__ = "1.4.6"
+    ├── __init__.py            # Version: __version__ = "1.4.7"
     ├── __main__.py            # python -m bro_skills
     ├── cli.py                 # Console script entry point → `bro-skills` command
     ├── registry.py            # Single Source of Truth — 38 skills + 33 workflows + 8 project types
@@ -553,8 +553,8 @@ bro-skills validate --target /path/to/project
 - Release: create tag `vX.Y.Z` to build sdist/wheel and create GitHub Release with artifacts.
 
 ```bash
-git tag v1.4.6
-git push origin v1.4.6
+git tag v1.4.7
+git push origin v1.4.7
 ```
 
 ---
