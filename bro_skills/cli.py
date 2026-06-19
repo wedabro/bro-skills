@@ -24,80 +24,136 @@ from bro_skills.registry import (
 )
 
 
-def _ask_project_type():
-    """Ask the user to select a project type."""
-    print("🏗️ Project type:")
-    types_list = list(PROJECT_TYPES.items())
-    for i, (key, info) in enumerate(types_list, 1):
-        print(f"  [{i}] {info['label']} — {info['description']}")
+def select_menu(options, title="", lang="en"):
+    """
+    options: list of tuples (value, label_en, label_vi)
+    title: Title of the menu
+    """
+    import sys
+    
+    selected_idx = 0
+    is_windows = sys.platform.startswith('win')
+    
+    def print_menu():
+        sys.stdout.write(f"\r\033[K{title}\n")
+        for i, opt in enumerate(options):
+            label = opt[2] if lang == "vi" else opt[1]
+            if i == selected_idx:
+                sys.stdout.write(f"\033[K\033[96m  ➔ {label}\033[0m\n")
+            else:
+                sys.stdout.write(f"\033[K    {label}\n")
+        sys.stdout.write(f"\033[{len(options) + 1}A")
+        sys.stdout.flush()
 
-    while True:
-        try:
-            choice = input(f"\nSelect (1-{len(types_list)}): ").strip()
-            idx = int(choice) - 1
-            if 0 <= idx < len(types_list):
-                selected_key = types_list[idx][0]
-                selected_info = types_list[idx][1]
-                return selected_key, selected_info
-        except (ValueError, IndexError):
-            pass
-        print(f"⚠️ Please choose a number from 1 to {len(types_list)}")
+    if not sys.stdout.isatty():
+        return options[0][0]
+
+    sys.stdout.write("\033[?25l") # hide cursor
+    sys.stdout.write("\n" * (len(options) + 1))
+    sys.stdout.write(f"\033[{len(options) + 1}A")
+    sys.stdout.flush()
+
+    try:
+        if is_windows:
+            import msvcrt
+            while True:
+                print_menu()
+                ch = msvcrt.getch()
+                if ch == b'\r':
+                    break
+                elif ch in (b'\xe0', b'\x00'):
+                    ch2 = msvcrt.getch()
+                    if ch2 == b'H':
+                        selected_idx = (selected_idx - 1) % len(options)
+                    elif ch2 == b'P':
+                        selected_idx = (selected_idx + 1) % len(options)
+        else:
+            import tty
+            import termios
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(fd)
+                while True:
+                    print_menu()
+                    char1 = sys.stdin.read(1)
+                    if char1 == '\r' or char1 == '\n':
+                        break
+                    elif char1 == '\x1b':
+                        char2 = sys.stdin.read(1)
+                        if char2 == '[':
+                            char3 = sys.stdin.read(1)
+                            if char3 == 'A':
+                                selected_idx = (selected_idx - 1) % len(options)
+                            elif char3 == 'B':
+                                selected_idx = (selected_idx + 1) % len(options)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    finally:
+        sys.stdout.write(f"\033[{len(options) + 1}B\033[?25h\n")
+        sys.stdout.flush()
+        
+    return options[selected_idx][0]
+
+
+def _ask_project_type(lang="en"):
+    """Ask the user to select a project type using arrow keys."""
+    options = []
+    vi_translations = {
+        "web_public": ("Web Public (B2C)", "Blog, Thương mại điện tử, Trang đích, Tin tức — Cần SEO + GEO"),
+        "web_saas": ("Web SaaS (B2B)", "Dashboard, Trang quản trị, Dịch vụ API — SEO cho Landing/Blog"),
+        "mobile_app": ("Ứng dụng Di động (Mobile App)", "iOS/Android — Không cần SEO, dùng ASO"),
+        "desktop_cli": ("Desktop / Công cụ CLI", "Electron, WPF, CLI — Không cần SEO"),
+        "fullstack": ("Full-stack (Web + API)", "Frontend Public + Backend API — Cần SEO + GEO + DevOps"),
+        "game": ("Phát triển Game (Game Dev)", "Game (Unity/Unreal/Godot/Phaser) — Game loop, ECS, netcode"),
+        "simple_script": ("Script đơn giản / Tự động hóa", "Script Python/Bash/JS nhỏ — Không Docker, Không Next.js"),
+        "custom_infra": ("Hạ tầng tùy chỉnh (Custom)", "Dự án có hạ tầng riêng — Không bắt buộc chuẩn Docker 89XX"),
+    }
+    
+    for key, info in PROJECT_TYPES.items():
+        vi_label, vi_desc = vi_translations.get(key, (info["label"], info["description"]))
+        options.append((
+            key, 
+            f"{info['label']} — {info['description']}", 
+            f"{vi_label} — {vi_desc}"
+        ))
+        
+    title = "🏗️ Chọn loại dự án (Project type):" if lang == "vi" else "🏗️ Select project type:"
+    selected_key = select_menu(options, title, lang)
+    return selected_key, PROJECT_TYPES[selected_key]
 
 
 def _ask_agent_language():
-    """Ask the user to select the agent response language."""
-    print("🌐 Agent Response Language:")
-    print("  [1] English (en)")
-    print("  [2] Vietnamese (vi)")
-    print("  [3] Dynamic (Detect dynamically based on user messages)")
-    print("  [4] Other (Custom language)")
-
-    while True:
-        choice = input("\nSelect (1-4): ").strip()
-        if choice == "1":
-            return "en"
-        elif choice == "2":
-            return "vi"
-        elif choice == "3":
-            return "dynamic"
-        elif choice == "4":
-            custom_lang = input("Enter custom language (e.g., French, Japanese): ").strip()
-            if custom_lang:
-                return custom_lang
-        print("⚠️ Please choose a number from 1 to 4")
-
-
-def _ask_agent_selection():
-    """Ask the user to select a target AI agent."""
-    agents = [
-        ("claude", "Claude Code (CLAUDE.md)"),
-        ("cursor", "Cursor (.cursor/rules/bro-skills.mdc)"),
-        ("windsurf", "Windsurf (.windsurf/rules/bro-skills.md)"),
-        ("antigravity", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)"),
-        ("copilot", "GitHub Copilot (.github/copilot-instructions.md)"),
-        ("kiro", "Kiro (.kiro/steering/tech.md + MCP)"),
-        ("codex", "Codex (skills.json in customizations root)"),
-        ("roocode", "Roo Code (.clinerules + .roomember)"),
-        ("qoder", "Qoder (.qoder/rules/bro-skills.md)"),
-        ("gemini", "Gemini CLI (.gemini/rules/bro-skills.md)"),
-        ("trae", "Trae (.traerules)"),
-        ("opencode", "OpenCode (.opencode/rules/bro-skills.md)"),
-        ("continue", "Continue (.continue/config.json)"),
-        ("all", "All Assistants"),
+    """Ask the user to select the agent response language using arrow keys."""
+    options = [
+        ("en", "English (en)", "Tiếng Anh (en)"),
+        ("vi", "Vietnamese (vi)", "Tiếng Việt (vi)"),
+        ("dynamic", "Dynamic (Detect dynamically)", "Tự động nhận diện (Dynamic)"),
     ]
-    print("\n🤖 Target AI Agent Configuration:")
-    for i, (key, desc) in enumerate(agents, 1):
-        print(f"  [{i}] {desc}")
+    title = "🌐 Select Agent Response Language / Chọn ngôn ngữ của Agent:"
+    return select_menu(options, title, lang="en")
 
-    while True:
-        try:
-            choice = input(f"\nSelect (1-{len(agents)}): ").strip()
-            idx = int(choice) - 1
-            if 0 <= idx < len(agents):
-                return agents[idx][0]
-        except (ValueError, IndexError):
-            pass
-        print(f"⚠️ Please choose a number from 1 to {len(agents)}")
+
+def _ask_agent_selection(lang="en"):
+    """Ask the user to select a target AI agent using arrow keys."""
+    agents = [
+        ("claude", "Claude Code (CLAUDE.md)", "Claude Code (CLAUDE.md)"),
+        ("cursor", "Cursor (.cursor/rules/bro-skills.mdc)", "Cursor (.cursor/rules/bro-skills.mdc)"),
+        ("windsurf", "Windsurf (.windsurf/rules/bro-skills.md)", "Windsurf (.windsurf/rules/bro-skills.md)"),
+        ("antigravity", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)"),
+        ("copilot", "GitHub Copilot (.github/copilot-instructions.md)", "GitHub Copilot (.github/copilot-instructions.md)"),
+        ("kiro", "Kiro (.kiro/steering/tech.md + MCP)", "Kiro (.kiro/steering/tech.md + MCP)"),
+        ("codex", "Codex (skills.json in customizations root)", "Codex (skills.json trong customizations root)"),
+        ("roocode", "Roo Code (.clinerules + .roomember)", "Roo Code (.clinerules + .roomember)"),
+        ("qoder", "Qoder (.qoder/rules/bro-skills.md)", "Qoder (.qoder/rules/bro-skills.md)"),
+        ("gemini", "Gemini CLI (.gemini/rules/bro-skills.md)", "Gemini CLI (.gemini/rules/bro-skills.md)"),
+        ("trae", "Trae (.traerules)", "Trae (.traerules)"),
+        ("opencode", "OpenCode (.opencode/rules/bro-skills.md)", "OpenCode (.opencode/rules/bro-skills.md)"),
+        ("continue", "Continue (.continue/config.json)", "Continue (.continue/config.json)"),
+        ("all", "All Assistants", "Tất cả trợ lý (All Assistants)"),
+    ]
+    title = "🤖 Chọn cấu hình trợ lý AI (Target AI Agent):" if lang == "vi" else "🤖 Select target AI agent configuration:"
+    return select_menu(agents, title, lang)
 
 
 def cmd_init(args):
@@ -143,32 +199,69 @@ def cmd_init(args):
                 print("❌ Canceled.")
                 return
 
-    # LANGUAGE SELECTION
+    # LANGUAGE SELECTION (Always first!)
     lang = getattr(args, 'lang', None)
     if not lang:
-        print()
         lang = _ask_agent_language()
-        print(f"\n✅ Selected language: {lang}")
+        if lang == "vi":
+            print(f"\n✅ Ngôn ngữ đã chọn: Tiếng Việt (vi)")
+        else:
+            print(f"\n✅ Selected language: {lang}")
     else:
-        print(f"  🌐 Agent Language: {lang}")
+        if lang == "vi":
+            print(f"  🌐 Ngôn ngữ Agent: Tiếng Việt ({lang})")
+        else:
+            print(f"  🌐 Agent Language: {lang}")
 
     # AGENT SELECTION
     ai_agent = getattr(args, 'ai', None)
     if not ai_agent:
-        print()
-        ai_agent = _ask_agent_selection()
-        print(f"\n✅ Selected AI Agent: {ai_agent}")
+        ai_agent = _ask_agent_selection(lang)
+        if lang == "vi":
+            print(f"\n✅ Cấu hình Agent đã chọn: {ai_agent}")
+        else:
+            print(f"\n✅ Selected AI Agent: {ai_agent}")
     else:
-        print(f"  🤖 AI Agent: {ai_agent}")
+        if lang == "vi":
+            print(f"  🤖 Cấu hình Agent: {ai_agent}")
+        else:
+            print(f"  🤖 AI Agent: {ai_agent}")
 
     # PROJECT TYPE SELECTION
     if not project_type:
-        print()
-        project_type, type_info = _ask_project_type()
-        print(f"\n✅ Selected: {type_info['label']}")
+        project_type, type_info = _ask_project_type(lang)
+        if lang == "vi":
+            vi_labels = {
+                "web_public": "Web Public (B2C)",
+                "web_saas": "Web SaaS (B2B)",
+                "mobile_app": "Mobile App",
+                "desktop_cli": "Desktop / CLI Tool",
+                "fullstack": "Full-stack (Web + API)",
+                "game": "Phát triển Game",
+                "simple_script": "Kịch bản đơn giản / Tự động hóa",
+                "custom_infra": "Hạ tầng tùy chỉnh"
+            }
+            lbl = vi_labels.get(project_type, type_info['label'])
+            print(f"\n✅ Đã chọn loại dự án: {lbl}")
+        else:
+            print(f"\n✅ Selected: {type_info['label']}")
     else:
         type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
-        print(f"  🏗️ Project Type: {type_info['label']}")
+        if lang == "vi":
+            vi_labels = {
+                "web_public": "Web Public (B2C)",
+                "web_saas": "Web SaaS (B2B)",
+                "mobile_app": "Mobile App",
+                "desktop_cli": "Desktop / CLI Tool",
+                "fullstack": "Full-stack (Web + API)",
+                "game": "Phát triển Game",
+                "simple_script": "Kịch bản đơn giản / Tự động hóa",
+                "custom_infra": "Hạ tầng tùy chỉnh"
+            }
+            lbl = vi_labels.get(project_type, type_info['label'])
+            print(f"  🏗️ Loại dự án: {lbl}")
+        else:
+            print(f"  🏗️ Project Type: {type_info['label']}")
 
     # Filter skills by project type
     filtered_skills = get_skills_for_project_type(project_type)
