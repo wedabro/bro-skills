@@ -364,7 +364,8 @@ def cmd_update(args):
 
     print(f"Running command: {' '.join(cmd)}")
     try:
-        result = subprocess.run(cmd, check=True, text=True)
+        is_windows = sys.platform.startswith('win')
+        result = subprocess.run(cmd, check=True, text=True, shell=is_windows)
         if result.returncode == 0:
             print("\n✅ Updated successfully! Please run 'bro-skills version' to check.")
         else:
