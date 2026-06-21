@@ -563,18 +563,6 @@ bro-skills validate --target /path/to/project
 
 ---
 
-## CI/CD
-
-- CI: GitHub Actions runs `pytest` for pull requests and every push.
-- Release: create tag `vX.Y.Z` to build sdist/wheel and create GitHub Release with artifacts.
-
-```bash
-git tag v1.4.8
-git push origin v1.4.8
-```
-
----
-
 ## 📄 License
 
 MIT

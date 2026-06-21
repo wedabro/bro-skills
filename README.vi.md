@@ -563,18 +563,6 @@ bro-skills validate --target /path/to/project
 
 ---
 
-## Quy trình tích hợp liên tục (CI/CD)
-
-- CI: GitHub Actions tự động chạy `pytest` cho mỗi Pull Request và mỗi lượt đẩy mã nguồn mới.
-- Release: Tạo tag phiên bản `vX.Y.Z` để đóng gói thư viện và phát hành GitHub Release với đầy đủ các artifacts tương ứng.
-
-```bash
-git tag v1.4.8
-git push origin v1.4.8
-```
-
----
-
 ## 📄 Giấy phép sử dụng
 
 MIT
