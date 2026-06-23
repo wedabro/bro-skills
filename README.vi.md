@@ -1,5 +1,7 @@
 <p align="center">
   <img src=".github/img/logo.png" alt="bro-skills logo" width="320" />
+  <br>
+  <a href="README.md">🇬🇧 English Version</a>
 </p>
 
 # ⚡ bro-skills - Spec-Driven Development CLI
