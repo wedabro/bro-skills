@@ -263,9 +263,36 @@ def cmd_init(args):
         else:
             print(f"  🏗️ Project Type: {type_info['label']}")
 
-    # Filter skills by project type
-    filtered_skills = get_skills_for_project_type(project_type)
-    filtered_workflows = get_workflows_for_project_type(project_type)
+    # Parse selected skills if provided
+    selected_skills = None
+    if getattr(args, "skills", None):
+        selected_skills = [s.strip() for s in args.skills.split(",") if s.strip()]
+
+    # Filter skills by project type and selected_skills
+    if selected_skills:
+        normalized_selected = set()
+        for s in selected_skills:
+            s_clean = s.strip().lower()
+            if not s_clean:
+                continue
+            if s_clean.startswith("speckit."):
+                normalized_selected.add(s_clean)
+            else:
+                normalized_selected.add(f"speckit.{s_clean}")
+        
+        filtered_skills = [
+            s for s in SKILLS_REGISTRY
+            if s["name"] in normalized_selected or s.get("project_types") == "all"
+        ]
+        
+        active_skill_names = {s["name"] for s in filtered_skills}
+        filtered_workflows = [
+            w for w in WORKFLOWS_REGISTRY
+            if all(s_name in active_skill_names for s_name in w.get("skills", []))
+        ]
+    else:
+        filtered_skills = get_skills_for_project_type(project_type)
+        filtered_workflows = get_workflows_for_project_type(project_type)
 
     # Show skills enabled/disabled
     all_skill_names = {s["name"] for s in SKILLS_REGISTRY}
@@ -291,6 +318,7 @@ def cmd_init(args):
     else:
         print("📭 Empty project — use default templates.\n")
 
+
     # Generate
     generator = ProjectGenerator(
         target_dir=target,
@@ -299,6 +327,7 @@ def cmd_init(args):
         scan_profile=scan_profile,
         lang=lang,
         ai_agent=ai_agent,
+        selected_skills=selected_skills,
     )
     generator.generate()
 
@@ -341,6 +370,67 @@ def cmd_init(args):
         else:
             print(f"  3. Run @speckit.devops to create a Security-standard Docker environment")
 
+
+    print()
+
+
+def cmd_install(args):
+    """Install specific skills into an existing .agent/ structure."""
+    target = os.path.abspath(args.target or os.getcwd())
+    agent_dir = os.path.join(target, ".agent")
+
+    if not os.path.exists(agent_dir):
+        print(f"❌ Error: Cannot find .agent/ folder at {target}")
+        print("💡 Run: 'bro-skills init' to initialize the project first.")
+        sys.exit(1)
+
+    skills_input = args.skills
+    if not skills_input:
+        print("❌ Error: Please specify skills to install. Example: 'bro-skills install 3d'")
+        sys.exit(1)
+
+    selected_skills = [s.strip() for s in skills_input.split(",") if s.strip()]
+
+    # Read existing project config to get project_type, lang, ai_agent, name
+    import json
+    project_type = "fullstack"
+    project_name = os.path.basename(target)
+    lang = "dynamic"
+    ai_agent = "all"
+
+    project_config_path = os.path.join(agent_dir, "project.json")
+    if os.path.exists(project_config_path):
+        try:
+            with open(project_config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+                project_type = config.get("project_type", project_type)
+                project_name = config.get("name", project_name)
+                lang = config.get("language", lang)
+                ai_agent = config.get("ai_agent", ai_agent)
+        except Exception:
+            pass
+
+    print(f"\n⚡ bro-skills v{__version__} - Installing Skills")
+    print(f"{'─' * 50}")
+    print(f"  📁 Target:  {target}")
+    print(f"  🛠️ Skills:  {', '.join(selected_skills)}")
+    print(f"{'─' * 50}\n")
+
+    # Scan the codebase to configure scanner metadata
+    scanner = ProjectScanner(target)
+    scan_profile = scanner.scan()
+
+    # Generate only selected skills
+    generator = ProjectGenerator(
+        target_dir=target,
+        project_name=project_name,
+        project_type=project_type,
+        scan_profile=scan_profile,
+        lang=lang,
+        ai_agent=ai_agent,
+        selected_skills=selected_skills,
+    )
+    generator.install_skills()
     print()
 
 
@@ -564,6 +654,12 @@ AVAILABLE project process:
     init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ if it already exists")
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
     init_parser.add_argument("--ai", help="Specify target AI agent (e.g., claude, cursor, windsurf, antigravity, copilot, kiro, codex, roocode, qoder, gemini, trae, opencode, continue, all)")
+    init_parser.add_argument("--skills", "-s", help="Comma-separated list of additional/specific skills to install (e.g. 3d,wordpress)")
+
+    # install
+    install_parser = subparsers.add_parser("install", help="Install specific skills into an existing .agent/ structure")
+    install_parser.add_argument("skills", help="Comma-separated list of skills to install (e.g. 3d,wordpress)")
+    install_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
 
     # list-skills
     subparsers.add_parser("list-skills", help="List all skills")
@@ -589,6 +685,7 @@ AVAILABLE project process:
 
     commands = {
         "init": cmd_init,
+        "install": cmd_install,
         "list-skills": cmd_list_skills,
         "list-workflows": cmd_list_workflows,
         "validate": cmd_validate,

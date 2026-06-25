@@ -1775,6 +1775,69 @@ Build industrial-grade WordPress products (Themes/Plugins), ensuring security, p
 """
 
 
+def skill_3d():
+    return r"""
+---
+name: speckit.3d
+description: 3D Specialist - 3D modeling, WebGL/Three.js/React Three Fiber, Unity/Unreal Engine 3D integration, shaders, optimization.
+role: 3D Architect & Developer
+---
+
+## 🎯 Mission
+Provide standards, best practices, and implementation guidelines for 3D graphics development, rendering, assets pipeline, and engine integration (Web 3D and native Game engines).
+
+## 📥 Input
+- `.agent/memory/constitution.md` (principles, tech stack)
+- Spec & Plan files (e.g., `spec.md`, `plan.md`)
+- Assets catalog and directories (e.g., glTF, FBX, OBJ, textures)
+
+## 📋 Protocol
+
+### Giai đoạn 1: Assets Pipeline & Setup
+- **WebGL/Web 3D (Three.js / React Three Fiber):**
+  - Sử dụng định dạng **glTF/glb** làm định dạng mô hình chuẩn.
+  - Phải nén file mô hình 3D bằng **Draco compression** hoặc Meshopt trước khi sử dụng trong ứng dụng web (giới hạn dung lượng model < 5MB).
+  - Tải tài nguyên bất đồng bộ (Async Loading) kèm theo Loading Screen/Progress Bar trực quan.
+  - Tách biệt thư mục chứa tài nguyên 3D (ví dụ: `public/assets/3d/` hoặc `assets/models/`).
+
+- **Game Engines (Unity / Unreal / Godot):**
+  - Quản lý asset khoa học: Thư mục riêng cho `Prefabs/`, `Models/`, `Materials/`, `Textures/`, `Shaders/`.
+  - Thiết lập Prefab Variants thay vì tạo bản sao Prefab độc lập.
+
+### Giai đoạn 2: Phát triển & Logic
+- **Web 3D:**
+  - Viết code sạch, quản lý vòng đời (Lifecycle Management) của Scene, Camera, Renderer và Light.
+  - Giải phóng bộ nhớ (Dispose) hoàn toàn cho Geometries, Materials, Textures khi unmount/destroy component để tránh memory leak.
+  - Sử dụng `requestAnimationFrame` thông qua loop của Three.js hoặc custom tick loop.
+
+- **Game Engines (Unity / Unreal / Godot):**
+  - Sử dụng mô hình ECS (Entity Component System) hoặc Object-Component sạch sẽ.
+  - Tránh sử dụng hàm `Find()` hoặc `GetComponent()` trong các vòng lặp Update.
+  - Quản lý State bằng State Machine rõ ràng.
+
+### Giai đoạn 3: Shaders & Hiệu ứng hình ảnh
+- Viết shader custom (GLSL/HLSL) tối ưu, hạn chế tính toán phức tạp trong Fragment Shader.
+- Tận dụng Vertex Shader cho các tính toán di chuyển/vật lý đơn giản.
+
+### Giai đoạn 4: Tối ưu hiệu năng (Performance Optimization)
+- **WebGL/Web 3D:**
+  - Hạn chế số lượng Draw Calls bằng cách gộp mesh (InstancedMesh) hoặc sử dụng Texture Atlases.
+  - Bật/tắt Shadow Map một cách chọn lọc, giới hạn resolution của shadow.
+  - Sử dụng **LOD (Level of Detail)** cho các mô hình ở xa.
+  - Giảm thiểu tính toán va chạm vật lý (Physics) trên CPU bằng cách sử dụng bounding boxes/spheres đơn giản.
+
+- **Game Engines:**
+  - Bật Occlusion Culling và Frustum Culling.
+  - Sử dụng GPU Instancing cho các vật thể lặp lại (cỏ, cây, đá).
+
+## 🚫 Guard Rails (Không được làm)
+- KHÔNG load các mô hình chưa được tối ưu hóa trực tiếp lên Web (tránh làm đơ trình duyệt).
+- KHÔNG tạo Material hoặc Texture mới trong mỗi frame render.
+- KHÔNG hardcode đường dẫn asset 3D.
+- KHÔNG chạy render loop liên tục khi Scene không có sự thay đổi (sử dụng render on demand nếu Scene tĩnh).
+"""
+
+
 # =============================================================================
 # SKILL TEMPLATE MAP — Complete mapping for all 38 skills
 # =============================================================================
@@ -1819,5 +1882,7 @@ SKILL_TEMPLATE_MAP = {
     "speckit.map": skill_map,
     "speckit.uat": skill_uat,
     "speckit.wordpress": skill_wordpress,
+    "speckit.3d": skill_3d,
 }
+
 

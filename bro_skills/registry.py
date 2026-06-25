@@ -315,6 +315,12 @@ SKILLS_REGISTRY = [
         "role": "WordPress Expert",
         "project_types": "web",
     },
+    {
+        "name": "speckit.3d",
+        "description": "3D Specialist - 3D modeling, WebGL/Three.js/React Three Fiber, Unity/Unreal Engine 3D integration, shaders, optimization.",
+        "role": "3D Architect & Developer",
+        "project_types": "builder",
+    },
 
     # ========================================================================
     # MULTI-AGENT BUILDERS (v2 — Attribute-based selection)
@@ -554,6 +560,11 @@ WORKFLOWS_REGISTRY = [
         "description": "Game Development Pipeline - Engine setup, game loop, performance, asset pipeline",
         "skills": ["speckit.gamedev", "speckit.uiux"],
     },
+    {
+        "command": "speckit.3d",
+        "description": "3D Modeling, Web 3D & Game 3D Workflow",
+        "skills": ["speckit.3d"],
+    },
 ]
 
 
@@ -601,6 +612,7 @@ MODIFIERS = {
         "multiplayer": ["speckit.backend", "speckit.devops"],
         "has_pii": ["speckit.security", "speckit.database"],
         "ml": ["speckit.data"],
+        "3d": ["speckit.3d"],
     },
 }
 

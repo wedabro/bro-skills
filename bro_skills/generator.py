@@ -40,7 +40,7 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all"):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
@@ -49,10 +49,36 @@ class ProjectGenerator:
         self.agent_dir = os.path.join(target_dir, ".agent")
         self.lang = lang or "dynamic"
         self.ai_agent = ai_agent or "all"
+        self.selected_skills = selected_skills
 
         # Filter skills/workflows by project type + attributes (multi-agent v2)
-        self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
-        self.filtered_workflows = get_workflows_for_project_type(project_type)
+        if selected_skills:
+            normalized_selected = set()
+            for s in selected_skills:
+                s_clean = s.strip().lower()
+                if not s_clean:
+                    continue
+                if s_clean.startswith("speckit."):
+                    normalized_selected.add(s_clean)
+                else:
+                    normalized_selected.add(f"speckit.{s_clean}")
+            
+            # Select from ALL SKILLS in registry, not just project type defaults
+            self.filtered_skills = [
+                s for s in SKILLS_REGISTRY
+                if s["name"] in normalized_selected or s.get("project_types") == "all"
+            ]
+            
+            # Select from ALL WORKFLOWS in registry where all referenced skills are active
+            active_skill_names = {s["name"] for s in self.filtered_skills}
+            self.filtered_workflows = [
+                w for w in WORKFLOWS_REGISTRY
+                if all(s_name in active_skill_names for s_name in w.get("skills", []))
+            ]
+        else:
+            self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
+            self.filtered_workflows = get_workflows_for_project_type(project_type)
+
 
         self.stats = {
             "skills": 0,
@@ -63,6 +89,7 @@ class ProjectGenerator:
             "identity": 0,
             "knowledge": 0
         }
+
 
     def generate(self):
         """Execute the entire scaffolding process."""
@@ -794,3 +821,26 @@ No tag -> inferred from keyword + project_type.
         print(f"  🔄 Workflows: {self.stats['workflows']}")
         print(f"  📄 Templates: {self.stats['templates']}")
         print(f"{'─' * 50}\n")
+
+    def install_skills(self):
+        """Install only the selected skills, workflows, and update agent registries."""
+        print(f"🛠️  Installing selected skills into {self.agent_dir}...")
+        
+        # 1. Create skills
+        self._create_skills()
+        
+        # 2. Create workflows
+        self._create_workflows()
+        
+        # 3. Update agents/orchestration
+        self._create_agents()
+        
+        # 4. Bridge if needed
+        agent = self.ai_agent.lower().strip()
+        if agent in ("codex", "all"):
+            self._create_codex_skills_bridge()
+        if agent in ("kiro", "all"):
+            self._create_kiro_skills_bridge()
+            
+        print(f"✅ Installed {self.stats['skills']} skills and {self.stats['workflows']} workflows successfully.")
+
