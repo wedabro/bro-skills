@@ -12,17 +12,17 @@ Each skill has a `project_types` field:
 PROJECT_TYPES = {
     "web_public": {
         "label": "Web Public (B2C)",
-        "description": "Blog, E-commerce, Landing Page, News — Need SEO + GEO",
+        "description": "Landing Page, Blog, E-commerce, News — Need SEO + GEO",
         "includes_skills": ["all", "web", "web_public"],
     },
     "web_saas": {
         "label": "Web SaaS (B2B)",
-        "description": "Dashboard, Admin Panel, API Service — SEO cho Landing/Blog",
+        "description": "Dashboard, Admin Panel, Internal Tool, API Service — Less SEO required",
         "includes_skills": ["all", "web"],
     },
     "mobile_app": {
         "label": "Mobile App",
-        "description": "iOS/Android — No need for SEO, use ASO",
+        "description": "iOS/Android (React Native, Flutter, Swift, Kotlin) — No SEO, use ASO",
         "includes_skills": ["all"],
     },
     "desktop_cli": {
@@ -32,7 +32,7 @@ PROJECT_TYPES = {
     },
     "fullstack": {
         "label": "Full-stack (Web + API)",
-        "description": "Frontend Public + Backend API — Need SEO + GEO + DevOps",
+        "description": "Frontend (Web) + Backend (API) — Foundation for Web + Mobile Apps (Need SEO + GEO + DevOps)",
         "includes_skills": ["all", "web", "web_public"],
     },
     "game": {

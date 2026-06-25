@@ -100,13 +100,13 @@ def _ask_project_type(lang="en"):
     """Ask the user to select a project type using arrow keys."""
     options = []
     vi_translations = {
-        "web_public": ("Web Public (B2C)", "Blog, Thương mại điện tử, Trang đích, Tin tức — Cần SEO + GEO"),
-        "web_saas": ("Web SaaS (B2B)", "Dashboard, Trang quản trị, Dịch vụ API — SEO cho Landing/Blog"),
-        "mobile_app": ("Ứng dụng Di động (Mobile App)", "iOS/Android — Không cần SEO, dùng ASO"),
-        "desktop_cli": ("Desktop / Công cụ CLI", "Electron, WPF, CLI — Không cần SEO"),
-        "fullstack": ("Full-stack (Web + API)", "Frontend Public + Backend API — Cần SEO + GEO + DevOps"),
-        "game": ("Phát triển Game (Game Dev)", "Game (Unity/Unreal/Godot/Phaser) — Game loop, ECS, netcode"),
-        "simple_script": ("Script đơn giản / Tự động hóa", "Script Python/Bash/JS nhỏ — Không Docker, Không Next.js"),
+        "web_public": ("Web Công cộng / B2C (Web Public)", "Trang đích (Landing Page), Blog, Thương mại điện tử, Tin tức — Cần tối ưu SEO + GEO"),
+        "web_saas": ("Web SaaS / B2B (Web SaaS)", "Dashboard, Trang quản trị, Hệ thống nội bộ, Dịch vụ API — Ít cần SEO"),
+        "mobile_app": ("Ứng dụng Di động (Mobile App)", "iOS/Android (React Native, Flutter, Swift, Kotlin) — Cần ASO, không cần SEO"),
+        "desktop_cli": ("Desktop / Công cụ CLI", "Electron, WPF, công cụ dòng lệnh CLI — Không cần SEO"),
+        "fullstack": ("Full-stack Web & API (Fullstack)", "Cả Frontend (Web) & Backend (API) — Nền tảng cho dự án có cả Web & Mobile App (Cần SEO + GEO + DevOps)"),
+        "game": ("Phát triển Game (Game Dev)", "Game (Unity, Unreal, Godot, Phaser) — Game loop, ECS, netcode"),
+        "simple_script": ("Script đơn giản / Tự động hóa", "Script Python/Bash/JS nhỏ — Không Docker, không Next.js"),
         "custom_infra": ("Hạ tầng tùy chỉnh (Custom)", "Dự án có hạ tầng riêng — Không bắt buộc chuẩn Docker 89XX"),
     }
     
