@@ -71,7 +71,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Check
 bro-skills version
-# → bro-skills v1.4.8
+# → bro-skills v1.4.9
 ```
 
 ### Method 3: `pipx install` (Isolated - Does not affect system Python)
@@ -522,7 +522,7 @@ bro-skills/
 │   └── bro-skills.cjs        # npx entry point → python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Python package
-    ├── __init__.py            # Version: __version__ = "1.4.8"
+    ├── __init__.py            # Version: __version__ = "1.4.9"
     ├── __main__.py            # python -m bro_skills
     ├── cli.py                 # Console script entry point → `bro-skills` command
     ├── registry.py            # Single Source of Truth — 38 skills + 33 workflows + 8 project types
