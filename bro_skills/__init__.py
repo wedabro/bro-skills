@@ -4,5 +4,5 @@
 Entry point for the console script.
 """
 
-__version__ = "1.4.9"
+__version__ = "1.4.10"
 __app_name__ = "bro-skills"
