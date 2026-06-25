@@ -30,11 +30,29 @@ def select_menu(options, title="", lang="en"):
     title: Title of the menu
     """
     import sys
+    import shutil
     
     selected_idx = 0
     is_windows = sys.platform.startswith('win')
     
+    # Track the last printed visual lines count to move cursor back down
+    last_total_lines = [0]
+    
     def print_menu():
+        cols = shutil.get_terminal_size().columns
+        
+        # Calculate visual lines with wrapping
+        visual_lines = 0
+        for i, opt in enumerate(options):
+            label = opt[2] if lang == "vi" else opt[1]
+            text_len = len(label) + 4
+            visual_lines += max(1, (text_len + cols - 1) // cols)
+            
+        title_lines = max(1, (len(title) + cols - 1) // cols)
+        total_lines = visual_lines + title_lines
+        last_total_lines[0] = total_lines
+        
+        # Clear lines as we print
         sys.stdout.write(f"\r\033[K{title}\n")
         for i, opt in enumerate(options):
             label = opt[2] if lang == "vi" else opt[1]
@@ -42,15 +60,24 @@ def select_menu(options, title="", lang="en"):
                 sys.stdout.write(f"\033[K\033[96m  ➔ {label}\033[0m\n")
             else:
                 sys.stdout.write(f"\033[K    {label}\n")
-        sys.stdout.write(f"\033[{len(options) + 1}A")
+        sys.stdout.write(f"\033[{total_lines}A")
         sys.stdout.flush()
 
     if not sys.stdout.isatty():
         return options[0][0]
 
+    cols = shutil.get_terminal_size().columns
+    initial_visual_lines = 0
+    for opt in options:
+        label = opt[2] if lang == "vi" else opt[1]
+        text_len = len(label) + 4
+        initial_visual_lines += max(1, (text_len + cols - 1) // cols)
+    initial_title_lines = max(1, (len(title) + cols - 1) // cols)
+    initial_total_lines = initial_visual_lines + initial_title_lines
+
     sys.stdout.write("\033[?25l") # hide cursor
-    sys.stdout.write("\n" * (len(options) + 1))
-    sys.stdout.write(f"\033[{len(options) + 1}A")
+    sys.stdout.write("\n" * initial_total_lines)
+    sys.stdout.write(f"\033[{initial_total_lines}A")
     sys.stdout.flush()
 
     try:
@@ -99,7 +126,8 @@ def select_menu(options, title="", lang="en"):
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     finally:
-        sys.stdout.write(f"\033[{len(options) + 1}B\033[?25h\n")
+        # Move cursor down by the last printed total lines so we don't overwrite the final output
+        sys.stdout.write(f"\033[{last_total_lines[0]}B\033[?25h\n")
         sys.stdout.flush()
         
     return options[selected_idx][0]
