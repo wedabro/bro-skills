@@ -40,7 +40,7 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None, vault_path: str = None):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
@@ -50,18 +50,22 @@ class ProjectGenerator:
         self.lang = lang or "dynamic"
         self.ai_agent = ai_agent or "all"
         self.selected_skills = selected_skills
+        self.vault_path = vault_path
 
         # Filter skills/workflows by project type + attributes (multi-agent v2)
         if selected_skills:
             normalized_selected = set()
+            registry_names = {s["name"].lower() for s in SKILLS_REGISTRY}
             for s in selected_skills:
                 s_clean = s.strip().lower()
                 if not s_clean:
                     continue
-                if s_clean.startswith("speckit."):
+                if s_clean in registry_names:
                     normalized_selected.add(s_clean)
-                else:
+                elif f"speckit.{s_clean}" in registry_names:
                     normalized_selected.add(f"speckit.{s_clean}")
+                else:
+                    normalized_selected.add(s_clean)
             
             # Select from ALL SKILLS in registry, not just project type defaults
             self.filtered_skills = [
@@ -525,19 +529,39 @@ class ProjectGenerator:
 
     def _create_skills(self):
         """Create SKILL.md for each skill - ONLY create skills matching project type."""
+        import shutil
         for skill in self.filtered_skills:
             skill_name = skill["name"]
             skill_dir = os.path.join(self.agent_dir, "skills", skill_name)
-            os.makedirs(skill_dir, exist_ok=True)
-            skill_file = os.path.join(skill_dir, "SKILL.md")
 
-            template_fn = SKILL_TEMPLATE_MAP.get(skill_name)
-            if template_fn:
-                content = template_fn()
-            else:
-                content = self._generate_basic_skill(skill)
+            copied_from_vault = False
+            if self.vault_path:
+                vault_skill_dir = os.path.join(self.vault_path, "skills", skill_name)
+                if os.path.isdir(vault_skill_dir):
+                    if os.path.exists(skill_dir):
+                        try:
+                            shutil.rmtree(skill_dir)
+                        except Exception as e:
+                            print(f"⚠️  Could not remove existing skill dir {skill_dir}: {e}")
+                    try:
+                        shutil.copytree(vault_skill_dir, skill_dir)
+                        copied_from_vault = True
+                        print(f"  ✅ Copied skill '{skill_name}' from vault.")
+                    except Exception as e:
+                        print(f"⚠️  Failed to copy skill '{skill_name}' from vault: {e}")
 
-            self._write_file(skill_file, content)
+            if not copied_from_vault:
+                os.makedirs(skill_dir, exist_ok=True)
+                skill_file = os.path.join(skill_dir, "SKILL.md")
+
+                template_fn = SKILL_TEMPLATE_MAP.get(skill_name)
+                if template_fn:
+                    content = template_fn()
+                else:
+                    content = self._generate_basic_skill(skill)
+
+                self._write_file(skill_file, content)
+
             self.stats["skills"] += 1
 
     def _generate_basic_skill(self, skill):

@@ -271,14 +271,17 @@ def cmd_init(args):
     # Filter skills by project type and selected_skills
     if selected_skills:
         normalized_selected = set()
+        registry_names = {s["name"].lower() for s in SKILLS_REGISTRY}
         for s in selected_skills:
             s_clean = s.strip().lower()
             if not s_clean:
                 continue
-            if s_clean.startswith("speckit."):
+            if s_clean in registry_names:
                 normalized_selected.add(s_clean)
-            else:
+            elif f"speckit.{s_clean}" in registry_names:
                 normalized_selected.add(f"speckit.{s_clean}")
+            else:
+                normalized_selected.add(s_clean)
         
         filtered_skills = [
             s for s in SKILLS_REGISTRY
@@ -328,6 +331,7 @@ def cmd_init(args):
         lang=lang,
         ai_agent=ai_agent,
         selected_skills=selected_skills,
+        vault_path=getattr(args, 'vault', None) or os.environ.get("ANTIGRAVITY_SKILLS_VAULT"),
     )
     generator.generate()
 
@@ -429,6 +433,7 @@ def cmd_install(args):
         lang=lang,
         ai_agent=ai_agent,
         selected_skills=selected_skills,
+        vault_path=getattr(args, 'vault', None) or os.environ.get("ANTIGRAVITY_SKILLS_VAULT"),
     )
     generator.install_skills()
     print()
@@ -655,11 +660,13 @@ AVAILABLE project process:
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
     init_parser.add_argument("--ai", help="Specify target AI agent (e.g., claude, cursor, windsurf, antigravity, copilot, kiro, codex, roocode, qoder, gemini, trae, opencode, continue, all)")
     init_parser.add_argument("--skills", "-s", help="Comma-separated list of additional/specific skills to install (e.g. 3d,wordpress)")
+    init_parser.add_argument("--vault", help="Path to external skill vault directory (e.g. F:\\code\\github\\antigravity-skills)")
 
     # install
     install_parser = subparsers.add_parser("install", help="Install specific skills into an existing .agent/ structure")
     install_parser.add_argument("skills", help="Comma-separated list of skills to install (e.g. 3d,wordpress)")
     install_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
+    install_parser.add_argument("--vault", help="Path to external skill vault directory (e.g. F:\\code\\github\\antigravity-skills)")
 
     # list-skills
     subparsers.add_parser("list-skills", help="List all skills")

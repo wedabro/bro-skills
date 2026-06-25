@@ -383,6 +383,42 @@ SKILLS_REGISTRY = [
         "role": "Game Developer",
         "project_types": "builder",
     },
+    {
+        "name": "k8s-manifest-generator",
+        "description": "Create production-ready Kubernetes manifests for Deployments, Services, ConfigMaps, and Secrets.",
+        "role": "Kubernetes Architect",
+        "project_types": "builder",
+    },
+    {
+        "name": "async-python-patterns",
+        "description": "Python asynchronous programming patterns, concurrency, asyncio, and performance optimization.",
+        "role": "Async Python Expert",
+        "project_types": "builder",
+    },
+    {
+        "name": "backend-architect",
+        "description": "Expert backend architect specializing in scalable API design, microservices, and distributed systems.",
+        "role": "Backend Architect",
+        "project_types": "builder",
+    },
+    {
+        "name": "security-auditor",
+        "description": "Security auditor specializing in code auditing, threat modeling, and vulnerability scanning.",
+        "role": "Security Auditor",
+        "project_types": "builder",
+    },
+    {
+        "name": "full-stack-orchestration-full-stack-feature",
+        "description": "Full-stack feature orchestration and coordination patterns.",
+        "role": "Orchestration Engineer",
+        "project_types": "builder",
+    },
+    {
+        "name": "conductor-implement",
+        "description": "Conductor workflow management and structured feature implementation.",
+        "role": "Conductor Specialist",
+        "project_types": "builder",
+    },
 ]
 
 
@@ -564,6 +600,16 @@ WORKFLOWS_REGISTRY = [
         "command": "speckit.3d",
         "description": "3D Modeling, Web 3D & Game 3D Workflow",
         "skills": ["speckit.3d"],
+    },
+    {
+        "command": "full-stack-orchestration-full-stack-feature",
+        "description": "Full-Stack Feature Orchestration Workflow",
+        "skills": ["full-stack-orchestration-full-stack-feature"],
+    },
+    {
+        "command": "conductor-implement",
+        "description": "Conductor Feature Implementation Workflow",
+        "skills": ["conductor-implement"],
     },
 ]
 

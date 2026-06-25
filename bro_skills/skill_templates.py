@@ -1875,7 +1875,163 @@ Provide standards, best practices, and implementation guidelines for 3D graphics
 
 
 # =============================================================================
-# SKILL TEMPLATE MAP — Complete mapping for all 38 skills
+# TEMPLATES FOR NEW SKILLS
+# =============================================================================
+
+def skill_k8s_manifest_generator():
+    return r"""---
+name: k8s-manifest-generator
+description: Create production-ready Kubernetes manifests for Deployments, Services, ConfigMaps, and Secrets.
+role: Kubernetes Architect
+---
+
+## 🎯 Mission
+Create production-ready Kubernetes manifests following best practices and security standards.
+
+## 📋 Protocol
+1. Clarify goals, constraints, and required inputs.
+2. Define Deployment, Service, ConfigMap, and Secret resources.
+3. Apply resource limits, health checks, security contexts, and naming conventions.
+4. Ensure manifests are designed for multi-environment deployments.
+5. Provide actionable steps and verification.
+
+## 🚫 Guard Rails
+- DO NOT generate insecure configurations (e.g. running containers as root).
+- DO NOT hard-code sensitive credentials in manifests (always use Secrets/ConfigMaps).
+"""
+
+
+def skill_async_python_patterns():
+    return r"""---
+name: async-python-patterns
+description: Master Python asyncio, concurrent programming, and async/await patterns for high-performance applications.
+role: Async Python Expert
+---
+
+## 🎯 Mission
+Implement asynchronous Python applications using asyncio and concurrent patterns.
+
+## 📋 Protocol
+1. Clarify workload characteristics (I/O vs CPU), targets, and runtime constraints.
+2. Pick concurrency patterns (tasks, gather, queues, pools) with cancellation rules.
+3. Add timeouts, backpressure, and structured error handling.
+4. Include testing and debugging guidance for async code paths.
+
+## 🚫 Guard Rails
+- DO NOT block the event loop with synchronous, long-running I/O or heavy CPU work (use run_in_executor).
+- DO NOT use async when a simple synchronous script is sufficient.
+"""
+
+
+def skill_backend_architect():
+    return r"""---
+name: backend-architect
+description: Expert backend architect specializing in API design, microservices, and distributed systems.
+role: Backend Architect
+---
+
+## 🎯 Mission
+Design scalable, resilient, and maintainable backend systems, APIs, and microservices boundaries.
+
+## 📋 Protocol
+1. Capture domain context, use cases, and non-functional requirements (scale, latency, consistency).
+2. Design API contracts (REST, GraphQL, gRPC) with clear specs (OpenAPI/GraphQL schemas).
+3. Choose architecture patterns, database boundaries, and inter-service communication (sync vs async).
+4. Build in resilience (circuit breakers, retries, timeouts) and observability (logging, metrics, tracing).
+5. Document architectural decisions (ADRs) with clear trade-offs.
+
+## 🚫 Guard Rails
+- DO NOT overcomplicate with microservices when a modular monolith is sufficient.
+- DO NOT hard-code service URLs or secrets (always use env vars or service discovery).
+- Defers database schema design to database-architect (works after data layer is designed).
+"""
+
+
+def skill_security_auditor():
+    return r"""---
+name: security-auditor
+description: Expert security auditor specializing in DevSecOps, cybersecurity, and compliance frameworks.
+role: Security Auditor
+---
+
+## 🎯 Mission
+Perform security audits, threat modeling, and secure software development lifecycle (SDLC) checks.
+
+## 📋 Protocol
+1. Confirm scope, assets, and compliance requirements (GDPR, SOC2, PCI-DSS, etc.).
+2. Review architecture, perform threat modeling (STRIDE), and check secure coding controls.
+3. Implement DevSecOps automated scans (SAST, DAST, dependency scanning) in CI/CD pipelines.
+4. Review authentication/authorization protocols (OAuth2, OIDC, JWT security, zero-trust).
+5. Prioritize findings by severity and business impact, providing clear remediation steps.
+
+## 🚫 Guard Rails
+- DO NOT run intrusive security tests on production environments without explicit written approval.
+- DO NOT expose sensitive data, passwords, or credentials in reports.
+"""
+
+
+def skill_full_stack_orchestration():
+    return r"""---
+name: full-stack-orchestration-full-stack-feature
+description: Orchestrate full-stack feature development across backend, frontend, and infrastructure layers.
+role: Orchestration Engineer
+---
+
+## 🎯 Mission
+Coordinate multi-agent and full-stack feature development with an API-first approach.
+
+## 📋 Protocol
+1. **Architecture & Design**:
+   - Database: Design schema & migrations.
+   - Backend: Define API contracts (OpenAPI/GraphQL) & authentication.
+   - Frontend: Design component hierarchy, state, and routing.
+2. **Implementation**:
+   - Build backend service endpoints with validation and observability.
+   - Build frontend components (React/Next.js), integrating APIs and state management.
+   - Deploy & optimize database indexing.
+3. **Integration & Testing**:
+   - Perform API contract testing (Pact/Dredd).
+   - Implement E2E user-journey tests (Playwright/Cypress).
+   - Run security audit & hardening.
+4. **Operations**:
+   - Setup Docker, Kubernetes, CI/CD pipelines, and feature flags.
+   - Configure observability (OpenTelemetry, Prometheus, Grafana).
+
+## 🚫 Guard Rails
+- DO NOT skip API contract validation before building frontend/backend features.
+- Ensure all services use correlation IDs for distributed tracing.
+"""
+
+
+def skill_conductor_implement():
+    return r"""---
+name: conductor-implement
+description: Execute tasks from a track's implementation plan following TDD workflow.
+role: Conductor Specialist
+---
+
+## 🎯 Mission
+Execute track implementation tasks step-by-step according to `conductor/workflow.md`.
+
+## 📋 Protocol
+1. **Pre-flight Check**: Verify Conductor files exist (`product.md`, `workflow.md`, `tracks.md`).
+2. **Track Selection**: Load track context, specs, plan, and update status to in-progress (`[~]`).
+3. **Task Loop**:
+   - Select next incomplete task.
+   - **TDD Workflow**: Write failing test (Red), implement code (Green), refactor (Refactor).
+   - Commit task changes: `git commit -m "{prefix}: {task} ({trackId})"`.
+   - Update `plan.md` to `[x]` and commit the plan change.
+4. **Phase Check**: Run phase verification and wait for user approval before next phase.
+5. **Completion**: Run final verification, update track status to complete, sync docs.
+
+## 🚫 Guard Rails
+- NEVER skip verification checkpoints. Wait for user approval between phases.
+- STOP immediately on any tool, test, or git failure. Do not auto-continue.
+"""
+
+
+# =============================================================================
+# SKILL TEMPLATE MAP — Complete mapping for all 44 skills
 # =============================================================================
 SKILL_TEMPLATE_MAP = {
     "speckit.identity": skill_identity,
@@ -1919,6 +2075,13 @@ SKILL_TEMPLATE_MAP = {
     "speckit.uat": skill_uat,
     "speckit.wordpress": skill_wordpress,
     "speckit.3d": skill_3d,
+    # --- New skills from external vault ---
+    "k8s-manifest-generator": skill_k8s_manifest_generator,
+    "async-python-patterns": skill_async_python_patterns,
+    "backend-architect": skill_backend_architect,
+    "security-auditor": skill_security_auditor,
+    "full-stack-orchestration-full-stack-feature": skill_full_stack_orchestration,
+    "conductor-implement": skill_conductor_implement,
 }
 
 
