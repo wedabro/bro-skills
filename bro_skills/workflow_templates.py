@@ -493,14 +493,16 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 - Port MUST be declared in `.env` (local) or server ENV (prod)
 - `docker-compose.yml` reads port from ENV vars ( `${PUBLIC_PORT}` , `${ADMIN_PORT}` , `${API_PORT}` )
 - DO NOT hard-code port number in any file
+- **CRITICAL**: If `.env` or system environment already has port variables defined (e.g., `PUBLIC_PORT`, `ADMIN_PORT`, `API_PORT` or equivalents), **ABSOLUTELY SKIP** port scanning/assignment and **NEVER** overwrite the existing port configuration.
 
 **Port scanning rules according to environment:**
 
-| Environment | Docker running? | Act |
-|---|---|---|
-| **Local** | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
-| **Local** | ✅ Already running | **SKIP** scan — use current ports from `.env` / docker |
-| **Staging/Beta/Prod** | Any | **ALWAYS** initial scan for configuration → write to `.env` |
+| Environment | Existing Ports in .env? | Docker running? | Act |
+|---|---|---|---|
+| **Any** | ✅ Yes | Any | **SKIP** scan — use existing ports, **DO NOT** overwrite |
+| **Local** | ❌ No | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
+| **Local** | ❌ No | ✅ Already running | **SKIP** scan — use current ports from docker/containers |
+| **Staging/Beta/Prod** | ❌ No | Any | **ALWAYS** initial scan for configuration → write to `.env` |
 
 **Check Docker is running (Local):**
 ```bash
