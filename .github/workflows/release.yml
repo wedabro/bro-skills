@@ -11,10 +11,12 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.12-slim
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -34,9 +36,15 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Build artifacts in Docker
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build artifacts
         run: |
-          docker run --rm -v "${{ github.workspace }}:/work" -w /work python:3.12-slim sh -lc "python -m pip install --upgrade pip; pip install build; python -m build"
+          python -m pip install --upgrade pip
+          pip install build
+          python -m build
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
