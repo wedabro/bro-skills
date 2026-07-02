@@ -105,11 +105,17 @@ class ProjectGenerator:
         print(f"📁 Scaffolding directory structure (ASF 3.3 Standard — {self.project_type})...")
         self._create_directories()
 
-        # ─── 0. Check Port (Only for NEW projects & using Docker) ───
-        project_config_path = os.path.join(self.agent_dir, "project.json")
-        is_new_project = not os.path.exists(project_config_path)
+        # ─── 0. Check Port (Only if project uses Docker and port config is missing in .env) ───
+        env_path = os.path.join(self.target_dir, ".env")
+        has_ports_in_env = False
+        if os.path.exists(env_path):
+            with open(env_path, "r", encoding="utf-8") as f:
+                env_content = f.read()
+                port_keys = ["PORT_FE", "NEXT_PUBLIC_PORT_FE", "ADMIN_PORT", "API_PORT", "VITE_PORT_FE"]
+                if any(k in env_content for k in port_keys):
+                    has_ports_in_env = True
 
-        if is_new_project and self.use_docker:
+        if self.use_docker and not has_ports_in_env:
              ports = self._find_available_ports()
              if ports:
                  self.assigned_ports = ports
@@ -815,12 +821,18 @@ No tag -> inferred from keyword + project_type.
             with open(env_path, "r", encoding="utf-8") as f:
                 existing_content = f.read()
 
-        # Prepare port variables
+        # Prepare port variables (including generic & Vite variables for non-NextJS projects)
         port_vars = {
-            f"NEXT_PUBLIC_PORT_FE": ports[0],
-            f"ADMIN_PORT": ports[1],
-            f"API_PORT": ports[2],
-            f"NEXT_PUBLIC_API_URL": f"http://localhost:{ports[2]}"
+            # Next.js
+            "NEXT_PUBLIC_PORT_FE": ports[0],
+            "ADMIN_PORT": ports[1],
+            "API_PORT": ports[2],
+            "NEXT_PUBLIC_API_URL": f"http://localhost:{ports[2]}",
+            # Generic / Other frameworks (Vite, Nuxt, etc.)
+            "PORT_FE": ports[0],
+            "VITE_PORT_FE": ports[0],
+            "VITE_API_URL": f"http://localhost:{ports[2]}",
+            "API_URL": f"http://localhost:{ports[2]}"
         }
 
         # Create or append new .env content
