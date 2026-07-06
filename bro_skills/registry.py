@@ -419,6 +419,12 @@ SKILLS_REGISTRY = [
         "role": "Conductor Specialist",
         "project_types": "builder",
     },
+    {
+        "name": "ponytail",
+        "description": "Forces the laziest solution that actually works, simplest, shortest, most minimal. Channels a senior dev who has seen everything: YAGNI, standard library first, native platform features, one line before fifty.",
+        "role": "Lazy Senior Developer",
+        "project_types": "all",
+    },
 ]
 
 
