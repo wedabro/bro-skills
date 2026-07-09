@@ -216,7 +216,7 @@ def cmd_init(args):
 
     # MIGRATION AUDIT LOGIC
     existing_config = {}
-    if os.path.exists(agent_dir):
+    if os.path.exists(agent_dir) and not force:
         project_config_path = os.path.join(agent_dir, "project.json")
         if os.path.exists(project_config_path):
             try:
@@ -261,7 +261,7 @@ def cmd_init(args):
     type_info = None
 
     # Check if we can auto-apply existing configurations without interactive prompt
-    is_upgrade = os.path.exists(agent_dir)
+    is_upgrade = os.path.exists(agent_dir) and not force
     if is_upgrade and lang and ai_agent and project_type:
         type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
         print(f"ℹ️  Reusing existing configurations:")
