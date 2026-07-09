@@ -744,7 +744,7 @@ No tag -> inferred from keyword + project_type.
             "attributes": self.attributes,
             "agent_language": self.lang,
             "asf_version": "3.3",
-            "bro_skills_version": "1.5.2",
+            "bro_skills_version": "1.5.3",
             "created_at": datetime.now().isoformat(),
             "skills_count": self.stats["skills"],
             "workflows_count": self.stats["workflows"],

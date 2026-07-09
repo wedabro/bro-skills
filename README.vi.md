@@ -133,7 +133,7 @@ bro-skills init --target /path/to/project
 # Khởi tạo kèm tên dự án
 bro-skills init --name "My Awesome Project"
 
-# Khởi tạo ghi đè không cần hỏi lại
+# Khởi tạo lại từ đầu (bỏ qua cấu hình cũ và bắt buộc hiển thị các câu hỏi tương tác)
 bro-skills init --force
 
 # Xem danh sách các skill

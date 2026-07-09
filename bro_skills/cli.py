@@ -762,7 +762,7 @@ AVAILABLE project process:
         choices=PROJECT_TYPES.keys(),
         help="Project type: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra",
     )
-    init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ if it already exists")
+    init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ and force interactive setup prompts from scratch")
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
     init_parser.add_argument("--ai", help="Specify target AI agent (e.g., claude, cursor, windsurf, antigravity, copilot, kiro, codex, roocode, qoder, gemini, trae, opencode, continue, all)")
     init_parser.add_argument("--skills", "-s", help="Comma-separated list of additional/specific skills to install (e.g. 3d,wordpress)")

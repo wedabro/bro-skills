@@ -133,7 +133,7 @@ bro-skills init --target /path/to/project
 # Init with project name
 bro-skills init --name "My Awesome Project"
 
-# Init and override don't ask
+# Re-initialize from scratch (bypasses auto-reuse configuration and forces interactive setup prompts)
 bro-skills init --force
 
 # See list of skills
