@@ -1,33 +1,33 @@
 # 🎨 UI/UX Standards (Anti-Slop & Premium)
 
 ## 🌈 Brand Palette & Color Calibration
-- **Anti-Default**: PROHIBITED using browser default colors (original red/blue/green). Misuse of the "AI Purple" gradient is PROHIBITED.
-- **Premium Consumer Ban**: Avoid using AI's default cream/beige + bronze/clay palette unless the brief specifically requires it. Use alternative palettes like Cold Luxury (silver-grey + chrome), Forest (deep green + bone), or Black and Tan.
-- **1 Accent Rule**: Choose a single accent color (Accent) and use it consistently across the entire page.
+- **Anti-Default**: FORBIDDEN to use default browser colors (pure red/blue/green). FORBIDDEN to overuse "AI Purple" gradients.
+- **Premium Consumer Ban**: Avoid AI default beige + brass/clay palettes unless explicitly requested. Use alternatives like Cold Luxury (silver-grey + chrome), Forest (deep green + bone), or Black and Tan.
+- **1 Accent Rule**: Choose a single Accent color and use it consistently across the entire site.
 
 ## 🔡 Typography (Anti-Slop)
-- **Display Font**: PROHIBITED using `Inter` as default for creative headings. Use `Geist` , `Satoshi` , `Cabinet Grotesk` , `Outfit` or a font suitable for the project.
-- **Serif Discipline**: DO NOT use serif fonts as default unless the brand requires editorial/luxury/vintage style. It is forbidden to mix serif and sans serif text in the same title.
-- **Hierarchy**: H1 title maximum 2 lines. Subtitles (subtext) maximum 20 words.
+- **Display Font**: FORBIDDEN to use `Inter` as default for creative headings. Use `Geist`, `Satoshi`, `Cabinet Grotesk`, `Outfit`, or a project-specific font.
+- **Serif Discipline**: DO NOT use Serif fonts as default unless brand requires editorial/luxury/vintage styles. Forbidden to mix serif and sans-serif fonts in the same heading.
+- **Hierarchy**: H1 headings max 2 lines. Subtext max 20 words.
 
 ## 📏 Layout & Rhythm
 - **Hero Section**: Limit top padding (max `pt-24` on desktop).
-- **Anti-Center Bias**: Avoid boringly centering Hero if it is not a manifesto page. Prioritize Split Screen or Asymmetric layout.
-- **Eyebrow Restraint**: PROHIBITED abuse of "eyebrow" (small capital title above) in all sections. Maximum 1 eyebrow per 3 sections.
-- **Bento Grid**: The Bento Grid must have rhythm. The number of cells equals the exact amount of content. Do not leave blank cells. Need to diversify cells (realistic images, gradients, text).
-- **Zigzag Ban**: Maximum 2 consecutive sections use a reversed "left-image-right-text" layout (zigzag).
+- **Anti-Center Bias**: Avoid boring centered Hero layout unless it's a manifesto page. Prefer Split Screen or Asymmetric layouts.
+- **Eyebrow Restraint**: FORBIDDEN to overuse "eyebrow" headings. Max 1 eyebrow per 3 sections.
+- **Bento Grid**: Bento grids must have rhythm. Number of cells must match content. No empty cells. Diversify cells (real images, gradients, text).
+- **Zigzag Ban**: Max 2 consecutive sections using alternating image-text (zigzag) layouts.
 
 ## 🧱 Core Components (Atomic) & Accessibility
 - **Buttons (CTAs)**:
-  - It is PROHIBITED to have wrapped text on the button on the desktop. Label button maximum 3 words (for example: `Get Started` ).
-  - 2 CTAs with the same purpose (same intent) are PROHIBITED from appearing on the same page (select only 1 label).
-  - Minimum WCAG AA contrast ratio 4.5:1 (No white text on light gray background).
+  - FORBIDDEN to wrap button text on desktop. Button labels max 3 words (e.g., `Get Started`).
+  - FORBIDDEN to have 2 CTAs with the same intent on the same page (choose only one label).
+  - Minimum WCAG AA contrast ratio 4.5:1 (Do not use white text on light grey background).
 - **Interactive UI States**:
-  - Skeletal loaders for loading data (don't use generic spinners).
-  - Tactile Feedback: Add `-translate-y-[1px]` or `scale-[0.98]` when `:active` to create a physical click feeling.
-- **Images**: REQUIRED real images (from image gen tool, unsplash, picsum). It is PROHIBITED to use `div` fake screenshots.
+  - Skeletal loaders for loading states (do not use generic spinners).
+  - Tactile Feedback: Add `-translate-y-[1px]` or `scale-[0.98]` on `:active` states for a physical button feel.
+- **Images**: REQUIRED to have real images (from image gen tools, Unsplash, Picsum). FORBIDDEN to use div fake screenshots.
 
 ## ✨ Micro-animations
 - Use `framer-motion` or `gsap` intentionally.
-- Motion must support `prefers-reduced-motion` .
-- It is PROHIBITED to repeat marquee (horizontal text) more than once on a page.
+- Animations must respect `prefers-reduced-motion`.
+- FORBIDDEN to repeat marquee texts more than once per page.

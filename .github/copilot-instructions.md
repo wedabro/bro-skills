@@ -1,32 +1,32 @@
 # Copilot Instructions for bro-skills
 
-Dự án: bro-skills
+Project: bro-skills
 
-## 1. PHÁP LỆNH TỐI CAO
-- Tuân thủ nghiêm ngặt file `.agent/memory/constitution.md`.
-- Docker-First: Mọi hoạt động code và chạy app phải diễn ra trong container. KHÔNG chạy node/python trên host.
-- Ports: Sử dụng dải port 8900-8999. Tuân thủ lấy port từ biến môi trường (.env).
+## 1. SUPREME ORDER
+- Strictly follow the `.agent/memory/constitution.md` file.
+- Docker-First: All coding and app running activities must take place in the container. DO NOT run node/python on the host.
+- Ports: Use port range 8900-8999. Strictly follow retrieve port from environment variables (.env).
 
 ## 2. bro-skills PROTOCOL
-- Mọi task phải đi qua quy trình: Specify → Plan → Tasks → Implement.
-- Sử dụng Workflows trong `.agent/workflows/` và Skills trong `.agent/skills/`.
+- Every task must go through the process: Specify → Plan → Tasks → Implement.
+- Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
 
-## 3. NGÔN NGỮ & CODE
-- Phản hồi developer hoàn toàn bằng Tiếng Việt.
-- 15-Minute Rule: Mỗi task phải atomic, ≤ 15 phút, ảnh hưởng ≤ 3 files.
-- PowerShell 5.1+, ngăn cách lệnh bằng dấu `;` (KHÔNG dùng `&&`).
-- KHÔNG hard-code URLs, Tokens, Keys. Dùng ENV vars (`.env`).
+## 3. LANGUAGE & CODE
+- Respond in English.
+- 15-Minute Rule: Each task must be atomic, ≤ 15 minutes, affecting ≤ 3 files.
+- PowerShell 5.1+, separate commands with `;` (DO NOT use `&&`).
+- DO NOT hardcoding URLs, Tokens, Keys. Use ENV vars (`.env`).
 
-## 4. AN TOÀN
-- KHÔNG chạy `docker compose down -v` trên Production.
-- Tạo script tự động (`.agent/scripts/`) cho lỗi lặp lại.
-- Kiểm tra logs ngay khi lỗi: `docker compose logs -f <service>`.
-- **Auto-Commit**: PHẢI thực hiện git commit & push ngay lập tức sau khi hoàn thành bất kỳ chức năng hoặc task nào theo chuẩn Conventional Commits.
+## 4. SAFETY
+- DO NOT run `docker compose down -v` on Production.
+- Generate automatic scripts (`.agent/scripts/`) for recurring errors.
+- Check logs immediately on error: `docker compose logs -f <service>`.
+- **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
-- **Task Tracking**: Sử dụng `task_boundary` để đồng bộ trạng thái với `@speckit.tasks` (tasks.md).
-- **Planning Artifacts**: Luôn tạo `implementation_plan.md` khi thực hiện các thay đổi lớn (atomic > 3 files).
-- **Verification**: Sau khi hoàn thành task, sử dụng `walkthrough.md` để đối chiếu kết quả với `spec.md`.
+- **Task Tracking**: Use `task_boundary` to synchronize status with `@speckit.tasks` (tasks.md).
+- **Planning Artifacts**: Always create `implementation_plan.md` when making large changes (atomic > 3 files).
+- **Verification**: After completing the task, use `walkthrough.md` to compare the results with `spec.md`.
 
 
 ## References

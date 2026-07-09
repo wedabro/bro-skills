@@ -1,3 +1,4 @@
+
 ---
 description: Red Team - Ask critical questions to find edge cases
 ---

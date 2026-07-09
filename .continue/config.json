@@ -1,0 +1,31 @@
+{
+  "models": [],
+  "customCommands": [
+    {
+      "name": "constitution",
+      "description": "Establish the project constitution",
+      "prompt": "Run the workflow /01-speckit.constitution"
+    },
+    {
+      "name": "specify",
+      "description": "Create a new feature specification",
+      "prompt": "Run the workflow /02-speckit.specify"
+    },
+    {
+      "name": "plan",
+      "description": "Create technical implementation plan",
+      "prompt": "Run the workflow /04-speckit.plan"
+    },
+    {
+      "name": "implement",
+      "description": "Deploy code according to tasks",
+      "prompt": "Run the workflow /07-speckit.implement"
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "codebase",
+      "params": {}
+    }
+  ]
+}

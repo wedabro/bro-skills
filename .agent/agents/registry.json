@@ -2,7 +2,7 @@
   "registry_version": "2.0.0",
   "asf_version": "3.3",
   "description": "Agent Registry v2 - Attribute-based. active = core + base[type] + modifiers[attr].",
-  "project_type": "fullstack",
+  "project_type": "web_public",
   "attributes": {},
   "active_agents": [
     "speckit.identity",
@@ -35,14 +35,11 @@
     "speckit.uat",
     "speckit.wordpress",
     "speckit.security",
-    "speckit.backend",
-    "speckit.frontend",
-    "speckit.database"
+    "ponytail",
+    "speckit.frontend"
   ],
   "builder_agents": [
-    "speckit.frontend",
-    "speckit.backend",
-    "speckit.database"
+    "speckit.frontend"
   ],
   "base_by_type": {
     "web_public": [
@@ -128,6 +125,9 @@
       ],
       "ml": [
         "speckit.data"
+      ],
+      "3d": [
+        "speckit.3d"
       ]
     }
   },

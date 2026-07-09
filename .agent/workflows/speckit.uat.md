@@ -1,3 +1,4 @@
+
 ---
 description: UAT Analyzer - Analyze manual acceptance results and process gaps from the User.
 ---

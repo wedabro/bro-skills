@@ -1,3 +1,4 @@
+
 ---
 description: Establish/update Constitution (Source of Law)
 ---

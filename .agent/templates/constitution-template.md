@@ -1,39 +1,39 @@
 # 📜 Project Constitution
 
 ## §0 bro-skills Protocol (REQUIRED)
-- **REQUIRED**: All development (Code), testing (Test), and deployment (Deploy Production) activities MUST use `bro-skills` .
-- **Pipeline**: Strictly follow the process: Specify → Plan → Tasks → Implement.
-- **Tools**: Only use workflows in `.agent/workflows` to perform tasks.
+- **REQUIRED**: All development (Code), testing (Test), and deployment (Deploy Production) activities MUST use `bro-skills`.
+- **Pipeline**: Strictly adhere to the SDLC pipeline: Specify → Plan → Tasks → Implement.
+- **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
 
 ## §1 Infrastructure (DOCKER-FIRST)
-- **Default uses Docker** for both Local and Production. DO NOT run `npm` / `node` / `python` directly on the host.
-- **Local**: Use `docker-compose.yml` for dev.
+- **Docker-First Policy**: Use Docker by default for both Local and Production. DO NOT run `npm`/`node`/`python` directly on host.
+- **Local**: Use `docker-compose.yml` for development.
 - **Production**: Use `docker-compose.prod.yml` with Security Hardening.
-- **Ports**: Only use range **8900-8999**.
+- **Ports**: Only use port range **8900-8999**.
   - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
 
 ## §2 Security & Production Safety
-- **PROHIBITED**: `docker compose down -v` on Production.
-- **PROHIBITED**: Manual deployment (MUST use workflows `/deploy-production` or `/deploy-staging` ).
-- **Confirm**: Requires confirmation before Deep Clean, Deploy Prod, or Delete Data.
-- **Runtime**: Production containers do NOT run as root.
+- **FORBIDDEN**: Running `docker compose down -v` on Production.
+- **FORBIDDEN**: Manual deployment (MUST use workflows `/deploy-production` or `/deploy-staging`).
+- **Confirmation**: Require user confirmation before Deep Clean, Deploy Prod, or Delete Data.
+- **Runtime**: Production containers MUST NOT run as root.
 
 ## §3 Code Standards & ENV
-- **hard-code PROHIBITED**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
-- **Sensitive vars**: MUST use ENV ( `.env` local, server ENV prod).
+- **FORBIDDEN hardcoding**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
+- **Sensitive variables**: MUST use ENV (`.env` local, server ENV prod).
   - Prefix: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
 - **Validate**: 
-  - Critical vars: `throw new Error()` if missing.
-  - Optional vars: `console.error()` if missing.
-- **Documentation**: Must have full `.env.example`.
+  - Critical variables: `throw new Error()` if missing.
+  - Optional variables: `console.error()` if missing.
+- **Documentation**: Must have a complete `.env.example` file.
 
 ## §4 Workflow & Scripting
-- **Automation**: Create scripts when encountering errors or recurring tasks.
-- **Git**: Save script to `.agent/scripts` , commit to version control system.
+- **Automation**: Create scripts when encountering errors or repetitive tasks.
+- **Git**: Save scripts in `.agent/scripts` and commit them to version control.
 - **Git Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
-- **Update**: Update the corresponding workflow after creating a new script.
+- **Update**: Update corresponding workflows after creating new scripts.
 
 ## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)
-- **REQUIRED**: When designing the interface, MUST use skill `design-taste-frontend` or `/util-speckit.uiux` .
-- **PROHIBITED**: Using stereotypical UI patterns, pre-existing templates, browser default colors, or abusing gradient/shadow AI.
-- **Design System**: MUST comply with Anti-Slop rules (Asymmetric layout, bento grids, Typography-first, Micro-interactions).
+- **REQUIRED**: Use the `design-taste-frontend` skill or `/util-speckit.uiux` for UI design.
+- **FORBIDDEN**: Using standard template-like UI patterns, default browser colors, or overused AI gradients/shadows.
+- **Design System**: MUST comply with Anti-Slop principles (Asymmetric layout, bento grids, Typography-first, Micro-interactions).

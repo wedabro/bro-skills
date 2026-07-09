@@ -215,6 +215,17 @@ def cmd_init(args):
     print(f"{'─' * 50}\n")
 
     # MIGRATION AUDIT LOGIC
+    existing_config = {}
+    if os.path.exists(agent_dir):
+        project_config_path = os.path.join(agent_dir, "project.json")
+        if os.path.exists(project_config_path):
+            try:
+                import json
+                with open(project_config_path, "r", encoding="utf-8") as f:
+                    existing_config = json.load(f)
+            except Exception:
+                pass
+
     if os.path.exists(agent_dir) and not force:
         print("🔍 Scanning existing .agent/ structure...")
         audit_report = _audit_existing_agent(agent_dir)
@@ -244,87 +255,69 @@ def cmd_init(args):
                 return
 
     # LANGUAGE, AGENT, AND PROJECT TYPE SELECTION FLOW
-    step = 1
-    lang = getattr(args, 'lang', None)
-    ai_agent = getattr(args, 'ai', None)
-    project_type = getattr(args, 'type', None)
+    lang = getattr(args, 'lang', None) or existing_config.get("agent_language") or existing_config.get("language")
+    ai_agent = getattr(args, 'ai', None) or existing_config.get("ai_agent") or existing_config.get("ai") or "all"
+    project_type = getattr(args, 'type', None) or existing_config.get("project_type")
     type_info = None
 
-    while True:
-        if step == 1:
-            if getattr(args, 'lang', None):
-                lang = args.lang
-                step = 2
-            else:
-                lang = _ask_agent_language()
-                if lang == "cancel" or lang == "back":
-                    print("❌ Canceled / Đã hủy.")
-                    return
-                if lang == "vi":
-                    print(f"\n✅ Ngôn ngữ đã chọn: Tiếng Việt (vi)")
+    # Check if we can auto-apply existing configurations without interactive prompt
+    is_upgrade = os.path.exists(agent_dir)
+    if is_upgrade and lang and ai_agent and project_type:
+        type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
+        print(f"ℹ️  Reusing existing configurations:")
+        print(f"   - Language:  {lang}")
+        print(f"   - AI Agent:  {ai_agent}")
+        print(f"   - Type:      {type_info['label']}\n")
+    else:
+        # Fallback to interactive prompts if not fully specified in existing config or arguments
+        step = 1
+        lang = getattr(args, 'lang', None)
+        ai_agent = getattr(args, 'ai', None)
+        project_type = getattr(args, 'type', None)
+        type_info = None
+
+        while True:
+            if step == 1:
+                if getattr(args, 'lang', None):
+                    lang = args.lang
+                    step = 2
                 else:
-                    print(f"\n✅ Selected language: {lang}")
-                step = 2
-                
-        elif step == 2:
-            if getattr(args, 'ai', None):
-                ai_agent = args.ai
-                step = 3
-            else:
-                ai_agent = _ask_agent_selection(lang)
-                if ai_agent == "cancel":
-                    print("❌ Canceled / Đã hủy.")
-                    return
-                elif ai_agent == "back":
-                    if getattr(args, 'lang', None):
+                    lang = _ask_agent_language()
+                    if lang == "cancel" or lang == "back":
                         print("❌ Canceled / Đã hủy.")
                         return
-                    print("\n⬅️ Going back to Language Selection...")
-                    step = 1
-                else:
                     if lang == "vi":
-                        print(f"\n✅ Cấu hình Agent đã chọn: {ai_agent}")
+                        print(f"\n✅ Ngôn ngữ đã chọn: Tiếng Việt (vi)")
                     else:
-                        print(f"\n✅ Selected AI Agent: {ai_agent}")
-                    step = 3
+                        print(f"\n✅ Selected language: {lang}")
+                    step = 2
                     
-        elif step == 3:
-            if getattr(args, 'type', None):
-                project_type = args.type
-                type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
-                if lang == "vi":
-                    vi_labels = {
-                        "web_public": "Web Public (B2C)",
-                        "web_saas": "Web SaaS (B2B)",
-                        "mobile_app": "Mobile App",
-                        "desktop_cli": "Desktop / CLI Tool",
-                        "fullstack": "Full-stack (Web + API)",
-                        "game": "Phát triển Game",
-                        "simple_script": "Kịch bản đơn giản / Tự động hóa",
-                        "custom_infra": "Hạ tầng tùy chỉnh"
-                    }
-                    lbl = vi_labels.get(project_type, type_info['label'])
-                    print(f"  🏗️ Loại dự án: {lbl}")
+            elif step == 2:
+                if getattr(args, 'ai', None):
+                    ai_agent = args.ai
+                    step = 3
                 else:
-                    print(f"  🏗️ Project Type: {type_info['label']}")
-                step = 4
-                break
-            else:
-                project_type, type_info = _ask_project_type(lang)
-                if project_type == "cancel":
-                    print("❌ Canceled / Đã hủy.")
-                    return
-                elif project_type == "back":
-                    if getattr(args, 'ai', None):
+                    ai_agent = _ask_agent_selection(lang)
+                    if ai_agent == "cancel":
+                        print("❌ Canceled / Đã hủy.")
+                        return
+                    elif ai_agent == "back":
                         if getattr(args, 'lang', None):
                             print("❌ Canceled / Đã hủy.")
                             return
                         print("\n⬅️ Going back to Language Selection...")
                         step = 1
                     else:
-                        print("\n⬅️ Going back to Agent Selection...")
-                        step = 2
-                else:
+                        if lang == "vi":
+                            print(f"\n✅ Cấu hình Agent đã chọn: {ai_agent}")
+                        else:
+                            print(f"\n✅ Selected AI Agent: {ai_agent}")
+                        step = 3
+                        
+            elif step == 3:
+                if getattr(args, 'type', None):
+                    project_type = args.type
+                    type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
                     if lang == "vi":
                         vi_labels = {
                             "web_public": "Web Public (B2C)",
@@ -337,11 +330,44 @@ def cmd_init(args):
                             "custom_infra": "Hạ tầng tùy chỉnh"
                         }
                         lbl = vi_labels.get(project_type, type_info['label'])
-                        print(f"\n✅ Đã chọn loại dự án: {lbl}")
+                        print(f"  🏗️ Loại dự án: {lbl}")
                     else:
-                        print(f"\n✅ Selected: {type_info['label']}")
+                        print(f"  🏗️ Project Type: {type_info['label']}")
                     step = 4
                     break
+                else:
+                    project_type, type_info = _ask_project_type(lang)
+                    if project_type == "cancel":
+                        print("❌ Canceled / Đã hủy.")
+                        return
+                    elif project_type == "back":
+                        if getattr(args, 'ai', None):
+                            if getattr(args, 'lang', None):
+                                print("❌ Canceled / Đã hủy.")
+                                return
+                            print("\n⬅️ Going back to Language Selection...")
+                            step = 1
+                        else:
+                            print("\n⬅️ Going back to Agent Selection...")
+                            step = 2
+                    else:
+                        if lang == "vi":
+                            vi_labels = {
+                                "web_public": "Web Public (B2C)",
+                                "web_saas": "Web SaaS (B2B)",
+                                "mobile_app": "Mobile App",
+                                "desktop_cli": "Desktop / CLI Tool",
+                                "fullstack": "Full-stack (Web + API)",
+                                "game": "Phát triển Game",
+                                "simple_script": "Kịch bản đơn giản / Tự động hóa",
+                                "custom_infra": "Hạ tầng tùy chỉnh"
+                            }
+                            lbl = vi_labels.get(project_type, type_info['label'])
+                            print(f"\n✅ Đã chọn loại dự án: {lbl}")
+                        else:
+                            print(f"\n✅ Selected: {type_info['label']}")
+                        step = 4
+                        break
 
     # Parse selected skills if provided
     selected_skills = None
