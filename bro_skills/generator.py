@@ -574,7 +574,6 @@ class ProjectGenerator:
         return f"""---
 name: {skill['name']}
 description: {skill['description']}
-role: {skill['role']}
 ---
 
 ## Role
@@ -744,7 +743,7 @@ No tag -> inferred from keyword + project_type.
             "attributes": self.attributes,
             "agent_language": self.lang,
             "asf_version": "3.3",
-            "bro_skills_version": "1.5.3",
+            "bro_skills_version": "1.5.4",
             "created_at": datetime.now().isoformat(),
             "skills_count": self.stats["skills"],
             "workflows_count": self.stats["workflows"],
@@ -791,6 +790,33 @@ No tag -> inferred from keyword + project_type.
         self._write_file(os.path.join(self.agent_dir, "README.md"), content)
 
     def _write_file(self, filepath, content):
+        # Template functions use triple-quoted strings for readability. Normalize
+        # their leading newline so YAML frontmatter remains the first bytes in the
+        # generated file, as required by skill/workflow loaders.
+        content = content.lstrip("\ufeff\r\n")
+
+        # `role` and `argument-hint` are useful prose, but are not portable
+        # SKILL.md frontmatter keys. Emit only metadata keys supported by the
+        # Codex skill loader and the other agents targeted by this project.
+        if os.path.basename(filepath) == "SKILL.md" and content.startswith("---"):
+            lines = content.splitlines(keepends=True)
+            try:
+                frontmatter_end = next(
+                    i for i, line in enumerate(lines[1:], start=1)
+                    if line.strip() == "---"
+                )
+            except StopIteration:
+                frontmatter_end = 0
+
+            if frontmatter_end:
+                unsupported = ("role:", "argument-hint:")
+                lines = [
+                    line for i, line in enumerate(lines)
+                    if i > frontmatter_end
+                    or not line.lstrip().startswith(unsupported)
+                ]
+                content = "".join(lines)
+
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)

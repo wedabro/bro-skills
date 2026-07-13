@@ -1,8 +1,6 @@
-
 ---
 name: speckit.migrate
 description: Legacy Code Migrator - Reverse-engineer existing codebase to SDD standard.
-role: Migration Specialist
 ---
 
 ## 🎯 Mission

@@ -1,8 +1,6 @@
-
 ---
 name: speckit.map
 description: Codebase Mapper - Automatically analyze project structure, draw dependency diagrams, and write architectural documents.
-role: Technical Lead
 ---
 
 ## 🎯 Mission

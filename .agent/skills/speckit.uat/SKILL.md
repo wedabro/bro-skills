@@ -1,8 +1,6 @@
-
 ---
 name: speckit.uat
 description: UAT Analyzer - Analyze manual acceptance results and process gaps from the User.
-role: Quality Assurance
 ---
 
 ## 🎯 Mission

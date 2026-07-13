@@ -1,8 +1,6 @@
-
 ---
 name: speckit.tasks
 description: Task Breaker - Create atomic tasks.md, with dependency order from plan.
-role: Execution Strategist
 ---
 
 ## 🎯 Mission

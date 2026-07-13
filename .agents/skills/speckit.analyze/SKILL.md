@@ -1,8 +1,6 @@
-
 ---
 name: speckit.analyze
 description: Consistency Checker - Analyze consistency between spec, plan, tasks.
-role: Consistency Analyst
 ---
 
 ## 🎯 Mission

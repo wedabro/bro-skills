@@ -1,8 +1,6 @@
-
 ---
 name: speckit.diff
 description: Artifact Comparator - Compares differences between artifacts.
-role: Diff Analyst
 ---
 
 ## 🎯 Mission

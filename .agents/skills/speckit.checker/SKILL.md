@@ -1,8 +1,6 @@
-
 ---
 name: speckit.checker
 description: Static Analysis Aggregator - Run static analysis on the codebase.
-role: Static Analyst
 ---
 
 ## 🎯 Mission

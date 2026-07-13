@@ -1,8 +1,6 @@
-
 ---
 name: speckit.implement
 description: Code Builder (Anti-Regression) - Deploy code in tasks with IRONCLAD protocols.
-role: Master Builder
 ---
 
 ## 🎯 Mission

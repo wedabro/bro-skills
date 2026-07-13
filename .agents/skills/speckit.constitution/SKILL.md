@@ -1,8 +1,6 @@
-
 ---
 name: speckit.constitution
 description: Governance Manager - Set up & manage Constitution (Source of Law).
-role: Governance Architect
 ---
 
 ## 🎯 Mission

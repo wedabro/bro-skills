@@ -1,8 +1,6 @@
-
 ---
 name: speckit.debug
 description: Systematic Debugger - Diagnose problems, find individual root causes, and recommend fix plans.
-role: Debugging Specialist
 ---
 
 ## 🎯 Mission

@@ -1,7 +1,6 @@
 ---
 name: speckit.backend
 description: Backend/API Developer - Xay dung API service, business logic, auth, integration theo API standards.
-role: Backend Engineer
 ---
 
 ## 🎯 Mission

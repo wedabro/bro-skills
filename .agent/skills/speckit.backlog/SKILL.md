@@ -1,8 +1,6 @@
-
 ---
 name: speckit.backlog
 description: Backlog Manager - Manage Ideas, Pending Requests and scan TODO/FIXME from codebase.
-role: Product Owner Assistant
 ---
 
 ## 🎯 Mission

@@ -4,6 +4,7 @@ Validators - Validate generated .agent/ structure.
 
 import os
 import json
+import re
 from .registry import (
     SKILLS_REGISTRY, WORKFLOWS_REGISTRY,
     get_skills_for_project_type, get_workflows_for_project_type,
@@ -152,19 +153,63 @@ def validate_agent_structure(agent_dir: str) -> list:
         "details": [] if os.path.isfile(readme_file) else ["Missing README.md"],
     })
 
-    # Check 9: SKILL.md content quality (basic check)
+    # Check 9: SKILL.md content quality and supported frontmatter keys
     empty_skills = []
-    for skill in SKILLS_REGISTRY:
+    invalid_skill_frontmatter = []
+    for skill in expected_skills:
         skill_file = os.path.join(agent_dir, "skills", skill["name"], "SKILL.md")
         if os.path.isfile(skill_file):
             size = os.path.getsize(skill_file)
             if size < 100:
                 empty_skills.append(f"{skill['name']} ({size} bytes)")
 
+            try:
+                with open(skill_file, "r", encoding="utf-8") as f:
+                    content = f.read().lstrip("\ufeff\r\n")
+            except (UnicodeDecodeError, OSError):
+                invalid_skill_frontmatter.append(f"{skill['name']}: unreadable UTF-8")
+                continue
+
+            if not content.startswith("---"):
+                invalid_skill_frontmatter.append(f"{skill['name']}: missing YAML header")
+                continue
+
+            parts = content.split("---", 2)
+            if len(parts) < 3:
+                invalid_skill_frontmatter.append(f"{skill['name']}: unclosed YAML header")
+                continue
+
+            header = parts[1]
+            name_match = re.search(r"(?m)^name:\s*([^\r\n]+)", header)
+            description_match = re.search(r"(?m)^description:\s*(?:\S|[>|])", header)
+            actual_name = name_match.group(1).strip(" \t'\"") if name_match else None
+            if actual_name != skill["name"]:
+                invalid_skill_frontmatter.append(
+                    f"{skill['name']}: frontmatter name is {actual_name or 'missing'}"
+                )
+            if not description_match:
+                invalid_skill_frontmatter.append(f"{skill['name']}: missing description")
+
+            unsupported = []
+            allowed_keys = {"name", "description", "license", "allowed-tools", "metadata"}
+            for key in re.findall(r"(?m)^([A-Za-z][A-Za-z0-9_-]*):", header):
+                if key not in allowed_keys:
+                    unsupported.append(key)
+            if unsupported:
+                invalid_skill_frontmatter.append(
+                    f"{skill['name']}: unsupported key(s): {', '.join(unsupported)}"
+                )
+
     results.append({
         "name": "SKILL.md content quality (>100 bytes each)",
         "passed": len(empty_skills) == 0,
         "details": [f"Too short: {s}" for s in empty_skills],
+    })
+
+    results.append({
+        "name": "SKILL.md frontmatter (supported YAML keys)",
+        "passed": len(invalid_skill_frontmatter) == 0,
+        "details": invalid_skill_frontmatter,
     })
 
     # Check 10: Workflow frontmatter
@@ -176,7 +221,7 @@ def validate_agent_structure(agent_dir: str) -> list:
                 fpath = os.path.join(wf_dir, fname)
                 with open(fpath, "r", encoding="utf-8") as f:
                     content = f.read()
-                if not content.startswith("---"):
+                if not content.lstrip("\ufeff\r\n").startswith("---"):
                     invalid_frontmatter.append(fname)
 
     results.append({

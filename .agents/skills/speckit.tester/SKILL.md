@@ -1,8 +1,6 @@
-
 ---
 name: speckit.tester
 description: Test Runner & Coverage - Create test plans, write tests, report coverage.
-role: Test Engineer
 ---
 
 ## 🎯 Mission

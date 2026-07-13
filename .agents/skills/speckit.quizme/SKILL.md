@@ -1,8 +1,6 @@
-
 ---
 name: speckit.quizme
 description: Logic Challenger (Red Team) - Ask critical questions, find edge cases.
-role: Red Team Analyst
 ---
 
 ## 🎯 Mission

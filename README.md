@@ -12,7 +12,7 @@
 
 This tool automatically creates the standard `.agent/` structure for Antigravity IDE, including:
 
-- **Skills** (38 skills) — Autonomous AI capabilities for each phase of SDLC + builder by domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) and Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
+- **Skills** (46 available) — Autonomous AI capabilities for each phase of SDLC + builder by domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) and Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
 - **Workflows** (33 workflows) — Orchestration commands with pre-conditions, gate checks, success criteria
 - **Templates** — Spec, Plan, Tasks, Constitution, Infrastructure, SEO, **UI/UX Standards** templates
 - **Scripts** — 4 bash utilities (create-feature, setup-plan, check-prerequisites, update-context)
@@ -235,7 +235,7 @@ Step 6: Implement → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Create structure `.agent/` (~90 files: 38 skills, 33 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
+- Create a project-tailored `.agent/` structure from 46 available skills and 36 workflows, plus templates, scripts, identity, knowledge base, constitution, and README
 - Open the project in Antigravity IDE — the agent automatically detects the `.agent/` folder
 
 #### Step 1 — `/01-speckit.constitution` ⚠️ REQUIRED
@@ -525,7 +525,7 @@ bro-skills/
     ├── __init__.py            # Version: __version__ = "1.4.9"
     ├── __main__.py            # python -m bro_skills
     ├── cli.py                 # Console script entry point → `bro-skills` command
-    ├── registry.py            # Single Source of Truth — 38 skills + 33 workflows + 8 project types
+    ├── registry.py            # Single Source of Truth — 46 skills + 36 workflows + 8 project types
     ├── skill_templates.py     # SKILL.md templates (Mission, Protocol, Guard Rails)
     ├── workflow_templates.py  # Workflow templates (Pre-conditions, Gates, Success Criteria)
     ├── templates.py           # Document + Script templates aggregator
@@ -544,7 +544,7 @@ bro-skills validate --target /path/to/project
 |---|-------|-------|
 | 1 | .agent/ directory | Exist |
 | 2 | Core directories | skills/, workflows/, templates/, scripts/, memory/ |
-| 3 | Skills | 38 folders + SKILL.md |
+| 3 | Skills | Project-appropriate folders + valid SKILL.md |
 | 4 | Workflows | 33 .md files |
 | 5 | Templates | 4 document templates |
 | 6 | Scripts | 4 bash scripts |

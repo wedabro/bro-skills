@@ -1,8 +1,6 @@
-
 ---
 name: speckit.identity
 description: Manage AI personality and behavioral orientation for the project.
-role: Persona Architect
 ---
 
 ## 🎯 Mission

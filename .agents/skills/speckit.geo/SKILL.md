@@ -1,8 +1,6 @@
-
 ---
 name: speckit.geo
 description: GEO Strategist - Optimized for AI Search (ChatGPT, Gemini, Perplexity).
-role: GEO Strategist
 ---
 
 ## 🎯 Mission

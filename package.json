@@ -1,6 +1,6 @@
 {
   "name": "bro-skills",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Spec-Driven Development CLI for initializing .agent skill/workflow packs.",
   "license": "MIT",
   "homepage": "https://github.com/wedabro/bro-skills#readme",

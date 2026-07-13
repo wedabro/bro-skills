@@ -4,6 +4,7 @@ from importlib.metadata import version
 
 import bro_skills
 from bro_skills.scanner import ProjectScanner
+from bro_skills.validators import validate_agent_structure
 
 
 def test_package_version_matches_metadata():
@@ -80,3 +81,11 @@ def test_generator_scaffolds_with_language(tmp_path):
     
     rules_content = rules_path.read_text(encoding="utf-8")
     assert "- Trả lời bằng tiếng Việt." in rules_content
+
+    results = validate_agent_structure(str(tmp_path / ".agent"))
+    assert all(result["passed"] for result in results), results
+
+    skill_path = tmp_path / ".agent" / "skills" / "speckit.identity" / "SKILL.md"
+    skill_content = skill_path.read_text(encoding="utf-8")
+    assert skill_content.startswith("---\n")
+    assert "\nrole:" not in skill_content.split("---", 2)[1]

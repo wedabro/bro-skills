@@ -1,8 +1,6 @@
-
 ---
 name: speckit.plan
 description: Technical Planner - Create plan.md from spec (data model, API contracts, research).
-role: System Architect
 ---
 
 ## 🎯 Mission

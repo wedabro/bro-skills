@@ -1,8 +1,6 @@
-
 ---
 name: speckit.clarify
 description: Ambiguity Resolver - Detect and resolve ambiguity in spec.
-role: Clarity Engineer
 ---
 
 ## 🎯 Mission

@@ -1,8 +1,6 @@
-
 ---
 name: speckit.checklist
 description: Requirements Validator - Create and validate checklist from spec.
-role: Requirements Auditor
 ---
 
 ## 🎯 Mission

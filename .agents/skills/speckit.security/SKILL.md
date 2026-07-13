@@ -1,8 +1,6 @@
-
 ---
 name: speckit.security
 description: Security Auditor - Audit AppSec theo OWASP, secret scanning, dependency/vuln, threat modeling.
-role: Security Auditor
 ---
 
 ## 🎯 Mission

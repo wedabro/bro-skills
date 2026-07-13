@@ -1,7 +1,6 @@
 ---
 name: speckit.database
 description: Database Architect - Thiet ke schema, index, migration, query optimization, data integrity.
-role: Database Architect
 ---
 
 ## 🎯 Mission

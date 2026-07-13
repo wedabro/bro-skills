@@ -1,8 +1,6 @@
-
 ---
 name: speckit.taskstoissues
 description: Issue Tracker Syncer - Synchronize tasks.md to issue tracker.
-role: Issue Syncer
 ---
 
 ## 🎯 Mission

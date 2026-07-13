@@ -1,8 +1,6 @@
-
 ---
 name: speckit.devops
 description: Docker Infrastructure & Security Hardening Specialist — Port ENV-first, range 8900-8999.
-role: DevOps Architect
 ---
 
 ## 🎯 Mission

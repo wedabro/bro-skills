@@ -1,8 +1,6 @@
-
 ---
 name: speckit.content
 description: Content Architect - Heading Structure, Readability, Multimodal, Fact-density.
-role: Content Strategist
 ---
 
 ## 🎯 Mission

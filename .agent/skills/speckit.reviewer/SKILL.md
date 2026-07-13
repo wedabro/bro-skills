@@ -1,8 +1,6 @@
-
 ---
 name: speckit.reviewer
 description: Code Reviewer - Review code according to spec and best practices.
-role: Code Reviewer
 ---
 
 ## 🎯 Mission

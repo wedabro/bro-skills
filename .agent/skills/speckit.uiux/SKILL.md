@@ -1,8 +1,6 @@
-
 ---
 name: speckit.uiux
 description: UI/UX Architect - Definition of Design System Anti-Slop, UI Components, Spacing, Typography, Responsive Patterns.
-role: UI/UX Architect
 ---
 
 ## 🎯 Mission

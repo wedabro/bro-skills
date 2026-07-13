@@ -1,8 +1,6 @@
-
 ---
 name: speckit.status
 description: Progress Dashboard - Displays project progress status.
-role: Progress Tracker
 ---
 
 ## 🎯 Mission

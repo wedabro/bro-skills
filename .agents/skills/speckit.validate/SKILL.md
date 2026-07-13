@@ -1,8 +1,6 @@
-
 ---
 name: speckit.validate
 description: Implementation Validator - Validate implementation vs overall spec.
-role: Validation Oracle
 ---
 
 ## 🎯 Mission

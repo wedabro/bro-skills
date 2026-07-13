@@ -1,8 +1,6 @@
-
 ---
 name: speckit.frontend
 description: Frontend Developer - Xay dung UI components, state management, data fetching, accessibility, performance (Anti-Slop).
-role: Frontend Engineer
 ---
 
 ## 🎯 Mission

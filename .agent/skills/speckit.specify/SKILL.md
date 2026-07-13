@@ -1,8 +1,6 @@
-
 ---
 name: speckit.specify
 description: Feature Definer - Generates spec.md from natural language description.
-role: Domain Scribe
 ---
 
 ## 🎯 Mission

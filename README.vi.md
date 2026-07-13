@@ -12,7 +12,7 @@
 
 Công cụ này tự động tạo cấu trúc `.agent/` tiêu chuẩn cho Antigravity IDE, bao gồm:
 
-- **Skills** (38 skills) — Các năng lực AI tự trị cho từng giai đoạn của SDLC + bộ tạo theo domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) và Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max.
+- **Skills** (46 skill có sẵn) — Các năng lực AI tự trị cho từng giai đoạn của SDLC + bộ tạo theo domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) và Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max.
 - **Workflows** (33 workflows) — Các lệnh điều phối với điều kiện tiền quyết (pre-conditions), kiểm tra cổng chặn (gate checks), và tiêu chí thành công (success criteria).
 - **Templates** — Các mẫu tài liệu Spec, Plan, Tasks, Constitution, Infrastructure, SEO, và tiêu chuẩn **UI/UX Standards**.
 - **Scripts** — 4 tiện ích bash (create-feature, setup-plan, check-prerequisites, update-context).
@@ -235,7 +235,7 @@ Bước 6: Thực thi → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` (~90 tệp bao gồm: 38 skills, 33 workflows, 7 templates, 4 scripts, identity, knowledge base, constitution, README)
+- Tạo cấu trúc `.agent/` phù hợp từng dự án từ 46 skill và 36 workflow có sẵn, cùng templates, scripts, identity, knowledge base, constitution và README
 - Mở thư mục dự án trong Antigravity IDE — tác nhân AI sẽ tự động nhận diện thư mục `.agent/`
 
 #### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
@@ -525,7 +525,7 @@ bro-skills/
     ├── __init__.py            # Khai báo phiên bản: __version__ = "1.4.9"
     ├── __main__.py            # Điểm bắt đầu khi chạy `python -m bro_skills`
     ├── cli.py                 # Điểm bắt đầu của lệnh điều khiển `bro-skills`
-    ├── registry.py            # Nguồn sự thật duy nhất — đăng ký 38 skills + 33 workflows + 8 loại dự án
+    ├── registry.py            # Nguồn sự thật duy nhất — đăng ký 46 skills + 36 workflows + 8 loại dự án
     ├── skill_templates.py     # Định nghĩa cấu hình mẫu cho SKILL.md
     ├── workflow_templates.py  # Định nghĩa cấu hình mẫu cho các Workflow
     ├── templates.py           # Tổng hợp các mẫu tài liệu và tiện ích

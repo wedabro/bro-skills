@@ -1,8 +1,6 @@
-
 ---
 name: speckit.roadmap
 description: Roadmap Strategist - Manage high-level roadmaps (Milestones) and transitions between Phases.
-role: Project Manager
 ---
 
 ## 🎯 Mission

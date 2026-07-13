@@ -1,8 +1,6 @@
-
 ---
 name: speckit.seo
 description: Technical SEO Lead - Optimize Meta Tags, Sitemap, Core Web Vitals, Schema.org.
-role: SEO Technical Lead
 ---
 
 ## 🎯 Mission
