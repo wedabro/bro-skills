@@ -1,10 +1,15 @@
 import subprocess
 import sys
+import re
 from importlib.metadata import version
+from pathlib import Path
 
 import bro_skills
 from bro_skills.scanner import ProjectScanner
 from bro_skills.validators import validate_agent_structure
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_package_version_matches_metadata():
@@ -89,3 +94,21 @@ def test_generator_scaffolds_with_language(tmp_path):
     skill_content = skill_path.read_text(encoding="utf-8")
     assert skill_content.startswith("---\n")
     assert "\nrole:" not in skill_content.split("---", 2)[1]
+
+
+def test_checked_in_skills_have_lean_valid_entrypoints():
+    for skill_dir in (REPO_ROOT / ".agent" / "skills").iterdir():
+        if not skill_dir.is_dir():
+            continue
+
+        skill_file = skill_dir / "SKILL.md"
+        assert skill_file.is_file(), f"Missing {skill_file}"
+
+        content = skill_file.read_text(encoding="utf-8")
+        assert content.startswith("---\n"), f"Invalid frontmatter in {skill_file}"
+        name_match = re.search(r"(?m)^name:\s*([^\r\n]+)", content)
+        assert name_match and name_match.group(1).strip() == skill_dir.name
+        assert len(content.splitlines()) <= 500, f"Move details from {skill_file} to references/"
+
+        for target in re.findall(r"\[[^]]+\]\(([^)]+\.md)\)", content):
+            assert (skill_dir / target).is_file(), f"Broken reference in {skill_file}: {target}"
