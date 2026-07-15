@@ -256,18 +256,30 @@ def cmd_init(args):
 
     # LANGUAGE, AGENT, AND PROJECT TYPE SELECTION FLOW
     lang = getattr(args, 'lang', None) or existing_config.get("agent_language") or existing_config.get("language")
-    ai_agent = getattr(args, 'ai', None) or existing_config.get("ai_agent") or existing_config.get("ai") or "all"
     project_type = getattr(args, 'type', None) or existing_config.get("project_type")
+    ai_agent = getattr(args, 'ai', None)
     type_info = None
 
     # Check if we can auto-apply existing configurations without interactive prompt
     is_upgrade = os.path.exists(agent_dir) and not force
-    if is_upgrade and lang and ai_agent and project_type:
+    if is_upgrade and lang and project_type:
         type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
         print(f"ℹ️  Reusing existing configurations:")
         print(f"   - Language:  {lang}")
-        print(f"   - AI Agent:  {ai_agent}")
-        print(f"   - Type:      {type_info['label']}\n")
+        print(f"   - Type:      {type_info['label']}")
+        
+        if getattr(args, 'ai', None):
+            ai_agent = args.ai
+            print(f"   - AI Agent:  {ai_agent}\n")
+        else:
+            ai_agent = _ask_agent_selection(lang)
+            if ai_agent == "cancel" or ai_agent == "back":
+                print("❌ Canceled / Đã hủy.")
+                return
+            if lang == "vi":
+                print(f"   - AI Agent:  {ai_agent} (đã chọn lại)\n")
+            else:
+                print(f"   - AI Agent:  {ai_agent} (reconfigured)\n")
     else:
         # Fallback to interactive prompts if not fully specified in existing config or arguments
         step = 1
@@ -704,6 +716,101 @@ def cmd_update(args):
             print("   pip install --upgrade git+https://github.com/wedabro/bro-skills.git")
 
 
+def clean_empty_parents(path, root_dir):
+    """Clean empty parent directories up to root_dir."""
+    current = os.path.dirname(path)
+    while current and current != root_dir and len(current) > len(root_dir):
+        if os.path.exists(current) and os.path.isdir(current):
+            try:
+                if not os.listdir(current):
+                    os.rmdir(current)
+                else:
+                    break
+            except Exception:
+                break
+        current = os.path.dirname(current)
+
+
+def cmd_uninstall(args):
+    """Uninstall bro-skills by removing .agent/ and IDE rules from the project."""
+    import shutil
+
+    target = os.path.abspath(args.target or os.getcwd())
+    force = getattr(args, 'force', False)
+    agent_dir = os.path.join(target, ".agent")
+
+    # If the user didn't specify --force, we should double check if .agent exists
+    # If not even .agent exists and not force, we exit
+    if not os.path.exists(agent_dir) and not force:
+        print("❌ Không tìm thấy thư mục `.agent` tại dự án này.")
+        return
+
+    print(f"\n⚡ bro-skills - Gỡ cài đặt (Uninstall)")
+    print(f"{'─' * 50}")
+    print(f"  📁 Target:  {target}")
+    print(f"{'─' * 50}\n")
+
+    if not force:
+        confirm = input("⚠️  Bạn có chắc chắn muốn gỡ bỏ hoàn toàn bro-skills khỏi dự án này không? (y/N): ").strip().lower()
+        if confirm != 'y':
+            print("❌ Đã hủy yêu cầu gỡ cài đặt.")
+            return
+
+    print("\n🧹 Bắt đầu gỡ bỏ các tệp và thư mục liên quan...")
+
+    paths_to_delete = [
+        ".agent",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".clinerules",
+        ".roomember",
+        ".traerules",
+        ".cursor/rules/bro-skills.mdc",
+        ".windsurf/rules/bro-skills.md",
+        ".github/copilot-instructions.md",
+        ".aiassistant/rules/bro-skills.md",
+        ".kiro/steering/tech.md",
+        ".kiro/settings/mcp.json",
+        ".kiro/skills",
+        ".qoder/rules/bro-skills.md",
+        ".opencode/rules/bro-skills.md",
+        ".gemini/rules/bro-skills.md",
+        ".continue/config.json",
+        ".agents/AGENTS.md",
+        ".agents/skills",
+    ]
+
+    deleted_count = 0
+    for rel_path in paths_to_delete:
+        abs_path = os.path.join(target, rel_path)
+        if os.path.exists(abs_path) or os.path.islink(abs_path):
+            success = False
+            try:
+                if os.path.islink(abs_path) or os.path.isfile(abs_path):
+                    os.unlink(abs_path)
+                    success = True
+                elif os.path.isdir(abs_path):
+                    if os.name == "nt":
+                        try:
+                            os.rmdir(abs_path)
+                            success = True
+                        except OSError:
+                            shutil.rmtree(abs_path, ignore_errors=True)
+                            success = True
+                    else:
+                        shutil.rmtree(abs_path, ignore_errors=True)
+                        success = True
+            except Exception as e:
+                print(f"  ⚠️ Lỗi khi xóa {rel_path}: {e}")
+            
+            if success:
+                print(f"  🗑️ Đã xóa: {rel_path}")
+                deleted_count += 1
+                clean_empty_parents(abs_path, target)
+
+    print(f"\n✅ Hoàn tất gỡ bỏ! Đã dọn dẹp {deleted_count} tệp/thư mục.")
+
+
 def main():
     if sys.platform.startswith('win'):
         try:
@@ -790,6 +897,11 @@ AVAILABLE project process:
     # update
     subparsers.add_parser("update", help="Upgrade bro-skills to the latest version")
 
+    # uninstall
+    uninstall_parser = subparsers.add_parser("uninstall", help="Remove all files and directories created by bro-skills")
+    uninstall_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
+    uninstall_parser.add_argument("--force", "-f", action="store_true", help="Remove without confirmation")
+
     args = parser.parse_args()
 
     if args.command is None:
@@ -804,6 +916,7 @@ AVAILABLE project process:
         "validate": cmd_validate,
         "version": cmd_version,
         "update": cmd_update,
+        "uninstall": cmd_uninstall,
     }
 
     commands[args.command](args)

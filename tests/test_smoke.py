@@ -96,6 +96,43 @@ def test_generator_scaffolds_with_language(tmp_path):
     assert "\nrole:" not in skill_content.split("---", 2)[1]
 
 
+def test_uninstall_removes_agent_structure(tmp_path):
+    from bro_skills.generator import ProjectGenerator
+    from bro_skills.cli import cmd_uninstall
+    
+    # 1. Generate scaffold
+    generator = ProjectGenerator(
+        target_dir=str(tmp_path),
+        project_name="test-project",
+        project_type="simple_script",
+        lang="vi",
+        ai_agent="all"
+    )
+    generator.generate()
+    
+    agent_dir = tmp_path / ".agent"
+    assert agent_dir.exists()
+    
+    # Create some dummy rules to simulate what generator does
+    cursor_rule = tmp_path / ".cursor" / "rules" / "bro-skills.mdc"
+    cursor_rule.parent.mkdir(parents=True, exist_ok=True)
+    cursor_rule.touch()
+    assert cursor_rule.exists()
+    
+    # 2. Run uninstall
+    class Args:
+        target = str(tmp_path)
+        force = True  # bypass prompt
+        
+    cmd_uninstall(Args())
+    
+    # 3. Verify files are removed
+    assert not agent_dir.exists()
+    assert not cursor_rule.exists()
+    # Verify empty directories are cleaned up (like .cursor)
+    assert not (tmp_path / ".cursor").exists()
+
+
 def test_checked_in_skills_have_lean_valid_entrypoints():
     for skill_dir in (REPO_ROOT / ".agent" / "skills").iterdir():
         if not skill_dir.is_dir():
