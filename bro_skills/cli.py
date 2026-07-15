@@ -264,22 +264,53 @@ def cmd_init(args):
     is_upgrade = os.path.exists(agent_dir) and not force
     if is_upgrade and lang and project_type:
         type_info = PROJECT_TYPES.get(project_type, PROJECT_TYPES["fullstack"])
+        old_agent = existing_config.get("ai_agent") or existing_config.get("ai")
+        
         print(f"ℹ️  Reusing existing configurations:")
         print(f"   - Language:  {lang}")
         print(f"   - Type:      {type_info['label']}")
+        if old_agent:
+            print(f"   - Previous AI Agent: {old_agent}")
         
         if getattr(args, 'ai', None):
             ai_agent = args.ai
             print(f"   - AI Agent:  {ai_agent}\n")
         else:
-            ai_agent = _ask_agent_selection(lang)
-            if ai_agent == "cancel" or ai_agent == "back":
-                print("❌ Canceled / Đã hủy.")
-                return
-            if lang == "vi":
-                print(f"   - AI Agent:  {ai_agent} (đã chọn lại)\n")
+            if old_agent:
+                if lang == "vi":
+                    prompt_msg = f"\n❓ Bạn có muốn cấu hình cho IDE khác không? (y/N): "
+                else:
+                    prompt_msg = f"\n❓ Do you want to configure rules for a different IDE? (y/N): "
+                
+                change_ide = input(prompt_msg).strip().lower()
+                if change_ide == 'y':
+                    ai_agent = _ask_agent_selection(lang)
+                    if ai_agent == "cancel" or ai_agent == "back":
+                        print("❌ Canceled / Đã hủy.")
+                        return
+                    if lang == "vi":
+                        print(f"✅ Cấu hình Agent mới đã chọn: {ai_agent}\n")
+                    else:
+                        print(f"✅ New selected AI Agent: {ai_agent}\n")
+                else:
+                    ai_agent = old_agent
+                    if lang == "vi":
+                        print(f"✅ Tiếp tục sử dụng cấu hình Agent cũ: {ai_agent}\n")
+                    else:
+                        print(f"✅ Reusing previous AI Agent: {ai_agent}\n")
             else:
-                print(f"   - AI Agent:  {ai_agent} (reconfigured)\n")
+                if lang == "vi":
+                    print("\n⚠️  Không tìm thấy thông tin IDE trong cấu hình cũ. Vui lòng chọn:")
+                else:
+                    print("\n⚠️  No previous IDE configuration found. Please select:")
+                ai_agent = _ask_agent_selection(lang)
+                if ai_agent == "cancel" or ai_agent == "back":
+                    print("❌ Canceled / Đã hủy.")
+                    return
+                if lang == "vi":
+                    print(f"✅ Cấu hình Agent đã chọn: {ai_agent}\n")
+                else:
+                    print(f"✅ Selected AI Agent: {ai_agent}\n")
     else:
         # Fallback to interactive prompts if not fully specified in existing config or arguments
         step = 1

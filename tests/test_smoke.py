@@ -80,6 +80,7 @@ def test_generator_scaffolds_with_language(tmp_path):
     with open(project_json_path, "r", encoding="utf-8") as f:
         config = json.load(f)
     assert config["agent_language"] == "vi"
+    assert config["ai_agent"] == "all"
     
     rules_path = tmp_path / ".agent" / "rules" / "bro-skills.md"
     assert rules_path.exists()
