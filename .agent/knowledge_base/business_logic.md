@@ -7,6 +7,7 @@ Spec-Driven Development CLI for initializing .agent skill/workflow packs.
 
 ## Source Structure
   📁 .agent/ (Agent config)
+  📄 AGENTS.md
   📄 CLAUDE.md
   📄 LICENSE
   📄 README.md
