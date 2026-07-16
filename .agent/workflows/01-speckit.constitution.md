@@ -1,4 +1,3 @@
-
 ---
 description: Establish/update Constitution (Source of Law)
 ---
@@ -12,7 +11,7 @@ description: Establish/update Constitution (Source of Law)
 
 1. **@speckit.constitution** — Collect information from developers:
    - Tech stack (language, framework, DB)
-   - Docker port range (default 8900-8999)
+   - Docker port configuration
    - Coding principles (VD: No hardcode, Docker-first)
    - Security requirements
 2. Create/update `.agent/memory/constitution.md`

@@ -25,7 +25,7 @@ Sự khác biệt vượt trội giữa việc sử dụng bộ cấu hình AI A
 |---|---|---|
 | **Phương thức phát triển** | **Code-First**: AI nhảy vào viết code ngay lập tức. Tạo ra các thay đổi lớn, chưa qua kiểm thử và dễ bị lệch khỏi yêu cầu ban đầu. | **Spec-Driven (SDD)**: Tuân thủ quy trình nghiêm ngặt: `Specify → Clarify → Plan → Tasks → Implement → Verify`. |
 | **Kiểm soát ngữ cảnh** | **Mất dấu & Ảo tưởng**: AI dễ dàng quên luật dự án, kiến trúc tổng thể và cấu trúc file khi repo phình to. | **Mỏ neo nhất quán**: Giữ AI luôn đi đúng hướng bằng cách đồng bộ ngữ cảnh qua `master-identity`, `constitution.md` và `AGENTS.md`. |
-| **An toàn môi trường** | **Chạy trực tiếp / Trùng cổng**: Thực thi lệnh tùy ý trên host, tự cấp cổng ngẫu nhiên gây xung đột dịch vụ hiện tại. | **Docker-First & Cổng cô lập**: Chạy hoàn toàn trong sandbox, bắt buộc dải port an toàn `8900-8999` và tự động quét trùng lặp. |
+| **An toàn môi trường** | **Chạy trực tiếp / Trùng cổng**: Thực thi lệnh tùy ý trên host, tự cấp cổng ngẫu nhiên gây xung đột dịch vụ hiện tại. | **Docker-First & Cổng cô lập**: Chạy hoàn toàn trong sandbox, cấu hình linh hoạt cổng qua ENV và tự động quét trùng lặp. |
 | **Tính nguyên tử (Atomic)** | **Vùng ảnh hưởng rộng**: AI thay đổi hàng chục file cùng lúc, cực kỳ khó debug, review hoặc rollback khi xảy ra lỗi. | **Quy tắc 15 Phút**: Chia nhỏ task $\le 15$ phút và giới hạn thay đổi $\le 3$ file. Tự động kiểm tra tĩnh và test trước khi lưu. |
 | **Thẩm mỹ UI/UX** | **Thiết kế rẻ tiền (Slop)**: Giao diện nhàm chán, font mặc định, màu sắc chắp vá và lạm dụng các phần tử giữ chỗ (placeholders). | **Premium Design System**: Ép AI thiết kế Bento Grid, typographic-first, màu HSL hài hòa và tích hợp hiệu ứng chuyển động mượt mà. |
 | **Quản lý Git & Lịch sử** | **Commit lộn xộn / Không commit**: Gộp nhiều tính năng vào một lần commit hoặc mô tả commit không rõ ràng. | **Auto-Commit nguyên tử**: Tự động commit code chuẩn Conventional Commits ngay sau khi hoàn thành từng task nhỏ. |
@@ -368,7 +368,7 @@ bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 # 2. Hiến pháp — khai báo công nghệ hiện hành
 /01-speckit.constitution
-# → "Next.js 15, Prisma 6, PostgreSQL, Docker-first, Port 8900-8999"
+# → "Next.js 15, Prisma 6, PostgreSQL, Docker-first, cấu hình cổng qua ENV"
 
 # 3. Di chuyển — AI tự động đọc và phân tích mã nguồn cũ
 /util-speckit.migrate

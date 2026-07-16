@@ -9,8 +9,7 @@
 - **Docker-First Policy**: Use Docker by default for both Local and Production. DO NOT run `npm`/`node`/`python` directly on host.
 - **Local**: Use `docker-compose.yml` for development.
 - **Production**: Use `docker-compose.prod.yml` with Security Hardening.
-- **Ports**: Only use port range **8900-8999**.
-  - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
+- **Ports**: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
 ## §2 Security & Production Safety
 - **FORBIDDEN**: Running `docker compose down -v` on Production.

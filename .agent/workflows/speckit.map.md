@@ -1,4 +1,3 @@
-
 ---
 description: Draw the architecture map and dependency diagram of the Codebase
 ---

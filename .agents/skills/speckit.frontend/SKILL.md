@@ -10,7 +10,7 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 - `.agent/knowledge_base/ui_ux_standards.md` (Design System)
 - `.agent/specs/[feature]/spec.md` (UI requirements)
 - API contract from `@speckit.backend`
-- `.agent/memory/constitution.md` (ENV, Docker-First, Port 8900-8999)
+- `.agent/memory/constitution.md` (ENV, Docker-First)
 
 ## 📋 Protocol
 

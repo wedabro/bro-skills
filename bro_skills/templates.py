@@ -196,8 +196,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 - **Chính sách Docker-First**: Sử dụng Docker theo mặc định cho cả môi trường Local và Production. TUYỆT ĐỐI KHÔNG chạy trực tiếp `npm`/`node`/`python` trên máy host.
 - **Local**: Sử dụng `docker-compose.yml` để phát triển.
 - **Production**: Sử dụng `docker-compose.prod.yml` với cấu hình bảo mật được tăng cường.
-- **Cổng kết nối**: Chỉ sử dụng dải cổng từ **8900-8999**.
-  - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
+- **Cổng kết nối**: Cấu hình cổng linh hoạt thông qua biến môi trường (.env) để tránh xung đột.
 """ if use_docker else f"""
 ## §1 Môi trường (CUSTOM)
 - **Hạ tầng dự án**: Được định nghĩa cụ thể theo yêu cầu nghiệp vụ, không nhất thiết phải chạy trong Docker.
@@ -247,8 +246,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 - **Docker-First Policy**: Use Docker by default for both Local and Production. DO NOT run `npm`/`node`/`python` directly on host.
 - **Local**: Use `docker-compose.yml` for development.
 - **Production**: Use `docker-compose.prod.yml` with Security Hardening.
-- **Ports**: Only use port range **8900-8999**.
-  - Public FE: `N` | Admin FE: `N+1` | Backend API: `N+2`
+- **Ports**: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 """ if use_docker else f"""
 ## §1 Environment (CUSTOM)
 - **Project Infrastructure**: Specifically defined by requirements, not necessarily running in Docker.
@@ -509,7 +507,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
     forbidden_label = "DO NOT" if not is_soft_rules else "Avoid"
     
     docker_rule = f"- Docker-First: All coding and app running activities {shall_label} take place in the container. {forbidden_label} run node/python on the host." if use_docker else "- Flexibility: Run app directly or via Docker based on project needs."
-    port_rule = f"- Ports: Use port range 8900-8999. {must_label} retrieve port from environment variables (.env)." if use_docker else "- Ports: Use available ports on the system."
+    port_rule = f"- Ports: Flexibly configure ports via environment variables (.env) to avoid conflicts."
 
     # Language instruction generation
     l_lower = lang.strip().lower()
@@ -519,7 +517,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
         forbidden_label_vi = "TUYỆT ĐỐI KHÔNG" if not is_soft_rules else "Tránh"
         
         docker_rule_vi = f"- Docker-First: Toàn bộ hoạt động lập trình và chạy ứng dụng {shall_label_vi} diễn ra trong container. {forbidden_label_vi} chạy trực tiếp node/python trên host." if use_docker else "- Linh hoạt: Chạy ứng dụng trực tiếp hoặc qua Docker tùy thuộc vào nhu cầu."
-        port_rule_vi = f"- Cổng (Ports): Sử dụng dải cổng từ 8900-8999. {must_label_vi} lấy cấu hình cổng từ biến môi trường (.env)." if use_docker else "- Cổng (Ports): Sử dụng các cổng có sẵn trên hệ thống."
+        port_rule_vi = f"- Cổng (Ports): Cấu hình cổng linh hoạt thông qua biến môi trường (.env) để tránh xung đột."
         
         return f"""Project: {project_name}
 
@@ -680,7 +678,7 @@ def doc_kiro_steering_template(project_name="Project", lang="dynamic"):
 
 Dự án: {project_name}
 Hệ thống Build: Docker (docker compose)
-Dải cổng mạng: 8900-8999
+Dải cổng mạng: Tự do cấu hình qua ENV (.env)
 Shell: PowerShell 5.1+ (Windows)
 
 ## Quy trình phát triển
@@ -713,7 +711,7 @@ Shell: PowerShell 5.1+ (Windows)
 
 Project: {project_name}
 Build System: Docker (docker compose)
-Port Range: 8900-8999
+Port Range: Flexibly configured via ENV (.env)
 Shell: PowerShell 5.1+ (Windows)
 
 ## Development Protocol

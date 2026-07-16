@@ -46,7 +46,7 @@ def skill_devops():
     return r"""
 ---
 name: speckit.devops
-description: Docker Infrastructure & Security Hardening Specialist — Port ENV-first, range 8900-8999.
+description: Docker Infrastructure & Security Hardening Specialist — Port ENV-first.
 role: DevOps Architect
 ---
 
@@ -74,7 +74,7 @@ Ports MUST always be configured via ENV vars — NEVER hard-code.
 | Environment | Existing Ports in .env? | Docker running? | Act |
 |---|---|---|---|
 | **Any** | ✅ Yes | Any | **SKIP** scan — use existing ports, **DO NOT** overwrite |
-| **Local** | ❌ No | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
+| **Local** | ❌ No | ❌ No (first time) | Scan available ports with socket/helper → select 3 consecutive empty ports |
 | **Local** | ❌ No | ✅ Already running | **SKIP** scan — use current ports from docker/containers |
 | **Staging/Beta/Prod** | ❌ No | Any | **ALWAYS** initial scan for configuration → write to `.env` |
 
@@ -115,7 +115,7 @@ docker compose ps --format json 2>$null
 - Doc: `.agent/knowledge_base/infrastructure.md` (updated)
 
 ## 🚫 Guard Rails
-- DO NOT use ports outside the 8900-8999 range.
+- Flexibly configure ports via environment variables (.env) to avoid conflicts.
 - DO NOT hard-code port numbers — ALWAYS use ENV vars.
 - DO NOT run `docker compose down -v` on production.
 - DO NOT hard-code credentials into the Dockerfile.
@@ -203,7 +203,7 @@ grep -A 5 "volumes:" docker-compose.prod.yml # Must NOT have `. :/app`
 ```
 - Volume mount `- .:/app` trong production → 🔴 CRITICAL
 - COPY path does not exist → 🔴 CRITICAL
-- Outer port 8900-8999 → 🟡 WARNING
+- Outer port not in env → 🟡 WARNING
 
 ### Phase 3: ENV Compliance
 ```bash
@@ -350,7 +350,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 ## 📋 Protocol
 1. Collected from developers:
    - Tech stack (frameworks, DB, language)
-   - Docker ports (trong range 8900-8999)
+   - Docker ports (cấu hình qua biến môi trường)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
 2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
@@ -1107,7 +1107,7 @@ Build backend/API production: standard REST/GraphQL endpoint, layered business l
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md` + `plan.md` (data model, API contracts)
 - `.agent/knowledge_base/api_standards.md`, `data_schema.md`
-- `.agent/memory/constitution.md` (Docker-First, ENV, Port 8900-8999)
+- `.agent/memory/constitution.md` (Docker-First, ENV)
 
 ## 📋 Protocol
 
@@ -1162,7 +1162,7 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 - `.agent/knowledge_base/ui_ux_standards.md` (Design System)
 - `.agent/specs/[feature]/spec.md` (UI requirements)
 - API contract from `@speckit.backend`
-- `.agent/memory/constitution.md` (ENV, Docker-First, Port 8900-8999)
+- `.agent/memory/constitution.md` (ENV, Docker-First)
 
 ## 📋 Protocol
 
@@ -1516,7 +1516,7 @@ Build production-grade games: stable gameplay loop, performance within frame-bud
 
 ## 📥 Input
 - `.agent/project.json` (project_type = `game`)
-- `.agent/memory/constitution.md` (Docker-First, ENV, Port 8900-8999)
+- `.agent/memory/constitution.md` (Docker-First, ENV)
 - `.agent/specs/[feature]/spec.md` (gameplay requirements)
 - Target engine (from spec or ask developer if missing)
 
@@ -1524,7 +1524,7 @@ Build production-grade games: stable gameplay loop, performance within frame-bud
 
 ### Phase 1: Engine & Project Setup
 - Identify target engine. If missing -> ASK before coding.
-- Web game (Phaser/PixiJS/Babylon): run in Docker (Node container), port range 8900-8999.
+- Web game (Phaser/PixiJS/Babylon): run in Docker (Node container), with flexible port configuration via ENV.
 - Native engine (Unity/Unreal/Godot): build/CI in Docker if feasible; editor running on host is allowed (exception to Docker-First, state reason clearly).
 - Structure: `assets/`, `scenes/`, `scripts/` (or `src/`), `prefabs/`, `config/`.
 

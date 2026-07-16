@@ -1,4 +1,3 @@
-
 ---
 description: Run Static Analysis
 ---
@@ -46,7 +45,7 @@ description: Run Static Analysis
 
 6. **Security Scan**:
    - Find `eval()` , `dangerouslySetInnerHTML` , exposed secrets
-   - Docker compliance: ports trong range 8900-8999
+   - Docker compliance: ports configured in environment variables
 
 7. **Output Report** → `.agent/memory/checker-report.md`
 

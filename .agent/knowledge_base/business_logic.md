@@ -7,7 +7,6 @@ Spec-Driven Development CLI for initializing .agent skill/workflow packs.
 
 ## Source Structure
   📁 .agent/ (Agent config)
-  📄 AGENTS.md
   📄 CLAUDE.md
   📄 LICENSE
   📄 README.md
@@ -20,6 +19,7 @@ Spec-Driven Development CLI for initializing .agent skill/workflow packs.
   📄 pyproject.toml
   📄 ssd.py
   📁 tests/ (1 items)
+  📄 uv.lock
 
 ## Core Business Rules
 <!-- Fill in the core business logic of the project here -->

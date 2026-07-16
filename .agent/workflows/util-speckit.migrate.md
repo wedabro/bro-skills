@@ -1,4 +1,3 @@
-
 ---
 description: Migrate Legacy Code — Reverse-engineer existing codebase
 ---

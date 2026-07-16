@@ -1,4 +1,3 @@
-
 ---
 description: Create/update Master Identity for AI Agent
 ---

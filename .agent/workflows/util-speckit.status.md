@@ -1,4 +1,3 @@
-
 ---
 description: Display Progress Dashboard
 ---

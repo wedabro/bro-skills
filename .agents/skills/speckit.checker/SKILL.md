@@ -35,7 +35,7 @@ grep -A 5 "volumes:" docker-compose.prod.yml # Must NOT have `. :/app`
 ```
 - Volume mount `- .:/app` trong production → 🔴 CRITICAL
 - COPY path does not exist → 🔴 CRITICAL
-- Outer port 8900-8999 → 🟡 WARNING
+- Outer port not in env → 🟡 WARNING
 
 ### Phase 3: ENV Compliance
 ```bash

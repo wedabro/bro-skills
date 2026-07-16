@@ -1,4 +1,3 @@
-
 ---
 description: Game Development Pipeline - Engine setup, game loop, performance, asset pipeline
 ---

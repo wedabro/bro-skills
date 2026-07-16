@@ -1,4 +1,3 @@
-
 ---
 description: Prep Pipeline (Specify → Clarify → Plan → Tasks → Analyze) — no Implement
 ---

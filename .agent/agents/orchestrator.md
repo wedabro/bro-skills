@@ -17,7 +17,7 @@ Decide which agent handles which task based on `project_type` + `attributes` and
 - `.agent/memory/constitution.md` → constraints (Docker-First, Port 8900-8999, ENV)
 
 ## 🎛️ Resolved Agent Set (auto-generated)
-- **Active agents**: speckit.identity, speckit.devops, speckit.analyze, speckit.checker, speckit.checklist, speckit.clarify, speckit.constitution, speckit.diff, speckit.implement, speckit.migrate, speckit.plan, speckit.quizme, speckit.reviewer, speckit.specify, speckit.status, speckit.tasks, speckit.taskstoissues, speckit.tester, speckit.validate, speckit.seo, speckit.geo, speckit.content, speckit.uiux, speckit.debug, speckit.backlog, speckit.roadmap, speckit.map, speckit.uat, speckit.wordpress, speckit.security, ponytail, speckit.frontend
+- **Active agents**: speckit.identity, speckit.devops, speckit.analyze, speckit.checker, speckit.checklist, speckit.clarify, speckit.constitution, speckit.diff, speckit.implement, speckit.migrate, speckit.plan, speckit.quizme, speckit.reviewer, speckit.specify, speckit.status, speckit.tasks, speckit.taskstoissues, speckit.tester, speckit.validate, speckit.seo, speckit.geo, speckit.content, speckit.uiux, speckit.debug, speckit.backlog, speckit.roadmap, speckit.map, speckit.uat, speckit.security, ponytail, speckit.frontend
 - **Builder agents**: speckit.frontend
 
 ## 📋 Protocol

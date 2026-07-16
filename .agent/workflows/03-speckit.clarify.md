@@ -1,4 +1,3 @@
-
 ---
 description: Resolve ambiguity in Specification
 ---

@@ -1,4 +1,3 @@
-
 ---
 description: GEO - Optimized for AI Search (ChatGPT, Gemini, Perplexity)
 ---

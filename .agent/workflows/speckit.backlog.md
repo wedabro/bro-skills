@@ -1,4 +1,3 @@
-
 ---
 description: Managing Ideas (Backlog) and scanning technical debt (TODO/FIXME)
 ---

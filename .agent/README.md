@@ -2,7 +2,7 @@
 
 > **Project**: bro-skills
 > **Type**: Web Public (B2C)
-> **Generated**: 2026-07-09
+> **Generated**: 2026-07-16
 
 ## 🏗️ Architecture
 

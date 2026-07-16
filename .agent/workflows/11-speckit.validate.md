@@ -1,4 +1,3 @@
-
 ---
 description: Validate Implementation vs Spec
 ---

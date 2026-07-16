@@ -53,7 +53,7 @@ description: Establish/update Constitution (Source of Law)
 
 1. **@speckit.constitution** — Collect information from developers:
    - Tech stack (language, framework, DB)
-   - Docker port range (default 8900-8999)
+   - Docker port configuration
    - Coding principles (VD: No hardcode, Docker-first)
    - Security requirements
 2. Create/update `.agent/memory/constitution.md`
@@ -259,7 +259,7 @@ description: Run Static Analysis
 
 6. **Security Scan**:
    - Find `eval()` , `dangerouslySetInnerHTML` , exposed secrets
-   - Docker compliance: ports trong range 8900-8999
+   - Docker compliance: ports configured in environment variables
 
 7. **Output Report** → `.agent/memory/checker-report.md`
 
@@ -485,7 +485,7 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 
 ### Step 1: Determine Environment
 - Detect environment: **local** / **staging** / **beta** / **production**
-- Read `constitution.md` → port range (default 8900-8999)
+- Read `constitution.md` → port configuration
 
 ### Step 2: Port Allocation (ENV-first) ⭐
 
@@ -500,7 +500,7 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 | Environment | Existing Ports in .env? | Docker running? | Act |
 |---|---|---|---|
 | **Any** | ✅ Yes | Any | **SKIP** scan — use existing ports, **DO NOT** overwrite |
-| **Local** | ❌ No | ❌ No (first time) | Scan range `8900-8999` with socket/helper → select 3 consecutive empty ports |
+| **Local** | ❌ No | ❌ No (first time) | Scan available ports with socket/helper → select 3 consecutive empty ports |
 | **Local** | ❌ No | ✅ Already running | **SKIP** scan — use current ports from docker/containers |
 | **Staging/Beta/Prod** | ❌ No | Any | **ALWAYS** initial scan for configuration → write to `.env` |
 
@@ -513,7 +513,7 @@ docker compose ps --format json 2>$null
 
 **Port scan when needed:**
 ```text
-Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
+Scan TCP bind availability on 127.0.0.1 for available ports.
 ```
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
 - Always write in `.env` :
@@ -556,7 +556,7 @@ Scan TCP bind availability on 127.0.0.1 for ports 8900-8999.
 - ✅ `infrastructure.md` updated
 
 ## 🚫 Guard Rails
-- DO NOT use ports outside the 8900-8999 range
+- Flexibly configure ports via environment variables (.env) to avoid conflicts
 - DO NOT hard-code port number — ALWAYS ENV vars
 - DO NOT run `docker compose down -v` on production
 - DO NOT hard-code credentials into the Dockerfile

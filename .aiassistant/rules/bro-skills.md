@@ -5,7 +5,7 @@ Project: bro-skills
 ## 1. SUPREME ORDER
 - Strictly follow the `.agent/memory/constitution.md` file.
 - Docker-First: All coding and app running activities must take place in the container. DO NOT run node/python on the host.
-- Ports: Use port range 8900-8999. Strictly follow retrieve port from environment variables (.env).
+- Ports: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
 ## 2. bro-skills PROTOCOL
 - Every task must go through the process: Specify → Plan → Tasks → Implement.

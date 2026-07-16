@@ -3,11 +3,12 @@
   "project_type": "web_public",
   "attributes": {},
   "agent_language": "en",
+  "ai_agent": "all",
   "asf_version": "3.3",
-  "bro_skills_version": "1.5.1",
-  "created_at": "2026-07-09T11:02:44.611089",
-  "skills_count": 32,
-  "workflows_count": 36,
+  "bro_skills_version": "1.5.6",
+  "created_at": "2026-07-16T09:12:16.661027",
+  "skills_count": 31,
+  "workflows_count": 35,
   "multi_agent": true,
   "agent_registry": ".agent/agents/registry.json"
 }

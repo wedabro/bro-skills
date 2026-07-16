@@ -1,4 +1,3 @@
-
 ---
 description: Content Strategy & Readability Audit
 ---

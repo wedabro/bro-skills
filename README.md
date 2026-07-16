@@ -25,7 +25,7 @@ Using an AI Agent configuration kit (`bro-skills`) vs. coding with raw/unconstra
 |---|---|---|
 | **Development Style** | **Code-First**: AI jumps straight into coding. Generates massive, untested changes that often drift from initial requirements. | **Spec-Driven (SDD)**: Enforces strict sequential flow: `Specify → Clarify → Plan → Tasks → Implement → Verify`. |
 | **Context Control** | **Drift & Hallucination**: AI quickly loses track of project rules, architecture, and files in larger repositories. | **Ironclad Anchoring**: Centralized rules via `master-identity`, `constitution.md`, and `AGENTS.md` force consistent behaviors. |
-| **Environment Safety** | **Host execution / Chaos ports**: Runs arbitrary commands on host, selects conflicting ports, risks system stability. | **Docker-First & Isolated Ports**: Sandbox execution, strict port range `8900-8999` with automatic conflict detection. |
+| **Environment Safety** | **Host execution / Chaos ports**: Runs arbitrary commands on host, selects conflicting ports, risks system stability. | **Docker-First & Isolated Ports**: Sandbox execution, flexible port configuration via ENV with automatic conflict detection. |
 | **Task Atomicity** | **Large Blast Radius**: AI attempts to modify 10+ files at once. Difficult to debug, review, or rollback when errors occur. | **15-Minute Rule**: Atomic tasks restricted to $\le 15$ mins and $\le 3$ files. Automated static checks and tests before git commit. |
 | **UI/UX Aesthetics** | **Template Slop**: Generates basic, uninspiring layouts using standard browser fonts, generic colors, and placeholders. | **Premium Design System**: Enforces Bento grids, wide editorial typography, curated HSL color schemes, and micro-interactions. |
 | **Git & Versioning** | **Messy/No Commits**: AI does not commit, or commits large blocks of unrelated changes with poor descriptions. | **Atomic Auto-Commits**: Automatic commits using Conventional Commits guidelines immediately after each task is completed. |
@@ -368,7 +368,7 @@ bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 # 2. Constitution — declares the current stack
 /01-speckit.constitution
-# → "Next.js 15, Prisma 6, PostgreSQL, Docker-first, Port 8900-8999"
+# → "Next.js 15, Prisma 6, PostgreSQL, Docker-first, Port configuration via ENV"
 
 # 3. Migrate — AI reads and analyzes existing code
 /util-speckit.migrate

@@ -13,7 +13,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 ## 📋 Protocol
 1. Collected from developers:
    - Tech stack (frameworks, DB, language)
-   - Docker ports (trong range 8900-8999)
+   - Docker ports (cấu hình qua biến môi trường)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
 2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
