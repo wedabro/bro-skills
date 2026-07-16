@@ -145,6 +145,7 @@ def _ask_project_type(lang="en"):
         "game": ("Phát triển Game (Game Dev)", "Game (Unity, Unreal, Godot, Phaser) — Game loop, ECS, netcode"),
         "simple_script": ("Script đơn giản / Tự động hóa", "Script Python/Bash/JS nhỏ — Không Docker, không Next.js"),
         "custom_infra": ("Hạ tầng tùy chỉnh (Custom)", "Dự án có hạ tầng riêng — Không bắt buộc chuẩn Docker 89XX"),
+        "wordpress": ("Website WordPress (Theme/Plugin)", "Phát triển Theme & Plugin WordPress — PHP, Gutenberg blocks, Interactivity API"),
     }
     
     for key, info in PROJECT_TYPES.items():
@@ -370,7 +371,8 @@ def cmd_init(args):
                             "fullstack": "Full-stack (Web + API)",
                             "game": "Phát triển Game",
                             "simple_script": "Kịch bản đơn giản / Tự động hóa",
-                            "custom_infra": "Hạ tầng tùy chỉnh"
+                            "custom_infra": "Hạ tầng tùy chỉnh",
+                            "wordpress": "Website WordPress (Theme/Plugin)"
                         }
                         lbl = vi_labels.get(project_type, type_info['label'])
                         print(f"  🏗️ Loại dự án: {lbl}")
@@ -403,7 +405,8 @@ def cmd_init(args):
                                 "fullstack": "Full-stack (Web + API)",
                                 "game": "Phát triển Game",
                                 "simple_script": "Kịch bản đơn giản / Tự động hóa",
-                                "custom_infra": "Hạ tầng tùy chỉnh"
+                                "custom_infra": "Hạ tầng tùy chỉnh",
+                                "wordpress": "Website WordPress (Theme/Plugin)"
                             }
                             lbl = vi_labels.get(project_type, type_info['label'])
                             print(f"\n✅ Đã chọn loại dự án: {lbl}")
@@ -875,6 +878,7 @@ Project type:
   game — Game Dev (Unity/Unreal/Godot/Phaser) — gamedev + uiux
   simple_script — Small script/automation (soft rules, not forcing Docker)
   custom_infra — Private infrastructure (soft rules, no standard port enforcement)
+  wordpress — WordPress Theme & Plugin Development (PHP, Gutenberg blocks, Interactivity API)
 
 NEW project process:
     bro-skills init → /01-speckit.constitution → /02-speckit.specify → /04-speckit.plan → /07-speckit.implement
@@ -898,7 +902,7 @@ AVAILABLE project process:
     init_parser.add_argument(
         "--type",
         choices=PROJECT_TYPES.keys(),
-        help="Project type: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra",
+        help="Project type: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra, wordpress",
     )
     init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ and force interactive setup prompts from scratch")
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")

@@ -54,6 +54,11 @@ PROJECT_TYPES = {
         "use_docker": False,
         "is_soft_rules": True,
     },
+    "wordpress": {
+        "label": "WordPress Site / Theme / Plugin",
+        "description": "WordPress Theme & Plugin Development — PHP, Gutenberg blocks, Interactivity API",
+        "includes_skills": ["all", "web", "wordpress"],
+    },
 }
 
 
@@ -313,7 +318,7 @@ SKILLS_REGISTRY = [
         "name": "speckit.wordpress",
         "description": "WordPress Theme Architect - Expert in developing themes, plugins and optimizing the WordPress ecosystem.",
         "role": "WordPress Expert",
-        "project_types": "web",
+        "project_types": "wordpress",
     },
     {
         "name": "speckit.3d",
@@ -590,7 +595,7 @@ WORKFLOWS_REGISTRY = [
         "command": "speckit.wordpress",
         "description": "WordPress Theme & Plugin Development Workflow",
         "skills": ["speckit.wordpress"],
-        "project_types": "web",
+        "project_types": "wordpress",
     },
     {
         "command": "speckit.orchestrate",
