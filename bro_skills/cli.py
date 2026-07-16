@@ -527,6 +527,7 @@ def cmd_init(args):
         ai_agent=ai_agent,
         selected_skills=selected_skills,
         vault_path=getattr(args, 'vault', None) or os.environ.get("ANTIGRAVITY_SKILLS_VAULT"),
+        force=force,
     )
     generator.generate()
 
@@ -629,6 +630,7 @@ def cmd_install(args):
         ai_agent=ai_agent,
         selected_skills=selected_skills,
         vault_path=getattr(args, 'vault', None) or os.environ.get("ANTIGRAVITY_SKILLS_VAULT"),
+        force=getattr(args, 'force', False),
     )
     generator.install_skills()
     print()
@@ -958,6 +960,7 @@ AVAILABLE project process:
     install_parser.add_argument("skills", help="Comma-separated list of skills to install (e.g. 3d,wordpress)")
     install_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
     install_parser.add_argument("--vault", help="Path to external skill vault directory (e.g. F:\\code\\github\\antigravity-skills)")
+    install_parser.add_argument("--force", "-f", action="store_true", help="Force install and overwrite existing skills")
 
     # list-skills
     subparsers.add_parser("list-skills", help="List all skills")

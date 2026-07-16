@@ -73,3 +73,5 @@ docker compose ps --format json 2>$null
 - DO NOT run `docker compose down -v` on production.
 - DO NOT hard-code credentials into the Dockerfile.
 - DO NOT scan ports when Docker local is already running (with containers).
+
+<!-- LESSON_LEARNED: Đã từng bị đơ khi gọi msvcrt.getch trên Git Bash và đã sửa fallback nhập số -->

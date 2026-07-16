@@ -40,7 +40,7 @@ from .scanner import ProjectScanner
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
-    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None, vault_path: str = None):
+    def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None, vault_path: str = None, force: bool = False):
         self.target_dir = target_dir
         self.project_name = project_name
         self.project_type = project_type
@@ -51,6 +51,7 @@ class ProjectGenerator:
         self.ai_agent = ai_agent or "all"
         self.selected_skills = selected_skills
         self.vault_path = vault_path
+        self.force = force
 
         # Filter skills/workflows by project type + attributes (multi-agent v2)
         if selected_skills:
@@ -539,6 +540,11 @@ class ProjectGenerator:
         for skill in self.filtered_skills:
             skill_name = skill["name"]
             skill_dir = os.path.join(self.agent_dir, "skills", skill_name)
+            skill_file = os.path.join(skill_dir, "SKILL.md")
+
+            if os.path.exists(skill_file) and not self.force:
+                self.stats["skills"] += 1
+                continue
 
             copied_from_vault = False
             if self.vault_path:
@@ -594,6 +600,10 @@ You are **{skill['role']}**.
         for wf in self.filtered_workflows:
             cmd = wf["command"]
             filepath = os.path.join(self.agent_dir, "workflows", f"{cmd}.md")
+
+            if os.path.exists(filepath) and not self.force:
+                self.stats["workflows"] += 1
+                continue
 
             # Prioritize detailed templates from WORKFLOW_TEMPLATE_MAP
             template_fn = WORKFLOW_TEMPLATE_MAP.get(cmd)
