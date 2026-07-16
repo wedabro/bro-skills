@@ -24,6 +24,19 @@ from bro_skills.registry import (
 )
 
 
+def _is_real_windows_console():
+    if not sys.platform.startswith('win'):
+        return True
+    try:
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        h = kernel32.GetStdHandle(-10) # STD_INPUT_HANDLE
+        mode = ctypes.c_uint32()
+        return kernel32.GetConsoleMode(h, ctypes.byref(mode)) != 0
+    except Exception:
+        return True
+
+
 def select_menu(options, title="", lang="en"):
     """
     options: list of tuples (value, label_en, label_vi)
@@ -65,6 +78,36 @@ def select_menu(options, title="", lang="en"):
 
     if not sys.stdout.isatty():
         return options[0][0]
+
+    # Fallback to standard numeric input if stdin is not a real tty/console
+    # (e.g. running in Git Bash/mintty on Windows without winpty)
+    if not sys.stdin.isatty() or not _is_real_windows_console():
+        print(f"\n{title}")
+        for i, opt in enumerate(options):
+            label = opt[2] if lang == "vi" else opt[1]
+            print(f"  [{i + 1}] {label}")
+        
+        while True:
+            try:
+                if lang == "vi":
+                    prompt = f"Nhập lựa chọn của bạn (1-{len(options)}) hoặc 'q' để hủy: "
+                else:
+                    prompt = f"Enter your choice (1-{len(options)}) or 'q' to cancel: "
+                val = input(prompt).strip()
+                if val.lower() in ('q', 'cancel'):
+                    return "cancel"
+                idx = int(val) - 1
+                if 0 <= idx < len(options):
+                    return options[idx][0]
+            except (ValueError, IndexError):
+                pass
+            except (KeyboardInterrupt, EOFError):
+                return "cancel"
+            
+            if lang == "vi":
+                print("❌ Lựa chọn không hợp lệ, vui lòng chọn lại.")
+            else:
+                print("❌ Invalid choice, please try again.")
 
     cols = shutil.get_terminal_size().columns
     initial_visual_lines = 0
