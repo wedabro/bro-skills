@@ -10,6 +10,7 @@ Project: bro-skills
 
 ## 1. SUPREME ORDER
 - Strictly follow the `.agent/memory/constitution.md` file.
+- **UI/UX Absolute Priority**: All frontend design, styling, and page rendering MUST strictly follow the UI/UX standards in `.agent/knowledge_base/ui_ux_standards.md` as the absolute source of truth. UI/UX is the highest priority directive; functional code with poor design is considered a failure.
 - Docker-First: All coding and app running activities must take place in the container. DO NOT run node/python on the host.
 - Ports: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
