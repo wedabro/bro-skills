@@ -37,7 +37,7 @@ def _is_real_windows_console():
         return True
 
 
-def select_menu(options, title="", lang="en"):
+def select_menu(options, title="", lang="en", multi=False):
     """
     options: list of tuples (value, label_en, label_vi)
     title: Title of the menu
@@ -46,6 +46,7 @@ def select_menu(options, title="", lang="en"):
     import shutil
     
     selected_idx = 0
+    selected_indices = set()
     is_windows = sys.platform.startswith('win')
     
     # Track the last printed visual lines count to move cursor back down
@@ -58,7 +59,11 @@ def select_menu(options, title="", lang="en"):
         visual_lines = 0
         for i, opt in enumerate(options):
             label = opt[2] if lang == "vi" else opt[1]
-            text_len = len(label) + 4
+            if multi and opt[0] not in ("back", "cancel"):
+                prefix = "[✓] " if i in selected_indices else "[ ] "
+            else:
+                prefix = ""
+            text_len = len(prefix) + len(label) + 4
             visual_lines += max(1, (text_len + cols - 1) // cols)
             
         title_lines = max(1, (len(title) + cols - 1) // cols)
@@ -69,10 +74,16 @@ def select_menu(options, title="", lang="en"):
         sys.stdout.write(f"\r\033[K{title}\n")
         for i, opt in enumerate(options):
             label = opt[2] if lang == "vi" else opt[1]
-            if i == selected_idx:
-                sys.stdout.write(f"\033[K\033[96m  ➔ {label}\033[0m\n")
+            if multi and opt[0] not in ("back", "cancel"):
+                prefix = "[✓] " if i in selected_indices else "[ ] "
             else:
-                sys.stdout.write(f"\033[K    {label}\n")
+                prefix = ""
+            
+            display_text = f"{prefix}{label}"
+            if i == selected_idx:
+                sys.stdout.write(f"\033[K\033[96m  ➔ {display_text}\033[0m\n")
+            else:
+                sys.stdout.write(f"\033[K    {display_text}\n")
         sys.stdout.write(f"\033[{total_lines}A")
         sys.stdout.flush()
 
@@ -90,15 +101,35 @@ def select_menu(options, title="", lang="en"):
         while True:
             try:
                 if lang == "vi":
-                    prompt = f"Nhập lựa chọn của bạn (1-{len(options)}) hoặc 'q' để hủy: "
+                    prompt = f"Nhập lựa chọn (chọn nhiều cách nhau bởi dấu phẩy, vd: 1,2) hoặc 'q' để hủy: " if multi else f"Nhập lựa chọn của bạn (1-{len(options)}) hoặc 'q' để hủy: "
                 else:
-                    prompt = f"Enter your choice (1-{len(options)}) or 'q' to cancel: "
+                    prompt = f"Enter choice (multiple choices separated by comma, e.g. 1,2) or 'q' to cancel: " if multi else f"Enter your choice (1-{len(options)}) or 'q' to cancel: "
                 val = input(prompt).strip()
                 if val.lower() in ('q', 'cancel'):
                     return "cancel"
-                idx = int(val) - 1
-                if 0 <= idx < len(options):
-                    return options[idx][0]
+                
+                if multi:
+                    parts = [p.strip() for p in val.replace(" ", ",").split(",") if p.strip()]
+                    selected_vals = []
+                    is_back_or_cancel = False
+                    for part in parts:
+                        if part.lower() in ('q', 'cancel'):
+                            return "cancel"
+                        idx = int(part) - 1
+                        if 0 <= idx < len(options):
+                            opt_val = options[idx][0]
+                            if opt_val in ("back", "cancel"):
+                                is_back_or_cancel = opt_val
+                            else:
+                                selected_vals.append(opt_val)
+                    if is_back_or_cancel and not selected_vals:
+                        return is_back_or_cancel
+                    if selected_vals:
+                        return ",".join(selected_vals)
+                else:
+                    idx = int(val) - 1
+                    if 0 <= idx < len(options):
+                        return options[idx][0]
             except (ValueError, IndexError):
                 pass
             except (KeyboardInterrupt, EOFError):
@@ -111,9 +142,13 @@ def select_menu(options, title="", lang="en"):
 
     cols = shutil.get_terminal_size().columns
     initial_visual_lines = 0
-    for opt in options:
+    for i, opt in enumerate(options):
         label = opt[2] if lang == "vi" else opt[1]
-        text_len = len(label) + 4
+        if multi and opt[0] not in ("back", "cancel"):
+            prefix = "[✓] " if i in selected_indices else "[ ] "
+        else:
+            prefix = ""
+        text_len = len(prefix) + len(label) + 4
         initial_visual_lines += max(1, (text_len + cols - 1) // cols)
     initial_title_lines = max(1, (len(title) + cols - 1) // cols)
     initial_total_lines = initial_visual_lines + initial_title_lines
@@ -131,6 +166,12 @@ def select_menu(options, title="", lang="en"):
                 ch = msvcrt.getch()
                 if ch == b'\r':
                     break
+                elif ch == b' ':
+                    if multi and options[selected_idx][0] not in ("back", "cancel"):
+                        if selected_idx in selected_indices:
+                            selected_indices.remove(selected_idx)
+                        else:
+                            selected_indices.add(selected_idx)
                 elif ch == b'\x1b' or ch in (b'q', b'Q'):
                     return "cancel"
                 elif ch in (b'\xe0', b'\x00'):
@@ -152,6 +193,12 @@ def select_menu(options, title="", lang="en"):
                     char1 = sys.stdin.read(1)
                     if char1 == '\r' or char1 == '\n':
                         break
+                    elif char1 == ' ':
+                        if multi and options[selected_idx][0] not in ("back", "cancel"):
+                            if selected_idx in selected_indices:
+                                selected_indices.remove(selected_idx)
+                            else:
+                                selected_indices.add(selected_idx)
                     elif char1 in ('q', 'Q'):
                         return "cancel"
                     elif char1 == '\x1b':
@@ -173,6 +220,14 @@ def select_menu(options, title="", lang="en"):
         sys.stdout.write(f"\033[{last_total_lines[0]}B\033[?25h\n")
         sys.stdout.flush()
         
+    if multi:
+        if options[selected_idx][0] in ("back", "cancel"):
+            return options[selected_idx][0]
+        if not selected_indices:
+            curr_val = options[selected_idx][0]
+            return curr_val
+        selected_vals = [options[idx][0] for idx in sorted(selected_indices)]
+        return ",".join(selected_vals)
     return options[selected_idx][0]
 
 
@@ -240,8 +295,8 @@ def _ask_agent_selection(lang="en"):
         ("back", "⬅️ Back to Language Selection", "⬅️ Quay lại chọn Ngôn ngữ"),
         ("cancel", "❌ Cancel & Exit", "❌ Hủy & Thoát"),
     ]
-    title = "🤖 Chọn cấu hình trợ lý AI (Target AI Agent):" if lang == "vi" else "🤖 Select target AI agent configuration:"
-    return select_menu(agents, title, lang)
+    title = "🤖 Chọn cấu hình trợ lý AI (Space để tích/bỏ tích, Enter để xác nhận):" if lang == "vi" else "🤖 Select target AI agents (Space to select/deselect, Enter to confirm):"
+    return select_menu(agents, title, lang, multi=True)
 
 
 def cmd_init(args):

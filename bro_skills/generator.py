@@ -37,6 +37,34 @@ from .templates import (
 from .scanner import ProjectScanner
 
 
+class AgentMatcher:
+    def __init__(self, ai_agent_str):
+        if not ai_agent_str:
+            self.agents = {"all"}
+        elif isinstance(ai_agent_str, list):
+            self.agents = {a.strip().lower() for a in ai_agent_str if a.strip()}
+        else:
+            self.agents = {a.strip().lower() for a in str(ai_agent_str).split(",") if a.strip()}
+            
+    def __eq__(self, other):
+        if isinstance(other, str):
+            other_clean = other.lower().strip()
+            return other_clean in self.agents or "all" in self.agents
+        return False
+
+    def __contains__(self, item):
+        if isinstance(item, str):
+            other_clean = item.lower().strip()
+            return other_clean in self.agents or "all" in self.agents
+        return False
+
+    def __str__(self):
+        return ",".join(self.agents)
+
+    def __repr__(self):
+        return f"AgentMatcher({repr(self.agents)})"
+
+
 class ProjectGenerator:
     """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
 
@@ -160,7 +188,7 @@ class ProjectGenerator:
     def _create_ide_rules(self):
         """Create rule files selectively for chosen IDE/Agent or all of them."""
         name = self.project_name
-        agent = self.ai_agent.lower().strip()
+        agent = AgentMatcher(self.ai_agent)
 
         # ─── 1. Antigravity (Google) ────────────────────────
         if agent in ("antigravity", "all"):
@@ -909,7 +937,7 @@ No tag -> inferred from keyword + project_type.
         self._create_agents()
         
         # 4. Bridge if needed
-        agent = self.ai_agent.lower().strip()
+        agent = AgentMatcher(self.ai_agent)
         if agent in ("codex", "all"):
             self._create_codex_skills_bridge()
         if agent in ("kiro", "all"):
