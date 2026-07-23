@@ -41,9 +41,24 @@ Sự khác biệt vượt trội giữa việc sử dụng bộ cấu hình AI A
 
 ---
 
-## 📦 Cài đặt / Chạy CLI (Mọi hệ điều hành)
+### Cách 1: Cài đặt 1 dòng lệnh bằng `curl` / `irm` (Khuyên dùng - Windows & Linux & macOS)
 
-### Cách 1: Chạy bằng `npx` (không cần cài đặt toàn cục)
+#### Trên Linux / macOS / WSL / Git Bash:
+```bash
+curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | bash
+```
+
+#### Trên Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 | iex
+```
+
+Hoặc dùng `curl.exe` trên Windows (PowerShell / CMD):
+```powershell
+curl.exe -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+### Cách 2: Chạy bằng `npx` (không cần cài đặt toàn cục)
 
 ```bash
 # Chạy trực tiếp từ GitHub qua npm/npx

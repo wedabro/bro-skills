@@ -43,7 +43,24 @@ Using an AI Agent configuration kit (`bro-skills`) vs. coding with raw/unconstra
 
 ## 📦 Install/run CLI (Any OS)
 
-### Method 1: Run with `npx` (do not install globally)
+### Method 1: 1-Line Quick Install via `curl` / `irm` (Recommended - Windows, Linux, macOS)
+
+#### Linux / macOS / WSL / Git Bash:
+```bash
+curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | bash
+```
+
+#### Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 | iex
+```
+
+Or using `curl.exe` on Windows (PowerShell / CMD):
+```powershell
+curl.exe -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+### Method 2: Run with `npx` (do not install globally)
 
 ```bash
 # Run directly from GitHub via npm/npx
