@@ -86,7 +86,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Kiểm tra
 bro-skills version
-# → bro-skills v1.4.9
+# → bro-skills v1.5.9
 ```
 
 ### Cách 3: `pipx install` (Cô lập - Không ảnh hưởng đến Python hệ thống)
