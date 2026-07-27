@@ -80,7 +80,7 @@ Lưu ý:
 - Wrapper npm chỉ gọi ngược lại Python CLI gốc, không cài đặt thêm dependency npm riêng biệt.
 - Nếu muốn chỉ định cố định Python executable, thiết lập biến môi trường `PYTHON=/path/to/python`.
 
-### Cách 2: `pip install` từ GitHub (Khuyên dùng cho sử dụng lâu dài)
+### Cách 3: `pip install` từ GitHub (Khuyên dùng cho sử dụng lâu dài)
 
 ```bash
 # Windows / Linux / macOS — Cài đặt toàn cục, lệnh `bro-skills` có thể sử dụng ở mọi nơi
@@ -91,7 +91,7 @@ bro-skills version
 # → bro-skills v1.6.0
 ```
 
-### Cách 3: `pipx install` (Cô lập - Không ảnh hưởng đến Python hệ thống)
+### Cách 4: `pipx install` (Cô lập - Không ảnh hưởng đến Python hệ thống)
 
 ```bash
 # Cài đặt pipx nếu bạn chưa có
@@ -105,7 +105,7 @@ pipx install git+https://github.com/wedabro/bro-skills.git
 bro-skills version
 ```
 
-### Cách 4: Clone + Cài đặt (Dành cho phát triển)
+### Cách 5: Clone + Cài đặt (Dành cho phát triển)
 
 ```bash
 git clone https://github.com/wedabro/bro-skills.git
@@ -118,7 +118,7 @@ pip install -e .
 python ssd.py init
 ```
 
-### Cách 5: Chạy trực tiếp (Không cài đặt)
+### Cách 6: Chạy trực tiếp (Không cài đặt)
 
 ```bash
 # Clone và chạy trực tiếp

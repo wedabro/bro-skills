@@ -82,7 +82,7 @@ Note:
 - Wrapper npm only calls back to the original Python CLI, does not install a separate npm dependency.
 - If you want to make Python executable permanent, set ENV `PYTHON=/path/to/python` .
 
-### Method 2: `pip install` from GitHub (Recommended for long-term use)
+### Method 3: `pip install` from GitHub (Recommended for long-term use)
 
 ```bash
 # Windows / Linux / macOS — Install globally, `bro-skills` command can be used everywhere
@@ -93,7 +93,7 @@ bro-skills version
 # → bro-skills v1.6.0
 ```
 
-### Method 3: `pipx install` (Isolated - Does not affect system Python)
+### Method 4: `pipx install` (Isolated - Does not affect system Python)
 
 ```bash
 # Install pipx if you don't have it yet
@@ -107,7 +107,7 @@ pipx install git+https://github.com/wedabro/bro-skills.git
 bro-skills version
 ```
 
-### Method 4: Clone + Install (Development)
+### Method 5: Clone + Install (Development)
 
 ```bash
 git clone https://github.com/wedabro/bro-skills.git
@@ -120,7 +120,7 @@ pip install -e .
 python ssd.py init
 ```
 
-### Method 5: Run directly (No installation)
+### Method 6: Run directly (No installation)
 
 ```bash
 # Clone and run directly
