@@ -18,7 +18,8 @@ Scan spec.md → detect ambiguity → ask developer up to 3 questions → update
 2. Categorize each issue:
    - 🔴 **CRITICAL**: Architectural influence, MUST ask developer
    - 🟡 **IMPORTANT**: Should ask but can suggest default
-   - 🟢 **MINOR**: Can be fixed by yourself (eg: add "maximum 50 items" if missing)
+   - 🟢 **MINOR**: Editorial correction that cannot change behavior, such as a
+     typo, broken reference, or inconsistent requirement ID.
 3. Ask the developer MAXIMUM 3 CRITICAL questions, each question has an options table:
    ```
 | Option | Describe | Impact |
@@ -27,7 +28,9 @@ Scan spec.md → detect ambiguity → ask developer up to 3 questions → update
    | B      | ...   | ...    |
    | C      | ...   | ...    |
    ```
-4. Auto-fix items 🟢 MINOR.
+4. Auto-fix only behavior-neutral 🟢 MINOR items. Present missing limits,
+   permissions, defaults, and error behavior as assumptions or questions; do
+   not write them into the spec without approval.
 5. Update spec.md with clarifications → mark `[CLARIFIED]` .
 
 ## 📤 Output
@@ -36,3 +39,4 @@ Scan spec.md → detect ambiguity → ask developer up to 3 questions → update
 ## 🚫 Guard Rails
 - MAXIMUM 3 questions — don't ask too many.
 - DO NOT change the original intent of the spec.
+- DO NOT invent product limits, permissions, defaults, or acceptance criteria.

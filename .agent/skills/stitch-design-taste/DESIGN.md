@@ -74,7 +74,8 @@ The Hero is the first impression — it must be striking, creative, and never ge
 - **Feature Sections:** The "3 equal cards in a row" pattern is BANNED. Use 2-column Zig-Zag, asymmetric Bento grids (2fr 1fr 1fr), or horizontal scroll galleries
 - **Containment:** All content within `max-width: 1400px`, centered. Generous horizontal padding (`1rem` mobile, `2rem` tablet, `4rem` desktop)
 - **Full-Height:** Use `min-height: 100dvh` — never `height: 100vh` (iOS Safari address bar jump)
-- **Bento Architecture:** For feature grids, use Row 1: 3 columns | Row 2: 2 columns (70/30 split). Each tile contains a perpetual micro-animation
+- **Bento Architecture:** For feature grids, vary cell proportions according to
+  content. Use motion only in tiles where it communicates state or behavior.
 
 ## 7. Responsive Rules
 Every screen must work flawlessly across all viewports. **Responsive is not optional — it is a hard requirement. Every single element must be tested at 375px, 768px, and 1440px.**
@@ -96,7 +97,9 @@ Every screen must work flawlessly across all viewports. **Responsive is not opti
 - **Staggered Orchestration:** Lists and grids mount with cascaded delays (`animation-delay: calc(var(--index) * 100ms)`). Waterfall reveals, never instant mount
 - **Layout Transitions:** Smooth re-ordering via shared element IDs. Items swap positions with physics, simulating real-time intelligence
 - **Hardware Rules:** Animate ONLY `transform` and `opacity`. Never `top`, `left`, `width`, `height`. Grain/noise filters on fixed, pointer-events-none pseudo-elements only
-- **Performance:** CPU-heavy perpetual animations isolated in microscopic leaf components. Never trigger parent re-renders. Target 60fps minimum
+- **Performance:** Isolate CPU-heavy animation in small leaf components. Never
+  trigger parent re-renders. Target smooth rendering and disable automatic,
+  looping, and scroll-linked motion under `prefers-reduced-motion: reduce`.
 
 ## 9. Anti-Patterns (Banned)
 - No emojis — anywhere in UI, code, or alt text

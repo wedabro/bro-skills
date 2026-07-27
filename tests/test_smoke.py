@@ -7,9 +7,30 @@ from pathlib import Path
 import bro_skills
 from bro_skills.scanner import ProjectScanner
 from bro_skills.validators import validate_agent_structure
+from bro_skills.registry import (
+    REPOSITORY_EXTENSION_SKILLS,
+    SKILLS_REGISTRY,
+    WORKFLOWS_REGISTRY,
+    get_skills_for_project_type,
+    resolve_builder_skills,
+)
+from bro_skills.skill_templates import SKILL_TEMPLATE_MAP
+from bro_skills.workflow_templates import WORKFLOW_TEMPLATE_MAP
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _normalized_portable_skill(content):
+    content = content.lstrip("\ufeff\r\n").replace("\r\n", "\n")
+    before, header, body = content.split("---", 2)
+    assert not before
+    portable_header = "\n".join(
+        line
+        for line in header.splitlines()
+        if not re.match(r"^(role|argument-hint):", line)
+    )
+    return re.sub(r"\s+", " ", f"{portable_header}\n{body}").strip()
 
 
 def test_package_version_matches_metadata():
@@ -150,3 +171,71 @@ def test_checked_in_skills_have_lean_valid_entrypoints():
 
         for target in re.findall(r"\[[^]]+\]\(([^)]+\.md)\)", content):
             assert (skill_dir / target).is_file(), f"Broken reference in {skill_file}: {target}"
+
+
+def test_skill_registry_matches_embedded_templates_and_documented_extensions():
+    registered = {skill["name"] for skill in SKILLS_REGISTRY}
+    checked_in = {
+        path.name
+        for path in (REPO_ROOT / ".agent" / "skills").iterdir()
+        if path.is_dir()
+    }
+
+    assert registered == set(SKILL_TEMPLATE_MAP)
+    assert not checked_in - registered - set(REPOSITORY_EXTENSION_SKILLS)
+    assert set(REPOSITORY_EXTENSION_SKILLS) <= checked_in
+
+
+def test_checked_in_core_skills_match_embedded_templates_semantically():
+    checked_in_root = REPO_ROOT / ".agent" / "skills"
+    for name, template in SKILL_TEMPLATE_MAP.items():
+        checked_in = checked_in_root / name / "SKILL.md"
+        if not checked_in.exists():
+            continue
+
+        assert _normalized_portable_skill(
+            checked_in.read_text(encoding="utf-8")
+        ) == _normalized_portable_skill(template()), name
+
+
+def test_workflow_registry_matches_templates_and_checked_in_files():
+    registered = {workflow["command"] for workflow in WORKFLOWS_REGISTRY}
+    checked_in = {
+        path.stem for path in (REPO_ROOT / ".agent" / "workflows").glob("*.md")
+    }
+
+    assert registered == set(WORKFLOW_TEMPLATE_MAP)
+    assert registered == checked_in
+
+
+def test_checked_in_workflows_match_embedded_templates_semantically():
+    checked_in_root = REPO_ROOT / ".agent" / "workflows"
+    for name, template in WORKFLOW_TEMPLATE_MAP.items():
+        checked_in = checked_in_root / f"{name}.md"
+        assert re.sub(
+            r"\s+", " ", checked_in.read_text(encoding="utf-8")
+        ).strip() == re.sub(r"\s+", " ", template()).strip(), name
+
+
+def test_workflow_skill_references_are_registered():
+    skill_names = {skill["name"] for skill in SKILLS_REGISTRY}
+    for workflow in WORKFLOWS_REGISTRY:
+        unknown = set(workflow["skills"]) - skill_names
+        assert not unknown, f"{workflow['command']} references unknown skills: {unknown}"
+
+
+def test_documented_microservices_architecture_resolves_builders():
+    resolved = resolve_builder_skills(
+        "fullstack",
+        {"architecture": "microservices"},
+    )
+
+    assert {"speckit.backend", "speckit.database", "speckit.devops"} <= set(resolved)
+
+
+def test_non_docker_project_does_not_install_devops_skill():
+    selected = {
+        skill["name"] for skill in get_skills_for_project_type("simple_script")
+    }
+
+    assert "speckit.devops" not in selected

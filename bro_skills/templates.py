@@ -267,7 +267,9 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 - **Runtime**: Production containers MUST NOT run as root.
 
 ## §3 Code Standards & ENV
-- **{forbidden_label} hardcoding**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
+- **{forbidden_label} hardcoding**: Secrets, tokens, credentials,
+  environment-specific URLs, and environment-specific endpoints. Product copy
+  belongs in source or i18n resources; runtime configuration belongs in ENV.
 - **Sensitive variables**: {shall_label} use ENV (`.env` local, server ENV prod).
   - Prefix: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
 - **Validate**: 
@@ -278,7 +280,9 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 ## §4 Workflow & Scripting
 - **Automation**: Create scripts when encountering errors or repetitive tasks.
 - **Git**: Save scripts in `.agent/scripts` and commit them to version control.
-- **Git Auto-Commit**: {shall_label} perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Verified Commits**: {shall_label} commit completed, verified atomic tasks
+  using Conventional Commits. Push only when the user explicitly requests
+  publishing or the active workflow includes an approved remote-publish boundary.
 - **Update**: Update corresponding workflows after creating new scripts.
 
 ## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)
@@ -603,7 +607,9 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 - {forbidden_label} run `docker compose down -v` on Production.
 - Generate automatic scripts (`.agent/scripts/`) for recurring errors.
 - Check logs immediately on error: `docker compose logs -f <service>`.
-- **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Verified Commits**: Commit completed, verified atomic tasks using
+  Conventional Commits. Push only when the user explicitly requests publishing
+  or the active workflow includes an approved remote-publish boundary.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
 - **Task Tracking**: Use `task_boundary` to synchronize status with `@speckit.tasks` (tasks.md).

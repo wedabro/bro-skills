@@ -76,7 +76,7 @@ SKILLS_REGISTRY = [
     {
         "name": "speckit.devops",
         "role": "DevOps Architect",
-        "description": "Docker Infrastructure & Security Hardening Specialist — Port ENV-first, range 8900-8999.",
+        "description": "Docker Infrastructure & Security Hardening Specialist — environment-driven ports.",
         "project_types": "all",
     },
     {
@@ -336,7 +336,7 @@ SKILLS_REGISTRY = [
     # ========================================================================
     {
         "name": "speckit.security",
-        "description": "Security Auditor - Audit AppSec theo OWASP, secret scanning, dependency/vuln, threat modeling.",
+        "description": "Security Auditor - Audit application security using OWASP guidance, secret scanning, dependency analysis, and threat modeling.",
         "role": "Security Auditor",
         "project_types": "all",
     },
@@ -431,6 +431,25 @@ SKILLS_REGISTRY = [
         "project_types": "all",
     },
 ]
+
+# Skills checked into this repository for agent hosts that can load local
+# extension packs directly. They are intentionally not installed by the core
+# CLI until they have embedded templates and project-type selection metadata.
+REPOSITORY_EXTENSION_SKILLS = (
+    "brandkit",
+    "design-taste-frontend",
+    "design-taste-frontend-v1",
+    "full-output-enforcement",
+    "gpt-taste",
+    "high-end-visual-design",
+    "imagegen-frontend-mobile",
+    "imagegen-frontend-web",
+    "image-to-code",
+    "industrial-brutalist-ui",
+    "minimalist-ui",
+    "redesign-existing-projects",
+    "stitch-design-taste",
+)
 
 
 # ============================================================================
@@ -567,6 +586,11 @@ WORKFLOWS_REGISTRY = [
         "skills": ["speckit.taskstoissues"],
     },
     {
+        "command": "util-speckit.bumpversion",
+        "description": "Update project versions and prepare an explicitly approved release",
+        "skills": [],
+    },
+    {
         "command": "speckit.debug",
         "description": "Systematic Debugging",
         "skills": ["speckit.debug"],
@@ -651,7 +675,7 @@ BASE_BUILDERS_BY_TYPE = {
 MODIFIERS = {
     "architecture": {
         "monolith": [],
-        "microservice": ["speckit.devops", "speckit.database", "speckit.backend"],
+        "microservices": ["speckit.devops", "speckit.database", "speckit.backend"],
         "serverless": ["speckit.devops", "speckit.backend"],
     },
     "platforms": {
@@ -673,11 +697,10 @@ MODIFIERS = {
     },
 }
 
-# Only resolve builder skills that actually exist in the registry
-_BUILDER_SKILL_NAMES = {
-    s["name"] for s in SKILLS_REGISTRY
-    if s.get("project_types") == "builder"
-}
+# Attribute modifiers may intentionally activate a core or web skill (for
+# example DevOps for microservices or UI/UX for web). Keep only names that
+# actually exist in the registry without discarding those valid references.
+_RESOLVABLE_SKILL_NAMES = {s["name"] for s in SKILLS_REGISTRY}
 
 
 def resolve_builder_skills(project_type, attributes=None):
@@ -695,6 +718,8 @@ def resolve_builder_skills(project_type, attributes=None):
     attrs = attributes or {}
 
     arch = attrs.get("architecture")
+    if arch == "microservice":
+        arch = "microservices"
     if arch:
         selected.extend(MODIFIERS["architecture"].get(arch, []))
 
@@ -708,7 +733,7 @@ def resolve_builder_skills(project_type, attributes=None):
     seen = set()
     result = []
     for name in selected:
-        if name in _BUILDER_SKILL_NAMES and name not in seen:
+        if name in _RESOLVABLE_SKILL_NAMES and name not in seen:
             seen.add(name)
             result.append(name)
     return result
@@ -732,6 +757,7 @@ def get_skills_for_project_type(project_type, attributes=None):
         s for s in SKILLS_REGISTRY
         if s.get("project_types", "all") in allowed
         and s.get("project_types") != "builder"
+        and (type_info.get("use_docker", True) or s["name"] != "speckit.devops")
     ]
 
     # 2. Attribute-based builder skills

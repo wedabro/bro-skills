@@ -7,7 +7,10 @@ description: Overrides default LLM truncation behavior. Enforces complete code g
 
 ## Baseline
 
-Treat every task as production-critical. A partial output is a broken output. Do not optimize for brevity — optimize for completeness. If the user asks for a full file, deliver the full file. If the user asks for 5 components, deliver 5 components. No exceptions.
+When the user explicitly requests exhaustive output, optimize for completeness
+within higher-priority instructions and the available execution environment. If
+the user asks for a full file, deliver the full file. If the user asks for five
+components, deliver five components.
 
 ## Banned Output Patterns
 
@@ -27,7 +30,8 @@ The following patterns are hard failures. Never produce them:
 
 ## Handling Long Outputs
 
-When a response approaches the token limit:
+When a direct textual response approaches the token limit and the environment
+cannot continue the work automatically:
 
 - Do not compress remaining sections to squeeze them in.
 - Do not skip ahead to a conclusion.
@@ -38,7 +42,9 @@ When a response approaches the token limit:
 [PAUSED — X of Y complete. Send "continue" to resume from: next section name]
 ```
 
-On "continue", pick up exactly where you stopped. No recap, no repetition.
+In agentic environments, continue through the available work mechanism instead
+of asking the user to resume. If a textual continuation is genuinely required,
+pick up exactly where the previous output stopped.
 
 ## Quick Check
 

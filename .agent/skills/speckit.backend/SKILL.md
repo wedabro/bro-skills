@@ -1,6 +1,6 @@
 ---
 name: speckit.backend
-description: Backend/API Developer - Xay dung API service, business logic, auth, integration theo API standards.
+description: Backend/API Developer - Build API services, business logic, authentication, authorization, and standards-based integrations.
 ---
 
 ## 🎯 Mission
@@ -9,7 +9,7 @@ Build backend/API production: standard REST/GraphQL endpoint, layered business l
 ## 📥 Input
 - `.agent/specs/[feature]/spec.md` + `plan.md` (data model, API contracts)
 - `.agent/knowledge_base/api_standards.md`, `data_schema.md`
-- `.agent/memory/constitution.md` (Docker-First, ENV, Port 8900-8999)
+- `.agent/memory/constitution.md` (runtime, ENV, and port policy)
 
 ## 📋 Protocol
 
@@ -45,4 +45,4 @@ Build backend/API production: standard REST/GraphQL endpoint, layered business l
 - DO NOT return raw error/stacktrace to the client.
 - DO NOT bypass authz check on sensitive endpoints.
 - DO NOT let public endpoints fail to authenticate without warning.
-- Feedback in Vietnamese.
+- Use the language configured by the project or requested by the user.

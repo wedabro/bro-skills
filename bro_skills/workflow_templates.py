@@ -104,7 +104,8 @@ description: Resolve ambiguity in Specification
 
 1. **@speckit.clarify** — Scan spec.md for ambiguity
 2. Ask the developer up to 3 CRITICAL questions (table A/B/C options)
-3. Auto-fix MINOR issues
+3. Auto-fix only behavior-neutral MINOR issues such as typos or inconsistent
+   requirement IDs. Present missing limits/defaults as assumptions or questions.
 4. Update spec.md with `[CLARIFIED]` markers
 
 ## Success Criteria
@@ -203,9 +204,10 @@ For EACH task `- [ ]` in tasks.md:
    - P2: Strategy Selection.
    - P3: TDD (Repro fail first).
    - P4: Context Anchoring.
-   - P5: Build Gate (tsc/build).
+   - P5: Applicable targeted verification, followed by the configured phase
+     build/test gate.
    - P6: **Deviation Rules** (Auto-fix bugs/missing).
-2. Mark `- [X]` when task pass **AND build gate pass**.
+2. Mark `- [X]` when the task and its applicable targeted checks pass.
 3. **Auto-Map**: When ALL tasks are completed, automatically run **@speckit.map** to update the architecture document.
 """
 
@@ -223,49 +225,18 @@ description: Run Static Analysis
 
 ## Steps
 
-// turbo-all
-
-1. **TypeScript Compile Check** (CRITICAL):
-   ```bash
-   docker compose build 2>&1 | grep -iE "error|fail|TS[0-9]"
-   ```
-   Or:
-   ```bash
-   docker compose exec topdeli-web npx tsc --noEmit
-   docker compose exec topdeli-admin npx tsc --noEmit
-   docker compose exec topdeli-api npx tsc --noEmit
-   ```
-
-2. **Dockerfile Integrity** — Check COPY paths:
-   - Verify any COPY directories exist (especially `public/` )
-   - Verify CMD entrypoint matches build output structure
-   - Verify does NOT have volume mount `.:/app` in production/beta compose
-
-3. **ENV Compliance** — Scan hard-coded values:
-   ```bash
-   grep -rn "http://localhost\|http://127.0.0.1" apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules"
-   grep -rn '|| "' apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules"
-   ```
-
-4. **Build-time Safety** — Verify SSG pages:
-   ```bash
-   grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
-   ```
-   Each result MUST be in a try-catch block.
-
-5. **Monorepo Type Contract** — @speckit.checker:
-   - Cross-reference shared type exports vs component usage
-   - Verify shared package exports match actual file structure
-
-6. **Security Scan**:
-   - Find `eval()` , `dangerouslySetInnerHTML` , exposed secrets
-   - Docker compliance: ports configured in environment variables
-
-7. **Output Report** → `.agent/memory/checker-report.md`
+1. **@speckit.checker** discovers the project language, package manager,
+   configured scripts, containerization, services, and framework.
+2. Build an applicability table for compile/type, lint, container,
+   configuration/security, and stack-specific integrity checks.
+3. Run every applicable repository-defined command in the runtime required by
+   the constitution. Mark unavailable checks `N/A` with a reason.
+4. Report every finding with a specific file and line while redacting secrets.
+5. Write `.agent/memory/checker-report.md`.
 
 ## Success Criteria
-- ✅ TypeScript compile: 0 errors
-- ✅ Docker build: complete success
+- ✅ Every applicable compile/type/lint check passes
+- ✅ Container checks pass, or are explicitly `N/A` for a non-container project
 - ✅ 0 issues CRITICAL (🔴)
 - ✅ Report file existence
 - ❌ If there are any 🔴 CRITICAL → BLOCK deploy
@@ -327,60 +298,29 @@ description: Validate Implementation vs Spec
 # ✅ Final Validation
 
 ## Pre-conditions
+
 - All tasks completed, tests passed, review approved
 
 ## Steps
 
-// turbo-all
-
-1. **Tasks Completion Check**:
-   - Read `tasks.md` → every task must be `[X]`
-   - If there is `[ ]` or `[/]` → ❌ BLOCKED
-
-2. **TypeScript Build Gate** (CRITICAL):
-   ```bash
-   docker compose -f docker-compose.beta.yml build 2>&1 | tail -n 100
-   ```
-   If build fails → ❌ BLOCKED, list errors
-
-3. **Runtime Verification**:
-   ```bash
-   docker compose -f docker-compose.beta.yml up -d
-   sleep 15
-   docker compose -f docker-compose.beta.yml ps
-   ```
-   - All services must be `Up` (NOT `Restarting` )
-   - If `Restarting` → run `docker compose logs <service>` → ❌ BLOCKED
-
-4. **Health Check**:
-   ```bash
-   curl -s http://localhost:<web_port> | head -c 200  # Public Web
-   curl -s http://localhost:<admin_port> | head -c 200  # Admin Panel
-   curl -s http://localhost:<api_port>/health  # API
-   ```
-   All must return 200
-
-5. **Constitution Compliance**:
-   - Verify Monorepo Rules (type contracts)
-   - Verify Docker Rules (no volume shadowing in prod)
-   - Verify Build-time Safety (try-catch trong SSG)
-
-6. **Final Verdict**:
-   ```
-   🏁 VALIDATION REPORT
-   ═══════════════════════
-   Tasks:        N/N ✅
-   TS Build:     PASS ✅
-   Runtime:      PASS ✅ (all services Up)
-   Health:       PASS ✅ (all 200)
-   Constitution: PASS ✅
-   ───────────────────────
-   VERDICT: ✅ READY FOR DEPLOY
-   ```
+1. **@speckit.validate** checks task completion and maps success criteria to
+   concrete evidence.
+2. Discover the project stack, configured commands, containerization, runtime,
+   services, and health checks.
+3. Run every applicable build, type, lint, and test command in the runtime
+   required by the constitution.
+4. Start and inspect the runtime only when the project defines one. Read
+   service names, compose files, ports, and health endpoints from project
+   configuration rather than assuming a topology.
+5. Mark non-applicable checks `N/A` with a reason and block on any failed
+   applicable check.
+6. Verify constitutional compliance and write
+   `.agent/memory/validation-report.md`.
 
 ## Success Criteria
+
 - ✅ Verdict: READY FOR DEPLOY
-- ❌ If ANY step FAIL → BLOCKED (not deployed)
+- ❌ If any applicable step fails → BLOCKED (not deployed)
 """
 
 
@@ -525,13 +465,14 @@ Scan TCP bind availability on 127.0.0.1 for available ports.
 
 ### Step 3: Docker Compose (Local)
 - Create/update `docker-compose.yml` :
-  - Ports read from ENV: `"${PUBLIC_PORT:-8920}:3000"`
+  - Ports read from required ENV variables:
+    `"${PUBLIC_PORT}:${WEB_CONTAINER_PORT}"`
   - Volume mounts cho hot-reload
   - Named volumes cho `node_modules`
   - Health checks for each service
 
 ### Step 4: Docker Compose (Production/Staging/Beta)
-- Create/update `docker-compose.prod.yml` / `docker-compose.beta.yml` :
+- Create/update the project-configured production and staging Compose files:
   - Multi-stage builds (builder → runner)
   - `USER node` or `USER appuser` (DO NOT run as root)
   - Remove devDependencies in the final image
@@ -917,6 +858,54 @@ description: Game Development Pipeline - Engine setup, game loop, performance, a
 """
 
 
+def wf_3d():
+    return r"""---
+description: 3D Modeling, Web 3D & Game 3D Workflow
+---
+
+# Workflow: speckit.3d
+
+1. Run @speckit.3d
+"""
+
+
+def wf_full_stack_feature():
+    return r"""---
+description: Full-Stack Feature Orchestration Workflow
+---
+
+# Workflow: full-stack-orchestration-full-stack-feature
+
+1. Run @full-stack-orchestration-full-stack-feature
+"""
+
+
+def wf_conductor_implement():
+    return r"""---
+description: Conductor Feature Implementation Workflow
+---
+
+# Workflow: conductor-implement
+
+1. Run @conductor-implement
+"""
+
+
+def wf_bumpversion():
+    return r"""---
+description: Update versions in project configuration files and prepare an approved release.
+---
+
+# Workflow: /bumpversion
+
+1. Validate the requested `x.y.z` version.
+2. Run the repository's version synchronization script in its required runtime.
+3. Review the resulting diff and run the release verification suite.
+4. Commit and tag only after verification passes.
+5. Push the branch and tag only when the user explicitly requests publishing.
+"""
+
+
 # =============================================================================
 # WORKFLOW TEMPLATE MAP — Complete mapping for all workflows
 # =============================================================================
@@ -945,6 +934,7 @@ WORKFLOW_TEMPLATE_MAP = {
     "util-speckit.quizme": wf_util_quizme,
     "util-speckit.status": wf_util_status,
     "util-speckit.taskstoissues": wf_util_taskstoissues,
+    "util-speckit.bumpversion": wf_bumpversion,
     "util-speckit.uiux": wf_util_uiux,
     "speckit.debug": wf_debug,
     "speckit.backlog": wf_backlog,
@@ -954,5 +944,8 @@ WORKFLOW_TEMPLATE_MAP = {
     "speckit.wordpress": wf_wordpress,
     "speckit.orchestrate": wf_orchestrate,
     "speckit.gamedev": wf_gamedev,
+    "speckit.3d": wf_3d,
+    "full-stack-orchestration-full-stack-feature": wf_full_stack_feature,
+    "conductor-implement": wf_conductor_implement,
 }
 

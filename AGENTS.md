@@ -22,7 +22,9 @@ Project: bro-skills
 - DO NOT run `docker compose down -v` on Production.
 - Generate automatic scripts (`.agent/scripts/`) for recurring errors.
 - Check logs immediately on error: `docker compose logs -f <service>`.
-- **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Verified Commits**: Commit completed, verified atomic tasks using Conventional
+  Commits. Push only when the user explicitly requests publishing or the active
+  workflow includes an approved remote-publish boundary.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
 - **Task Tracking**: Use `task_boundary` to synchronize status with `@speckit.tasks` (tasks.md).

@@ -1,6 +1,6 @@
 ---
 name: speckit.database
-description: Database Architect - Thiet ke schema, index, migration, query optimization, data integrity.
+description: Database Architect - Design schemas, indexes, migrations, query optimization, and data integrity controls.
 ---
 
 ## 🎯 Mission
@@ -45,4 +45,4 @@ Design and optimize the data layer: reasonable standardized schema, effective in
 - NO hard-code credential → ENV ( `DB_*` ).
 - DO NOT drop index on FK/hot query columns.
 - DO NOT save plaintext passwords (must be hashed).
-- Feedback in Vietnamese.
+- Use the language configured by the project or requested by the user.

@@ -12,8 +12,8 @@
 
 Công cụ này tự động tạo cấu trúc `.agent/` tiêu chuẩn cho Antigravity IDE, bao gồm:
 
-- **Skills** (46 skill có sẵn) — Các năng lực AI tự trị cho từng giai đoạn của SDLC + bộ tạo theo domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) và Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max.
-- **Workflows** (33 workflows) — Các lệnh điều phối với điều kiện tiền quyết (pre-conditions), kiểm tra cổng chặn (gate checks), và tiêu chí thành công (success criteria).
+- **Skills** (46 skill lõi được sinh tự động + 13 skill mở rộng trong repository) — Các năng lực AI cho từng giai đoạn SDLC, builder theo domain và các gói thiết kế/tạo ảnh tùy chọn.
+- **Workflows** (37 workflows) — Các lệnh điều phối với điều kiện tiền quyết, kiểm tra cổng chặn và tiêu chí thành công.
 - **Templates** — Các mẫu tài liệu Spec, Plan, Tasks, Constitution, Infrastructure, SEO, và tiêu chuẩn **UI/UX Standards**.
 - **Scripts** — 4 tiện ích bash (create-feature, setup-plan, check-prerequisites, update-context).
 
@@ -28,10 +28,12 @@ Sự khác biệt vượt trội giữa việc sử dụng bộ cấu hình AI A
 | **An toàn môi trường** | **Chạy trực tiếp / Trùng cổng**: Thực thi lệnh tùy ý trên host, tự cấp cổng ngẫu nhiên gây xung đột dịch vụ hiện tại. | **Docker-First & Cổng cô lập**: Chạy hoàn toàn trong sandbox, cấu hình linh hoạt cổng qua ENV và tự động quét trùng lặp. |
 | **Tính nguyên tử (Atomic)** | **Vùng ảnh hưởng rộng**: AI thay đổi hàng chục file cùng lúc, cực kỳ khó debug, review hoặc rollback khi xảy ra lỗi. | **Quy tắc 15 Phút**: Chia nhỏ task $\le 15$ phút và giới hạn thay đổi $\le 3$ file. Tự động kiểm tra tĩnh và test trước khi lưu. |
 | **Thẩm mỹ UI/UX** | **Thiết kế rẻ tiền (Slop)**: Giao diện nhàm chán, font mặc định, màu sắc chắp vá và lạm dụng các phần tử giữ chỗ (placeholders). | **Premium Design System**: Ép AI thiết kế Bento Grid, typographic-first, màu HSL hài hòa và tích hợp hiệu ứng chuyển động mượt mà. |
-| **Quản lý Git & Lịch sử** | **Commit lộn xộn / Không commit**: Gộp nhiều tính năng vào một lần commit hoặc mô tả commit không rõ ràng. | **Auto-Commit nguyên tử**: Tự động commit code chuẩn Conventional Commits ngay sau khi hoàn thành từng task nhỏ. |
+| **Quản lý Git & Lịch sử** | **Commit lộn xộn / Không commit**: Gộp nhiều tính năng vào một lần commit hoặc mô tả commit không rõ ràng. | **Commit nguyên tử đã xác minh**: Dùng Conventional Commits tại ranh giới task đã kiểm tra; việc push remote luôn là hành động tường minh. |
 
 > [!TIP]
-> **Phân tích Tác động**: Các dự án khởi tạo bằng `bro-skills` ghi nhận **giảm 70% lỗi hồi quy (regression bugs)** và **tăng 85% độ sạch của mã nguồn** nhờ kiểm soát chặt chẽ quy tắc 15 phút cùng các cổng chặn kiểm thử tự động.
+> **Tác động kỳ vọng**: Task nguyên tử và các cổng xác minh tự động hướng tới
+> giảm rủi ro hồi quy và giữ thay đổi dễ review. Kết quả định lượng phụ thuộc
+> từng dự án và nên được đo bằng số liệu delivery thực tế.
 
 ## 📋 Yêu cầu hệ thống
 
@@ -250,7 +252,7 @@ Bước 6: Thực thi → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` phù hợp từng dự án từ 46 skill và 36 workflow có sẵn, cùng templates, scripts, identity, knowledge base, constitution và README
+- Tạo cấu trúc `.agent/` phù hợp từng dự án từ 46 skill lõi và 37 workflow, cùng templates, scripts, identity, knowledge base, constitution và README
 - Mở thư mục dự án trong Antigravity IDE — tác nhân AI sẽ tự động nhận diện thư mục `.agent/`
 
 #### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
@@ -537,10 +539,10 @@ bro-skills/
 │   └── bro-skills.cjs        # Tệp entry point của npx → gọi python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Mã nguồn gói Python
-    ├── __init__.py            # Khai báo phiên bản: __version__ = "1.4.9"
+    ├── __init__.py            # Khai báo phiên bản package
     ├── __main__.py            # Điểm bắt đầu khi chạy `python -m bro_skills`
     ├── cli.py                 # Điểm bắt đầu của lệnh điều khiển `bro-skills`
-    ├── registry.py            # Nguồn sự thật duy nhất — đăng ký 46 skills + 36 workflows + 8 loại dự án
+    ├── registry.py            # Nguồn lõi — 46 skills + 13 extensions + 37 workflows + 9 loại dự án
     ├── skill_templates.py     # Định nghĩa cấu hình mẫu cho SKILL.md
     ├── workflow_templates.py  # Định nghĩa cấu hình mẫu cho các Workflow
     ├── templates.py           # Tổng hợp các mẫu tài liệu và tiện ích

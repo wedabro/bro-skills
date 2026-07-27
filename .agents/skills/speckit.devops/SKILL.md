@@ -5,7 +5,7 @@ description: Docker Infrastructure & Security Hardening Specialist — Port ENV-
 
 ## 🎯 Mission
 Set up and manage a standardized and secure Docker system for the project.
-Ports MUST always be configured via ENV vars — NEVER hard-code.
+Published ports MUST always be configured via environment variables.
 
 ## 📥 Input
 - `.agent/memory/constitution.md` (port range, security rules)
@@ -18,8 +18,9 @@ Ports MUST always be configured via ENV vars — NEVER hard-code.
 
 **ALWAYS configure ports via ENV:**
 - `.env` file (local) or server ENV (production)
-- `docker-compose.yml` reads: `"${PUBLIC_PORT:-8920}:3000"`
-- DO NOT hard-code port number in any file
+- `docker-compose.yml` reads: `"${PUBLIC_PORT}:${WEB_CONTAINER_PORT}"`
+- Document required port variables in `.env.example`; do not hide missing
+  configuration behind a fixed fallback.
 - **CRITICAL**: If `.env` or system environment already has port variables defined (e.g. `PUBLIC_PORT`, `ADMIN_PORT`, `API_PORT` or equivalents), **ABSOLUTELY SKIP** port scanning/assignment and **NEVER** overwrite the existing port configuration.
 
 **Port scanning rules according to environment:**
@@ -41,7 +42,8 @@ docker compose ps --format json 2>$null
 - Pattern: Public FE `N` → Admin FE `N+1` → Backend API `N+2`
 
 ### 2. Local Docker (`docker-compose.yml`):
-- Ports read from ENV: `"${PUBLIC_PORT:-8920}:3000"`
+- Published and container ports read from ENV:
+  `"${PUBLIC_PORT}:${WEB_CONTAINER_PORT}"`
 - Volume mounts cho hot-reload code
 - Named volumes for `node_modules` (avoid host-container lock)
 - Health checks for each service
@@ -73,5 +75,3 @@ docker compose ps --format json 2>$null
 - DO NOT run `docker compose down -v` on production.
 - DO NOT hard-code credentials into the Dockerfile.
 - DO NOT scan ports when Docker local is already running (with containers).
-
-<!-- LESSON_LEARNED: Đã từng bị đơ khi gọi msvcrt.getch trên Git Bash và đã sửa fallback nhập số -->

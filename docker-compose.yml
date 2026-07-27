@@ -1,0 +1,6 @@
+services:
+  test:
+    build:
+      context: .
+    command: pytest -q -p no:cacheprovider
+    user: "10001:10001"

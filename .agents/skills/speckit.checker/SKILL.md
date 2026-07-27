@@ -4,66 +4,56 @@ description: Static Analysis Aggregator - Run static analysis on the codebase.
 ---
 
 ## 🎯 Mission
-Codebase scanning detects violations of coding standards, security issues, performance anti-patterns.
-**MUST run actual commands** — not just scan by eye.
+Detect coding-standard violations, security issues, and performance
+anti-patterns using commands appropriate to the actual project stack.
+**MUST run applicable checks** — do not claim a check passed from visual review.
 
 ## 📥 Input
-- Source code (all `src/` , `app/` , `pages/` )
+- Source code and dependency manifests
 - `.agent/memory/constitution.md` (coding standards)
-- `Dockerfile`, `docker-compose*.yml`
+- `.agent/project.json` and documented build/test commands
+- Docker files when the project is containerized
 
 ## 📋 Protocol
 
-### Phase 1: TypeScript Compile Check (CRITICAL)
-This is the most important step, MUST run before every deploy:
-```bash
-# In Docker container or local:
-docker compose exec <service> npx tsc --noEmit
-# Or try building:
-docker compose build 2>&1 | grep -i "error\|fail"
-```
-- Catch: type mismatch, missing props, wrong property names, import errors
-- All TS errors are 🔴 CRITICAL
+### Phase 1: Capability Discovery
 
-### Phase 2: Dockerfile & Docker Compose Lint
-```bash
-# Check for any COPY sources that exist
-# Check out docker compose syntax:
-docker compose -f docker-compose*.yml config --quiet
-# Check volume shadowing (Using volumes for production is PROHIBITED):
-grep -A 5 "volumes:" docker-compose.prod.yml # Must NOT have `. :/app`
-```
-- Volume mount `- .:/app` trong production → 🔴 CRITICAL
-- COPY path does not exist → 🔴 CRITICAL
-- Outer port not in env → 🟡 WARNING
+1. Read project configuration and dependency manifests.
+2. Detect language, package manager, containerization, services, and available
+   build/lint/type-check scripts.
+3. Build an applicability table. Mark unavailable checks `N/A` with a reason;
+   never treat `N/A` as a pass or failure.
 
-### Phase 3: ENV Compliance
-```bash
-# Find hard-coded URLs/tokens:
-grep -rn "http://localhost\|http://127.0.0.1\|https://" apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules\|.next\|schema.org"
-# Find default text fallback:
-grep -rn '|| "' apps/*/src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules"
-```
+### Phase 2: Compile, Type, and Lint Checks
 
-### Phase 4: Import Hygiene
-- Find unused imports, circular dependencies
-- Verify shared package exports match actual usage
+- Run the repository-defined compile, type-check, and lint commands.
+- If the constitution requires container execution, run them in the matching
+  service. Otherwise use the project's documented runtime.
+- Compiler/type errors are 🔴 CRITICAL. Lint severity follows project policy.
+- Do not assume TypeScript, npm, a monorepo, or fixed service names.
 
-### Phase 5: Build-time Safety (Next.js specific)
-```bash
-# Find SSG/SSR pages that call the API without try-catch:
-grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/*/page.tsx
-# Each result must be in a try-catch block
-```
-- API call in `generateStaticParams` / `sitemap()` has no try-catch → 🔴 CRITICAL
+### Phase 3: Container Checks (When Applicable)
 
-### Phase 6: Security Scan
-- Find `eval()` , `dangerouslySetInnerHTML` (need sanitize), SQL concatenation
-- Find secrets/keys in source code
+- Validate every discovered Compose file with `docker compose ... config`.
+- Verify Dockerfile COPY sources, non-root production runtime, health checks,
+  environment-driven published ports, and no production source shadowing.
+- If the project is not containerized, record this phase as `N/A`.
 
-### Phase 7: Monorepo Integrity
-- Verify shared package exports match imports
-- Cross-reference types: every `entity.X` must exist in the interface
+### Phase 4: Configuration and Security
+
+- Scan source and tracked files for likely secrets, unsafe URL/endpoint
+  literals, injection sinks, unsafe HTML, dynamic evaluation, and SQL
+  concatenation.
+- Exclude generated/vendor directories and report redacted locations only.
+- Treat intentional public URLs, documentation links, and schema identifiers
+  according to project policy rather than flagging every `https://` literal.
+
+### Phase 5: Stack-Specific Integrity
+
+- Apply framework checks only when that framework is detected.
+- For monorepos, verify package exports and cross-package contracts.
+- For server-rendered applications, inspect build-time data fetching and error
+  behavior according to the framework and project requirements.
 
 ## 📤 Output
 - File: `.agent/memory/checker-report.md`
@@ -72,7 +62,7 @@ grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/
   ## 🔴 CRITICAL (N issues)
   - `apps/web/src/app/page.tsx:65` — Property 'category' does not exist on type 'Article'
   ## 🟡 WARNING (N issues)
-  - `docker-compose.beta.yml:40` — Volume mount `.:/app` will override built code
+  - `compose.prod.yml:40` — Source mount overrides the built production artifact
   ## 🟢 INFO (N issues)
   - ...
   ```
@@ -80,5 +70,5 @@ grep -rn "await api\.\|await fetchApi" apps/*/src/app/sitemap.ts apps/*/src/app/
 ## 🚫 Guard Rails
 - Report ONLY — DO NOT edit the code yourself.
 - Each finding must have a specific file path + line number.
-- **MUST run `tsc --noEmit` or `docker compose build` ** — visual scanning is NOT ENOUGH.
+- MUST run every applicable configured check; visual scanning alone is not enough.
 - If there is 🔴 CRITICAL → FAIL conclusion, deployment is NOT allowed.

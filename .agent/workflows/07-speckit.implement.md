@@ -13,7 +13,8 @@ For EACH task `- [ ]` in tasks.md:
    - P2: Strategy Selection.
    - P3: TDD (Repro fail first).
    - P4: Context Anchoring.
-   - P5: Build Gate (tsc/build).
+   - P5: Applicable targeted verification, followed by the configured phase
+     build/test gate.
    - P6: **Deviation Rules** (Auto-fix bugs/missing).
-2. Mark `- [X]` when task pass **AND build gate pass**.
+2. Mark `- [X]` when the task and its applicable targeted checks pass.
 3. **Auto-Map**: When ALL tasks are completed, automatically run **@speckit.map** to update the architecture document.

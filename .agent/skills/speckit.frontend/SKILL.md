@@ -1,6 +1,6 @@
 ---
 name: speckit.frontend
-description: Frontend Developer - Xay dung UI components, state management, data fetching, accessibility, performance (Anti-Slop).
+description: Frontend Developer - Build UI components, state management, data fetching, accessibility, and performance without generic styling.
 ---
 
 ## 🎯 Mission
@@ -42,4 +42,4 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 - DO NOT hard-code text/URL/color → use i18n/tokens/ENV.
 - DO NOT use 2 CTA buttons for the same purpose on one screen.
 - DO NOT violate a11y (missing label, button with white text on light background).
-- Feedback in Vietnamese.
+- Use the language configured by the project or requested by the user.

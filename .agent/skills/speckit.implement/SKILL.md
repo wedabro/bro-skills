@@ -13,7 +13,9 @@ Implement code according to tasks.md, complying with IRONCLAD Protocols and **De
 2. **Strategy**: Choose direct editing or Strangler Pattern.
 3. **TDD**: Create repro script fail -> code -> pass.
 4. **Context Anchoring**: Re-read constitution every 3 tasks.
-5. **Build Gate**: ALWAYS run tsc/build after each task.
+5. **Verification Gate**: Run the smallest applicable configured check after
+   each task (targeted test/type/lint), then run the full project build at the
+   phase boundary. Use Docker only when required by project configuration.
 
 ### Deviation Rules (Self-handling when deviating) ⭐
 - **Bug detected**: Automatically fix if within scope, or create new task if serious.
@@ -22,7 +24,8 @@ Implement code according to tasks.md, complying with IRONCLAD Protocols and **De
 - **Arch Change**: If you need to change the architecture, you MUST ask the user.
 
 ### Self-Check Protocol
-- All tasks are only completed when they pass Build Gate (no Type errors, no Docker errors).
+- A task is complete only when its applicable targeted checks pass. The phase
+  is complete only when the configured full build/test gate passes.
 
 ## 🚫 Guard Rails
 - DO NOT commit build error code.

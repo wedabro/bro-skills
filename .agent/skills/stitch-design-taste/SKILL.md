@@ -1,6 +1,6 @@
 ---
 name: stitch-design-taste
-description: Semantic Design System Skill for Google Stitch. Generates agent-friendly DESIGN.md files that enforce premium, anti-generic UI standards — strict typography, calibrated color, asymmetric layouts, perpetual micro-motion, and hardware-accelerated performance.
+description: Semantic Design System Skill for Google Stitch. Generates agent-friendly DESIGN.md files with strict typography, calibrated color, asymmetric layouts, purposeful accessible motion, and hardware-accelerated performance.
 ---
 
 # Stitch Design Taste — Semantic Design System Skill
@@ -21,7 +21,7 @@ Generate a `DESIGN.md` file that encodes:
 3. **Typographic architecture** — font stacks, scale hierarchy, and anti-patterns
 4. **Component behaviors** — buttons, cards, inputs with interaction states
 5. **Layout principles** — grid systems, spacing philosophy, responsive strategy
-6. **Motion philosophy** — animation engine specs, spring physics, perpetual micro-interactions
+6. **Motion philosophy** — animation engine specs, spring physics, and purposeful micro-interactions
 7. **Anti-patterns** — explicit list of banned AI design clicheés
 
 ## Analysis & Synthesis Instructions
@@ -79,9 +79,11 @@ For each component type, describe shape, color, shadow depth, and interaction be
 
 ### 7. Define Responsive Rules
 Every design must work across all viewports:
-- **Mobile-First Collapse (< 768px):** All multi-column layouts collapse to single column. No exceptions
+- **Mobile-First Collapse (< 768px):** Multi-column layouts collapse or adapt
+  to a readable mobile composition without horizontal overflow
 - **No Horizontal Scroll:** Horizontal overflow on mobile is a critical failure
-- **Typography Scaling:** Headlines scale via `clamp()`. Body text minimum `1rem`/`14px`
+- **Typography Scaling:** Headlines scale via `clamp()`. Body text minimum
+  `1rem`/`16px`
 - **Touch Targets:** All interactive elements minimum `44px` tap target
 - **Image Behavior:** Inline typography images (photos between words) stack below headline on mobile
 - **Navigation:** Desktop horizontal nav collapses to clean mobile menu
@@ -89,9 +91,13 @@ Every design must work across all viewports:
 
 ### 8. Encode Motion Philosophy
 - **Spring Physics default:** `stiffness: 100, damping: 20` — premium, weighty feel. No linear easing
-- **Perpetual Micro-Interactions:** Every active component should have an infinite loop state (Pulse, Typewriter, Float, Shimmer)
+- **Selective Micro-Interactions:** Use a loop only when it communicates live
+  state or progress. Informational components remain still.
 - **Staggered Orchestration:** Never mount lists instantly — use cascade delays for waterfall reveals
 - **Performance:** Animate exclusively via `transform` and `opacity`. Never animate `top`, `left`, `width`, `height`. Grain/noise filters on fixed pseudo-elements only
+- **Reduced Motion:** Every automatic, looping, scroll-linked, or staggered
+  animation must stop or become an immediate state change under
+  `prefers-reduced-motion: reduce`.
 
 ### 9. List Anti-Patterns (AI Tells)
 Encode these as explicit "NEVER DO" rules in the DESIGN.md:
@@ -151,9 +157,10 @@ Strict single-column collapse below 768px. Max-width containment.
 No flexbox percentage math. Generous internal padding.)
 
 ## 6. Motion & Interaction
-(Spring physics for all interactive elements. Staggered cascade reveals.
-Perpetual micro-loops on active dashboard components. Hardware-accelerated
-transforms only. Isolated Client Components for CPU-heavy animations.)
+(Spring physics for suitable interactive elements. Restrained staggered
+reveals. Loops only for meaningful live state. Hardware-accelerated transforms
+only, with a reduced-motion fallback. Isolated Client Components for
+CPU-heavy animations.)
 
 ## 7. Anti-Patterns (Banned)
 (Explicit list of forbidden patterns: no emojis, no Inter, no pure black,

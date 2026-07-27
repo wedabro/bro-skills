@@ -54,13 +54,14 @@ Scan TCP bind availability on 127.0.0.1 for available ports.
 
 ### Step 3: Docker Compose (Local)
 - Create/update `docker-compose.yml` :
-  - Ports read from ENV: `"${PUBLIC_PORT:-8920}:3000"`
+  - Ports read from required ENV variables:
+    `"${PUBLIC_PORT}:${WEB_CONTAINER_PORT}"`
   - Volume mounts cho hot-reload
   - Named volumes cho `node_modules`
   - Health checks for each service
 
 ### Step 4: Docker Compose (Production/Staging/Beta)
-- Create/update `docker-compose.prod.yml` / `docker-compose.beta.yml` :
+- Create/update the project-configured production and staging Compose files:
   - Multi-stage builds (builder → runner)
   - `USER node` or `USER appuser` (DO NOT run as root)
   - Remove devDependencies in the final image

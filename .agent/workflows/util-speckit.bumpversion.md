@@ -1,21 +1,11 @@
 ---
-description: Automatically update versions in all configuration files and create git tags.
+description: Update versions in project configuration files and prepare an approved release.
 ---
 
 # Workflow: /bumpversion
 
-The process of automatically upgrading versions and creating tags for projects.
-
-## Steps
-
-1. **Get input**: Determine the new version number to update (format `x.y.z` ).
-2. **Run Script**: Run python script to synchronize:
-   ```bash
-   python .agent/scripts/bump_version.py <version>
-   ```
-3. **Commit & Tag**:
-   - `git add .`
-   - `git commit -m "chore(release): bump version to <version>"`
-   - `git push origin main`
-   - `git tag v<version>`
-   - `git push origin v<version>`
+1. Validate the requested `x.y.z` version.
+2. Run the repository's version synchronization script in its required runtime.
+3. Review the resulting diff and run the release verification suite.
+4. Commit and tag only after verification passes.
+5. Push the branch and tag only when the user explicitly requests publishing.

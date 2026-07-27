@@ -5,6 +5,13 @@ description: Raw mechanical interfaces fusing Swiss typographic print with milit
 
 # SKILL: Industrial Brutalism & Tactical Telemetry UI
 
+## Scope
+
+Use this only as a mutually exclusive style preset when the user asks for a
+mechanical, Swiss-industrial, terminal, or blueprint aesthetic. Pair it with
+`design-taste-frontend` for implementation; do not combine it with
+`minimalist-ui` or another competing visual preset.
+
 ## 1. Skill Meta
 **Name:** Industrial Brutalism & Tactical Telemetry Interface Engineering
 **Description:** Advanced proficiency in architecting web interfaces that synthesize mid-century Swiss Typographic design, industrial manufacturing manuals, and retro-futuristic aerospace/military terminal interfaces. This discipline requires absolute mastery over rigid modular grids, extreme typographic scale contrast, purely utilitarian color palettes, and the programmatic simulation of analog degradation (halftones, CRT scanlines, bitmap dithering). The objective is to construct digital environments that project raw functionality, mechanical precision, and high data density, deliberately discarding conventional consumer UI patterns.

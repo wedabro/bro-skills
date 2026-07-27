@@ -12,8 +12,8 @@
 
 This tool automatically creates the standard `.agent/` structure for Antigravity IDE, including:
 
-- **Skills** (46 available) — Autonomous AI capabilities for each phase of SDLC + builder by domain (frontend, backend, database, security, mobile/iOS/Android, data, gamedev) and Debug, Backlog, Roadmap, Map, UAT, WordPress, UI/UX Pro Max
-- **Workflows** (33 workflows) — Orchestration commands with pre-conditions, gate checks, success criteria
+- **Skills** (46 generated core skills + 13 repository extension skills) — Autonomous AI capabilities for each SDLC phase, domain builders, and optional design/image-generation packs
+- **Workflows** (37 workflows) — Orchestration commands with pre-conditions, gate checks, and success criteria
 - **Templates** — Spec, Plan, Tasks, Constitution, Infrastructure, SEO, **UI/UX Standards** templates
 - **Scripts** — 4 bash utilities (create-feature, setup-plan, check-prerequisites, update-context)
 
@@ -28,10 +28,12 @@ Using an AI Agent configuration kit (`bro-skills`) vs. coding with raw/unconstra
 | **Environment Safety** | **Host execution / Chaos ports**: Runs arbitrary commands on host, selects conflicting ports, risks system stability. | **Docker-First & Isolated Ports**: Sandbox execution, flexible port configuration via ENV with automatic conflict detection. |
 | **Task Atomicity** | **Large Blast Radius**: AI attempts to modify 10+ files at once. Difficult to debug, review, or rollback when errors occur. | **15-Minute Rule**: Atomic tasks restricted to $\le 15$ mins and $\le 3$ files. Automated static checks and tests before git commit. |
 | **UI/UX Aesthetics** | **Template Slop**: Generates basic, uninspiring layouts using standard browser fonts, generic colors, and placeholders. | **Premium Design System**: Enforces Bento grids, wide editorial typography, curated HSL color schemes, and micro-interactions. |
-| **Git & Versioning** | **Messy/No Commits**: AI does not commit, or commits large blocks of unrelated changes with poor descriptions. | **Atomic Auto-Commits**: Automatic commits using Conventional Commits guidelines immediately after each task is completed. |
+| **Git & Versioning** | **Messy/No Commits**: AI does not commit, or commits large blocks of unrelated changes with poor descriptions. | **Verified Atomic Commits**: Conventional Commits at verified task boundaries; remote publishing remains explicit. |
 
 > [!TIP]
-> **Impact Analysis**: Projects initialized with `bro-skills` experience a **70% reduction in regression bugs** and **85% cleaner codebase structure** due to the strict 15-Minute Rule and automated check-gates.
+> **Expected impact**: Atomic tasks and automated verification are intended to
+> reduce regression risk and keep changes reviewable. Quantitative outcomes
+> depend on the project and should be measured by its own delivery metrics.
 
 ## 📋 Requirements
 
@@ -252,7 +254,7 @@ Step 6: Implement → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Create a project-tailored `.agent/` structure from 46 available skills and 36 workflows, plus templates, scripts, identity, knowledge base, constitution, and README
+- Create a project-tailored `.agent/` structure from 46 core skills and 37 workflows, plus templates, scripts, identity, knowledge base, constitution, and README
 - Open the project in Antigravity IDE — the agent automatically detects the `.agent/` folder
 
 #### Step 1 — `/01-speckit.constitution` ⚠️ REQUIRED
@@ -429,7 +431,7 @@ Every time AI implements code, these 4 protocols are implemented **mandatory**:
 │   ├── business_logic.md      # Domain rules, source structure
 │   └── seo_standards.md       # SEO/GEO checklist (web projects only)
 │
-├── skills/                    # @ Mentions — 38 Agentic Capabilities
+├── skills/                    # @ Mentions — checked-in core entrypoints + 13 extensions
 │   ├── speckit.identity/      # Persona Architect
 │   ├── speckit.devops/        # DevOps & Docker Architect
 │   ├── speckit.analyze/       # Consistency Checker
@@ -539,10 +541,10 @@ bro-skills/
 │   └── bro-skills.cjs        # npx entry point → python -m bro_skills
 ├── .gitignore
 └── bro_skills/                 # Python package
-    ├── __init__.py            # Version: __version__ = "1.4.9"
+    ├── __init__.py            # Package version
     ├── __main__.py            # python -m bro_skills
     ├── cli.py                 # Console script entry point → `bro-skills` command
-    ├── registry.py            # Single Source of Truth — 46 skills + 36 workflows + 8 project types
+    ├── registry.py            # Core source of truth — 46 skills + 13 extensions + 37 workflows + 9 project types
     ├── skill_templates.py     # SKILL.md templates (Mission, Protocol, Guard Rails)
     ├── workflow_templates.py  # Workflow templates (Pre-conditions, Gates, Success Criteria)
     ├── templates.py           # Document + Script templates aggregator

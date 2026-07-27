@@ -18,7 +18,9 @@
 - **Runtime**: Production containers MUST NOT run as root.
 
 ## §3 Code Standards & ENV
-- **FORBIDDEN hardcoding**: URLs, Tokens, Keys, Credentials, Endpoints, Default Text.
+- **FORBIDDEN hardcoding**: Secrets, tokens, credentials, environment-specific
+  URLs, and environment-specific endpoints. Product copy belongs in source or
+  i18n resources; runtime configuration belongs in ENV.
 - **Sensitive variables**: MUST use ENV (`.env` local, server ENV prod).
   - Prefix: `NEXT_PUBLIC_*`, `API_*`, `DB_*`.
 - **Validate**: 
@@ -29,7 +31,9 @@
 ## §4 Workflow & Scripting
 - **Automation**: Create scripts when encountering errors or repetitive tasks.
 - **Git**: Save scripts in `.agent/scripts` and commit them to version control.
-- **Git Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Verified Commits**: Commit completed, verified atomic tasks using
+  Conventional Commits. Push only when the user explicitly requests publishing
+  or the active workflow includes an approved remote-publish boundary.
 - **Update**: Update corresponding workflows after creating new scripts.
 
 ## §5 UI/UX & Anti-Slop (PREMIUM DESIGN)

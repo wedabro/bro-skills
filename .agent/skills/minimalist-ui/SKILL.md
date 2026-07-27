@@ -5,6 +5,13 @@ description: Clean editorial-style interfaces. Warm monochrome palette, typograp
 
 # Protocol: Premium Utilitarian Minimalism UI Architect
 
+## Scope
+
+Use this only as a mutually exclusive style preset when the user asks for a
+clean editorial or warm-minimal direction. Pair it with
+`design-taste-frontend` for implementation; do not combine it with
+`industrial-brutalist-ui` or another competing visual preset.
+
 ## 1. Protocol Overview
 Name: Premium Utilitarian Minimalism & Editorial UI
 Description: An advanced frontend engineering directive for generating highly refined, ultra-minimalist, "document-style" web interfaces analogous to top-tier workspace platforms. This protocol strictly enforces a high-contrast warm monochrome palette, bespoke typographic hierarchies, meticulous structural macro-whitespace, bento-grid layouts, and an ultra-flat component architecture with deliberate muted pastel accents. It actively rejects standard generic SaaS design trends.
