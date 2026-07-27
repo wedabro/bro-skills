@@ -15,6 +15,7 @@ from bro_skills.registry import (
     resolve_builder_skills,
 )
 from bro_skills.skill_templates import SKILL_TEMPLATE_MAP
+from bro_skills.templates import doc_ui_ux_standards_template
 from bro_skills.workflow_templates import WORKFLOW_TEMPLATE_MAP
 
 
@@ -196,6 +197,35 @@ def test_checked_in_core_skills_match_embedded_templates_semantically():
         assert _normalized_portable_skill(
             checked_in.read_text(encoding="utf-8")
         ) == _normalized_portable_skill(template()), name
+
+
+def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
+    frontend_sources = (
+        (REPO_ROOT / ".agent/skills/speckit.frontend/SKILL.md").read_text(
+            encoding="utf-8"
+        ),
+        SKILL_TEMPLATE_MAP["speckit.frontend"](),
+    )
+    for content in frontend_sources:
+        assert "### 0. Mandatory Preflight" in content
+        assert "shared application shell" in content
+        assert "70% or more" in content
+        assert "250–300 lines" in content
+        assert "### 7. Completion Gate" in content
+
+    checked_in_ui = (
+        REPO_ROOT / ".agent/knowledge_base/ui_ux_standards.md"
+    ).read_text(encoding="utf-8")
+    generated_ui = doc_ui_ux_standards_template()
+    assert re.sub(r"\s+", " ", checked_in_ui).strip() == re.sub(
+        r"\s+", " ", generated_ui
+    ).strip()
+
+    for content in (checked_in_ui, generated_ui):
+        assert "## 🧭 Systemic Layout & Ownership" in content
+        assert "Single Change Point" in content
+        assert "`gap-4` as the default gap" in content
+        assert "## 📱 Responsive System" in content
 
 
 def test_workflow_registry_matches_templates_and_checked_in_files():

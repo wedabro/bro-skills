@@ -400,6 +400,19 @@ def doc_ui_ux_standards_template():
 - **Premium Consumer Ban**: Avoid AI default beige + brass/clay palettes unless explicitly requested. Use alternatives like Cold Luxury (silver-grey + chrome), Forest (deep green + bone), or Black and Tan.
 - **1 Accent Rule**: Choose a single Accent color and use it consistently across the entire site.
 
+## 🧭 Systemic Layout & Ownership
+- **Shared Page Shell**: Manage the header, sidebar, footer, content container,
+  breadcrumbs, page title, and page actions through shared layout components.
+  Do not rebuild the shell inside individual pages.
+- **Page-Family Consistency**: Pages with the same purpose must share the same
+  content width, horizontal padding, title position, and composition pattern.
+- **Single Change Point**: Centralize color, typography, spacing, radius, shadow,
+  container width, breakpoints, control height, z-index, and motion in design
+  tokens, CSS variables, theme configuration, or typed component variants.
+- **Shared Primitives**: Standardize buttons, fields, cards, tables, dialogs,
+  drawers, loading states, empty states, and error states. Feature code composes
+  these primitives instead of restyling them.
+
 ## 🔡 Typography & Font-Size Guidelines (Anti-Slop)
 - **Unit Standard**: Always use `rem` units (calculated from browser default root font-size, usually 16px) for scalability.
 - **Display Font**: FORBIDDEN to use `Inter` as default for creative headings. Use `Geist`, `Satoshi`, `Cabinet Grotesk`, `Outfit`, or a project-specific font.
@@ -433,7 +446,9 @@ def doc_ui_ux_standards_template():
   borders such as `border-[1px]`, blur/shadow tuning, or very small radii that
   require pixel-level sharpness. If the same exception appears more than once,
   promote it to a named theme token or reusable class.
-- **8-Point Grid System**: Use spacing and padding values that are multiples of 8px (e.g., 8px, 16px, 24px, 32px, 48px, 64px).
+- **4-Point Spacing Scale**: Stay on the framework scale (`p-1`, `p-2`, `p-3`,
+  `p-4`, `p-5`, `p-6`, `p-8`, `p-10`, `p-12`, `p-16`). Keep equivalent values
+  on the shared 4px rhythm; do not invent page-local spacing.
 - **Hero Section**: Limit top padding (max `pt-24` on desktop).
 - **Anti-Center Bias**: Avoid boring centered Hero layout unless it's a manifesto page. Prefer Split Screen or Asymmetric layouts.
 - **Eyebrow Restraint**: FORBIDDEN to overuse "eyebrow" headings. Max 1 eyebrow per 3 sections.
@@ -441,8 +456,18 @@ def doc_ui_ux_standards_template():
 - **Zigzag Ban**: Max 2 consecutive sections using alternating image-text (zigzag) layouts.
 - **Core Padding Guidelines**:
   - **Buttons (CTAs)**: Vertical padding of 0.5rem (8px), horizontal padding of 1rem (16px).
-  - **Cards & Small Containers**: Padding of 1rem (16px) on all sides.
+  - **Page Containers**: Prefer `px-4 md:px-6 lg:px-8`.
+  - **Cards & Small Containers**: Prefer `p-4`, increasing to `p-6` only when the
+    component hierarchy or viewport needs more room.
+  - **Form Fields**: Use `gap-4`; use `gap-2` for icon-label or helper-text pairs.
   - **Page Sections/Containers**: Vertical padding (py) should be generous, ranging from 2rem (32px) to 4rem (64px) to let layouts breathe.
+
+## 📱 Responsive System
+- Design mobile-first and use the project's established `sm`, `md`, `lg`, `xl`,
+  and `2xl` breakpoints. Add a breakpoint only when content demonstrates a
+  reusable need.
+- Let shared layout and component primitives own their responsive behavior.
+  Avoid page-specific breakpoint patches for behavior already owned upstream.
 
 ## 🔢 Minimize Font-size Variations (Consistency First)
 - **Max 4 Font Sizes**: Limit font variations on a single page to a maximum of 4 sizes:
@@ -453,6 +478,16 @@ def doc_ui_ux_standards_template():
 - **Strict Consistency**: Default to uniformity. Do not introduce arbitrary font sizes.
 
 ## 🧱 Core Components (Atomic) & Accessibility
+- **Reuse First**: Before creating a component, inspect existing primitives and
+  variants. Extend substantially similar components through composition or
+  typed variants instead of copying them.
+- **Forms**: Use a shared field contract for label, control, helper text, error,
+  required, disabled, read-only, success, and loading states.
+- **Tables**: Use a shared table/data-table primitive for loading, empty state,
+  pagination, sorting, filtering, row actions, selection, responsiveness, and
+  data formatting as applicable.
+- **Dialogs & Drawers**: Use shared shell/header/content/footer primitives.
+  Centralize overlay, width, padding, radius, and motion.
 - **Buttons (CTAs)**:
   - FORBIDDEN to wrap button text on desktop. Button labels max 3 words (e.g., `Get Started`).
   - FORBIDDEN to have 2 CTAs with the same intent on the same page (choose only one label).

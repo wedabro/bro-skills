@@ -11,6 +11,7 @@ COPY pyproject.toml README.md LICENSE ./
 COPY bro_skills ./bro_skills
 COPY tests ./tests
 COPY .agent/skills ./.agent/skills
+COPY .agent/knowledge_base ./.agent/knowledge_base
 COPY .agent/workflows ./.agent/workflows
 
 RUN pip install --no-cache-dir ".[test]"
