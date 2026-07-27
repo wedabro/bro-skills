@@ -90,7 +90,7 @@ pip install git+https://github.com/wedabro/bro-skills.git
 
 # Check
 bro-skills version
-# → bro-skills v1.6.0
+# → bro-skills v1.7.0
 ```
 
 ### Method 4: `pipx install` (Isolated - Does not affect system Python)
