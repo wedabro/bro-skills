@@ -13,7 +13,7 @@ Project: bro-skills
 - Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
 
 ## 3. LANGUAGE & CODE
-- Respond in English.
+- Respond in Vietnamese.
 - 15-Minute Rule: Each task must be atomic, ≤ 15 minutes, affecting ≤ 3 files.
 - PowerShell 5.1+, separate commands with `;` (DO NOT use `&&`).
 - DO NOT hardcoding URLs, Tokens, Keys. Use ENV vars (`.env`).
