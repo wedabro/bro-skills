@@ -1067,6 +1067,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 ### Phase 2: Spacing, Layout & Rhythm
 - ALWAYS prefer existing framework/theme classes (`p-4`, `text-lg`,
   `rounded-md`) over arbitrary values so every screen uses the same scale.
+- Use `gap-4` as the primary gap. Use `gap-2` only for tightly related controls
+  and `gap-6`/`gap-8` only for clear hierarchy boundaries.
 - Fixed-pixel values are limited to hairline borders, blur/shadow tuning, and
   very small precision radii. Repeated exceptions become named theme tokens.
 - Limit Hero's top padding (max `pt-24` ). Hero maximum 2 subject lines.
@@ -1175,7 +1177,9 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 - Small, reusable, single responsibility components. Viewport uses `100dvh` instead of `100vh` to avoid layout jump on mobile.
 - According to Design System: spacing/typography/color tokens. Absolutely do not hardcode inline style unless required.
 - ALWAYS prefer existing framework/theme classes such as `p-4`, `text-lg`,
-  `gap-6`, and `rounded-md` so the interface stays on one shared scale.
+  `gap-4`, and `rounded-md` so the interface stays on one shared scale.
+- Use `gap-4` as the primary component/grid gap. Reserve `gap-2` for tightly
+  related controls and `gap-6`/`gap-8` for clear hierarchy boundaries.
 - DO NOT use arbitrary fixed-pixel utilities when an existing class or token
   covers the intent. Fixed `px` values are limited to hairline borders
   (`border-[1px]`), blur/shadow tuning, and very small precision radii.

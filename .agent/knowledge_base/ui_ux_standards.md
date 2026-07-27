@@ -26,8 +26,11 @@
 
 ## 📏 Layout, Spacing & Padding
 - **Utility Class Priority**: ALWAYS prefer existing framework/theme classes
-  such as `p-4`, `text-lg`, `gap-6`, and `rounded-md`. This shared scale is the
+  such as `p-4`, `text-lg`, `gap-4`, and `rounded-md`. This shared scale is the
   source of truth for consistent spacing, typography, sizing, and radius.
+- **Primary Gap Rhythm**: Use `gap-4` as the default gap for components, grids,
+  and ordinary content groups. Use `gap-2` only for tightly related controls
+  and `gap-6`/`gap-8` only when a larger hierarchy boundary clearly requires it.
 - **Arbitrary Value Ban**: DO NOT use arbitrary fixed-pixel utilities such as
   `p-[18px]`, `text-[17px]`, or `w-[347px]` when an existing class or design
   token can express the intent.

@@ -24,6 +24,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 ### Phase 2: Spacing, Layout & Rhythm
 - ALWAYS prefer existing framework/theme classes (`p-4`, `text-lg`,
   `rounded-md`) over arbitrary values so every screen uses the same scale.
+- Use `gap-4` as the primary gap. Use `gap-2` only for tightly related controls
+  and `gap-6`/`gap-8` only for clear hierarchy boundaries.
 - Fixed-pixel values are limited to hairline borders, blur/shadow tuning, and
   very small precision radii. Repeated exceptions become named theme tokens.
 - Limit Hero's top padding (max `pt-24` ). Hero maximum 2 subject lines.
