@@ -22,6 +22,10 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - **Typography**: PROHIBITED using `Inter` and Serif as default for anything. Use `Geist` , `Satoshi` , `Cabinet Grotesk` or a sans-serif font of your choice.
 
 ### Phase 2: Spacing, Layout & Rhythm
+- ALWAYS prefer existing framework/theme classes (`p-4`, `text-lg`,
+  `rounded-md`) over arbitrary values so every screen uses the same scale.
+- Fixed-pixel values are limited to hairline borders, blur/shadow tuning, and
+  very small precision radii. Repeated exceptions become named theme tokens.
 - Limit Hero's top padding (max `pt-24` ). Hero maximum 2 subject lines.
 - Apply Anti-Center Bias: Avoid boringly centering the Hero.
 - Misuse of "eyebrow" (titles in super small caps) is PROHIBITED. Maximum 1 eyebrow per 3 sections.
@@ -34,7 +38,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 
 ### Phase 4: Rich Aesthetics Directive
 - Avoid cheap AI gradients. Use realistic Glassmorphism (backdrop-filter + 1px inner border) if the vibe fits.
-- Interactive States: Skeletal loading (no generic spinner), tactile feedback when clicking (scale-98).
+- Interactive States: Skeletal loading (no generic spinner), tactile feedback
+  using a built-in utility such as `active:scale-95`.
 
 ## 📤 Output
 - File: `.agent/knowledge_base/ui_ux_standards.md`
@@ -44,4 +49,6 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - DO NOT use browser default colors.
 - DO NOT mix Serif and Sans-serif in the same headline.
 - DO NOT use 2 CTAs with the same purpose (same intent) on the same page.
+- DO NOT use arbitrary fixed-pixel utilities when an existing class or token
+  expresses the same intent.
 - MANDATORY Mobile-first design priority.

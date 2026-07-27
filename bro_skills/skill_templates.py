@@ -1065,6 +1065,10 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - **Typography**: PROHIBITED using `Inter` and Serif as default for anything. Use `Geist` , `Satoshi` , `Cabinet Grotesk` or a sans-serif font of your choice.
 
 ### Phase 2: Spacing, Layout & Rhythm
+- ALWAYS prefer existing framework/theme classes (`p-4`, `text-lg`,
+  `rounded-md`) over arbitrary values so every screen uses the same scale.
+- Fixed-pixel values are limited to hairline borders, blur/shadow tuning, and
+  very small precision radii. Repeated exceptions become named theme tokens.
 - Limit Hero's top padding (max `pt-24` ). Hero maximum 2 subject lines.
 - Apply Anti-Center Bias: Avoid boringly centering the Hero.
 - Misuse of "eyebrow" (titles in super small caps) is PROHIBITED. Maximum 1 eyebrow per 3 sections.
@@ -1077,7 +1081,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 
 ### Phase 4: Rich Aesthetics Directive
 - Avoid cheap AI gradients. Use realistic Glassmorphism (backdrop-filter + 1px inner border) if the vibe fits.
-- Interactive States: Skeletal loading (no generic spinner), tactile feedback when clicking (scale-98).
+- Interactive States: Skeletal loading (no generic spinner), tactile feedback
+  using a built-in utility such as `active:scale-95`.
 
 ## 📤 Output
 - File: `.agent/knowledge_base/ui_ux_standards.md`
@@ -1087,6 +1092,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - DO NOT use browser default colors.
 - DO NOT mix Serif and Sans-serif in the same headline.
 - DO NOT use 2 CTAs with the same purpose (same intent) on the same page.
+- DO NOT use arbitrary fixed-pixel utilities when an existing class or token
+  expresses the same intent.
 - MANDATORY Mobile-first design priority.
 """
 
@@ -1167,6 +1174,12 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 ### 1. Component Architecture
 - Small, reusable, single responsibility components. Viewport uses `100dvh` instead of `100vh` to avoid layout jump on mobile.
 - According to Design System: spacing/typography/color tokens. Absolutely do not hardcode inline style unless required.
+- ALWAYS prefer existing framework/theme classes such as `p-4`, `text-lg`,
+  `gap-6`, and `rounded-md` so the interface stays on one shared scale.
+- DO NOT use arbitrary fixed-pixel utilities when an existing class or token
+  covers the intent. Fixed `px` values are limited to hairline borders
+  (`border-[1px]`), blur/shadow tuning, and very small precision radii.
+- Promote any repeated pixel exception to a named theme token or reusable class.
 
 ### 2. State & Data
 - It is PROHIBITED to use `useState` for continuous values ​​(mouse position, scroll progress). Use `useMotionValue` / `useTransform` of Framer Motion / GSAP.
@@ -1175,7 +1188,8 @@ Realize Design System (from `@speckit.uiux` ) into production code: reusable com
 ### 3. Accessibility (a11y) & UI Rules
 - Semantic HTML, ARIA. MANDATORY contrast ratio test (WCAG AA). Button CTA text must be easy to read on the button background.
 - Button text must NOT wrap on the desktop. Label button is brief (maximum 3 words).
-- Tactile Feedback: add `active:scale-[0.98]` or `-translate-y-[1px]` to create a physical click feeling.
+- Tactile Feedback: use built-in utilities such as `active:scale-95` or
+  `active:translate-y-px`.
 
 ### 4. Motion & Performance
 - Animate `transform` and `opacity` (supports hardware acceleration). It is PROHIBITED to animate top/left/width/height continuously.

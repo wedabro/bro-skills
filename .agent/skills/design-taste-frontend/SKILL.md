@@ -29,6 +29,10 @@ Ask one clarifying question only when two materially different design directions
 
 - Avoid templated defaults: purple glow, centered dark-mesh hero, repeated three-card rows, excessive glass, and uniform section rhythms.
 - Keep one visual language per page: one palette, one radius system, one icon family, and consistent type hierarchy.
+- Always prefer existing framework/theme classes such as `p-4`, `text-lg`, and
+  `rounded-md` over arbitrary values. Fixed-pixel exceptions are limited to
+  hairline borders, blur/shadow tuning, and very small precision radii; promote
+  repeated exceptions to named tokens.
 - Use cards only when grouping or elevation carries meaning. Prefer spacing, dividers, and composition otherwise.
 - Give each section a distinct job and vary layout families; never repeat split-image rows more than twice consecutively.
 - Keep the hero visible on a small laptop: concise headline, short supporting copy, and primary CTA above the fold.

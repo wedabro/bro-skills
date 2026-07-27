@@ -25,6 +25,16 @@
   - **Interactive-Heavy Pages**: Prefer Body 1rem (16px) and Line-height 1.5 for compact, high-density layouts.
 
 ## 📏 Layout, Spacing & Padding
+- **Utility Class Priority**: ALWAYS prefer existing framework/theme classes
+  such as `p-4`, `text-lg`, `gap-6`, and `rounded-md`. This shared scale is the
+  source of truth for consistent spacing, typography, sizing, and radius.
+- **Arbitrary Value Ban**: DO NOT use arbitrary fixed-pixel utilities such as
+  `p-[18px]`, `text-[17px]`, or `w-[347px]` when an existing class or design
+  token can express the intent.
+- **Fixed-Pixel Exceptions**: Fixed `px` values are allowed only for hairline
+  borders such as `border-[1px]`, blur/shadow tuning, or very small radii that
+  require pixel-level sharpness. If the same exception appears more than once,
+  promote it to a named theme token or reusable class.
 - **8-Point Grid System**: Use spacing and padding values that are multiples of 8px (e.g., 8px, 16px, 24px, 32px, 48px, 64px).
 - **Hero Section**: Limit top padding (max `pt-24` on desktop).
 - **Anti-Center Bias**: Avoid boring centered Hero layout unless it's a manifesto page. Prefer Split Screen or Asymmetric layouts.
@@ -51,7 +61,8 @@
   - Minimum WCAG AA contrast ratio 4.5:1 (Do not use white text on light grey background).
 - **Interactive UI States**:
   - Skeletal loaders for loading states (do not use generic spinners).
-  - Tactile Feedback: Add `-translate-y-[1px]` or `scale-[0.98]` on `:active` states for a physical button feel.
+  - Tactile Feedback: Use built-in utilities such as `active:translate-y-px`
+    or `active:scale-95` for physical button feedback.
 - **Images**: REQUIRED to have real images (from image gen tools, Unsplash, Picsum). FORBIDDEN to use div fake screenshots.
 
 ## ✨ Micro-animations
