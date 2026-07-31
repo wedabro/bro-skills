@@ -34,14 +34,18 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - Bento Grid must have rhythm, not leave empty cells, diversify the background of the cells (images, subtle gradients, text).
 
 ### Phase 3: Core Components Design
+- **RULE TỐI CAO: Reuse & Separation**:
+  - Bắt buộc kiểm tra kỹ xem component có sẵn chưa trước khi tạo mới.
+  - Tuyệt đối không tự ý viết code tạo UI form, card design hoặc các widget phức tạp trực tiếp bên trong các file Page. Phải tách biệt hoàn toàn thành các component độc lập để tái sử dụng.
 - **Buttons**: Text does not wrap lines on the desktop. Contrast WCAG AA.
 - **Cards**: Limit dark shadows on light backgrounds. Do not nest cards within cards.
 - **Forms**: Label on input, do not use placeholder instead of label.
 
 ### Phase 4: Rich Aesthetics Directive
 - Avoid cheap AI gradients. Use realistic Glassmorphism (backdrop-filter + 1px inner border) if the vibe fits.
-- Interactive States: Skeletal loading (no generic spinner), tactile feedback
-  using a built-in utility such as `active:scale-95`.
+- Interactive States & Skeleton Loading:
+  - Bắt buộc áp dụng Skeleton Loading 1:1 với cấu trúc thực tế cho mọi component có tải dữ liệu bất đồng bộ. Nghiêm cấm dùng spinner quay tròn generic hoặc text loading thô sơ.
+  - Tactile feedback using a built-in utility such as `active:scale-95`.
 
 ## 📤 Output
 - File: `.agent/knowledge_base/ui_ux_standards.md`
@@ -53,4 +57,7 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - DO NOT use 2 CTAs with the same purpose (same intent) on the same page.
 - DO NOT use arbitrary fixed-pixel utilities when an existing class or token
   expresses the same intent.
+- DO NOT write form designs or detailed UI blocks directly inside page files.
+- MANDATORY: Check and reuse existing components before creating new ones.
+- MANDATORY: Apply 1:1 skeleton loading to all asynchronous components.
 - MANDATORY Mobile-first design priority.
