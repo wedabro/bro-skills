@@ -83,9 +83,9 @@
 - **Strict Consistency**: Default to uniformity. Do not introduce arbitrary font sizes.
 
 ## 🧱 Core Components (Atomic) & Accessibility
-- **Reuse First**: Before creating a component, inspect existing primitives and
-  variants. Extend substantially similar components through composition or
-  typed variants instead of copying them.
+- **RULE TỐI CAO: Reuse First & Page Cleanliness**:
+  - Bắt buộc kiểm tra kỹ hệ thống component có sẵn trước khi tạo mới. Nếu đã có component tương tự, PHẢI sử dụng lại hoặc mở rộng qua props/variants thay vì tự ý tạo mới hoặc nhân bản code.
+  - TUYỆT ĐỐI KHÔNG tự ý viết code tạo UI form, card design, hoặc các khối giao diện chi tiết trực tiếp bên trong các file Page (ví dụ `page.tsx`, `index.html`, v.v.). Page chỉ đóng vai trò làm layout container kết nối, truyền props, quản lý high-level state và fetching dữ liệu. Mọi form, card, widget phải được tách biệt hoàn toàn thành các component con độc lập trong thư mục components.
 - **Forms**: Use a shared field contract for label, control, helper text, error,
   required, disabled, read-only, success, and loading states.
 - **Tables**: Use a shared table/data-table primitive for loading, empty state,
@@ -97,8 +97,9 @@
   - FORBIDDEN to wrap button text on desktop. Button labels max 3 words (e.g., `Get Started`).
   - FORBIDDEN to have 2 CTAs with the same intent on the same page (choose only one label).
   - Minimum WCAG AA contrast ratio 4.5:1 (Do not use white text on light grey background).
-- **Interactive UI States**:
-  - Skeletal loaders for loading states (do not use generic spinners).
+- **Interactive UI States & Skeleton Loading**:
+  - BẮT BUỘC áp dụng **Skeleton Loading** cho tất cả các component có tải dữ liệu bất đồng bộ (async API call). Nghiêm cấm dùng spinner quay tròn generic hoặc text loading thô sơ cho toàn bộ vùng nội dung lớn.
+  - Thiết kế của Skeleton Loader phải khớp 1:1 với kích thước, bo góc, cấu trúc phân cấp và layout của component thực tế khi hiển thị dữ liệu xong nhằm tránh hiện tượng giật lắc bố cục (layout shift).
   - Tactile Feedback: Use built-in utilities such as `active:translate-y-px`
     or `active:scale-95` for physical button feedback.
 - **Images**: REQUIRED to have real images (from image gen tools, Unsplash, Picsum). FORBIDDEN to use div fake screenshots.
