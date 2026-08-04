@@ -1,11 +1,12 @@
 ---
-description: Full Pipeline (Specify → Clarify → Plan → Tasks → Analyze)
+description: Full Pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze)
 ---
 
 # 🚀 Full Pipeline
 
 ## Steps
 
+0. **Brainstorm & Align** — Discuss and clarify requirements with the User, propose solution alternatives (with pros/cons), and get final confirmation.
 1. **@speckit.map** — (IF old project) Scans the structure and understands the current codebase.
    - Output: `.agent/codebase/` docs.
 

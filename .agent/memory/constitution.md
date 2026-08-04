@@ -2,7 +2,8 @@
 
 ## §0 bro-skills Protocol (REQUIRED)
 - **REQUIRED**: All development (Code), testing (Test), and deployment (Deploy Production) activities MUST use `bro-skills`.
-- **Pipeline**: Strictly adhere to the SDLC pipeline: Specify → Plan → Tasks → Implement.
+- **Pipeline**: Strictly adhere to the SDLC pipeline: Brainstorm & Align → Specify → Plan → Tasks → Implement.
+- **Brainstorming-First**: Before writing any code/spec/plan, the Agent MUST brainstorm with the User to clarify requirements, propose solutions (with pros/cons), and recommend the best path.
 - **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
 
 ## §1 Infrastructure (DOCKER-FIRST)
