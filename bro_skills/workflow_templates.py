@@ -7,13 +7,14 @@ Each workflow has: Pre-conditions, Steps with gate checks, Success criteria.
 def wf_00_all():
     return r"""
 ---
-description: Full Pipeline (Specify → Clarify → Plan → Tasks → Analyze)
+description: Full Pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze)
 ---
 
 # 🚀 Full Pipeline
 
 ## Steps
 
+0. **Brainstorm & Align** — Discuss and clarify requirements with the User, propose solution alternatives (with pros/cons), and get final confirmation.
 1. **@speckit.map** — (IF old project) Scans the structure and understands the current codebase.
    - Output: `.agent/codebase/` docs.
 
@@ -75,12 +76,14 @@ description: Create Feature Specification (spec.md)
 
 ## Pre-conditions
 - `.agent/memory/constitution.md` exists
+- **Brainstorm & Align session is completed and confirmed by the User**
 
 ## Steps
 
-1. Developers describe features in natural language
-2. **@speckit.specify** — Parse description → create standardized spec.md
-3. Review output: spec.md must have Overview, User Scenarios, Requirements, Success Criteria
+1. Brainstorm with the User to clarify requirements, propose solutions, and get final alignment
+2. Developers describe features in natural language (or output of brainstorm is used)
+3. **@speckit.specify** — Parse description → create standardized spec.md
+4. Review output: spec.md must have Overview, User Scenarios, Requirements, Success Criteria
 
 ## Success Criteria
 - ✅ spec.md has ≥1 User Scenario
