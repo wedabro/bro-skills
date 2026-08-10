@@ -1,46 +1,58 @@
-# bro-skills Installer for Windows (PowerShell)
-# Usage (PowerShell / irm):
-#   irm https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 | iex
-# Usage (curl in PowerShell / CMD):
-#   curl.exe -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1
+# bro-skills standalone installer for Windows x64
+# Usage: irm https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 | iex
 
 $ErrorActionPreference = "Stop"
+$repo = "wedabro/bro-skills"
+$asset = "bro-skills-windows-x86_64.exe"
+$installDir = Join-Path $env:LOCALAPPDATA "Programs\bro-skills"
+$destination = Join-Path $installDir "bro-skills.exe"
+$baseUrl = "https://github.com/$repo/releases/latest/download"
+$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("bro-skills-" + [guid]::NewGuid())
 
-Write-Host "⚡ Installing bro-skills..." -ForegroundColor Cyan
-
-# 1. Detect Python
-$pythonCmd = Get-Command python -ErrorAction SilentlyContinue
-if (-not $pythonCmd) {
-    $pythonCmd = Get-Command python3 -ErrorAction SilentlyContinue
+$architecture = $env:PROCESSOR_ARCHITEW6432
+if (-not $architecture) {
+    $architecture = $env:PROCESSOR_ARCHITECTURE
+}
+if ($architecture -notin @("AMD64", "x86_64")) {
+    throw "bro-skills currently provides a standalone Windows binary for x64 only (detected: $architecture)."
 }
 
-if (-not $pythonCmd) {
-    Write-Host "❌ Python is required but not found in PATH." -ForegroundColor Red
-    Write-Host "Please install Python 3.9+ from https://www.python.org/downloads/ and check 'Add Python to PATH'." -ForegroundColor Yellow
-    exit 1
+Write-Host "Installing bro-skills standalone..." -ForegroundColor Cyan
+
+try {
+    New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+    $download = Join-Path $tempDir $asset
+    $checksumFile = "$download.sha256"
+    Invoke-WebRequest "$baseUrl/$asset" -OutFile $download -UseBasicParsing
+    Invoke-WebRequest "$baseUrl/$asset.sha256" -OutFile $checksumFile -UseBasicParsing
+
+    $expected = ((Get-Content -Raw $checksumFile).Trim() -split "\s+")[0].ToLowerInvariant()
+    $actual = (Get-FileHash $download -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $expected) {
+        throw "SHA-256 verification failed. Expected $expected but downloaded $actual."
+    }
+
+    Move-Item -Force $download $destination
+
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $pathEntries = @($userPath -split ";" | Where-Object { $_ })
+    if ($pathEntries -notcontains $installDir) {
+        $newPath = (($pathEntries + $installDir) -join ";")
+        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+        Write-Host "Added $installDir to your user PATH." -ForegroundColor Yellow
+    }
+    if (($env:Path -split ";") -notcontains $installDir) {
+        $env:Path = "$env:Path;$installDir"
+    }
+
+    Write-Host "bro-skills installed successfully." -ForegroundColor Green
+    & $destination version
+    Write-Host "Open a new terminal, then run: bro-skills" -ForegroundColor Cyan
 }
-
-$pythonExe = $pythonCmd.Source
-$pyVersionStr = & $pythonExe --version 2>&1
-Write-Host "✔ Found $pyVersionStr" -ForegroundColor Green
-
-# 2. Check Python Version (>= 3.9)
-$versionCheck = & $pythonExe -c "import sys; print(1 if sys.version_info >= (3, 9) else 0)"
-if ($versionCheck.Trim() -ne "1") {
-    Write-Host "❌ Python 3.9 or higher is required." -ForegroundColor Red
-    exit 1
-}
-
-# 3. Install via pip
-Write-Host "📦 Installing bro-skills via pip..." -ForegroundColor Yellow
-& $pythonExe -m pip install --upgrade git+https://github.com/wedabro/bro-skills.git
-
-# 4. Verify Installation
-$broSkillsCmd = Get-Command bro-skills -ErrorAction SilentlyContinue
-if ($broSkillsCmd) {
-    Write-Host "`n🎉 bro-skills installed successfully!" -ForegroundColor Green
-    & bro-skills version
-} else {
-    Write-Host "`n⚠️ bro-skills was installed, but the 'bro-skills' command is not in your current PATH." -ForegroundColor Yellow
-    Write-Host "Please restart your terminal or ensure Python Scripts folder is in your environment PATH." -ForegroundColor Yellow
+finally {
+    if (Test-Path $tempDir) {
+        Remove-Item -LiteralPath $tempDir -Recurse -Force
+    }
 }
