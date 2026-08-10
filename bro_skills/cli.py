@@ -785,24 +785,117 @@ def cmd_version(args):
 
 
 def _get_latest_github_version():
-    """Retrieve the latest version of bro-skills from GitHub raw package.json."""
+    """Retrieve the latest version of bro-skills from GitHub Releases."""
     import urllib.request
     import json
-    
-    url = "https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json"
+
+    url = "https://api.github.com/repos/wedabro/bro-skills/releases/latest"
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'bro-skills-cli'})
-        with urllib.request.urlopen(req, timeout=5) as response:
+        with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
-            return data.get("version")
+            return data.get("tag_name", "").lstrip("v") or None
     except Exception:
         return None
+
+
+def _standalone_asset_name():
+    """Return the release asset for the current supported standalone platform."""
+    import platform
+
+    machine = platform.machine().lower()
+    if machine not in ("amd64", "x86_64"):
+        raise RuntimeError(f"Standalone updates currently support x64 only (detected: {machine}).")
+    if sys.platform.startswith("win"):
+        return "bro-skills-windows-x86_64.exe"
+    if sys.platform.startswith("linux"):
+        return "bro-skills-linux-x86_64"
+    raise RuntimeError(f"Standalone updates are not available for {sys.platform}.")
+
+
+def _download_file(url, destination):
+    """Download one release asset with a stable CLI user agent."""
+    import urllib.request
+
+    request = urllib.request.Request(url, headers={"User-Agent": "bro-skills-cli"})
+    with urllib.request.urlopen(request, timeout=60) as response, open(destination, "wb") as output:
+        while True:
+            chunk = response.read(1024 * 1024)
+            if not chunk:
+                break
+            output.write(chunk)
+
+
+def _verify_sha256(path, checksum_path):
+    """Verify a downloaded asset against its release checksum file."""
+    import hashlib
+
+    with open(checksum_path, "r", encoding="utf-8") as checksum_file:
+        expected = checksum_file.read().strip().split()[0].lower()
+    digest = hashlib.sha256()
+    with open(path, "rb") as downloaded_file:
+        for chunk in iter(lambda: downloaded_file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    actual = digest.hexdigest()
+    if actual != expected:
+        raise RuntimeError(f"SHA-256 verification failed. Expected {expected}, downloaded {actual}.")
+
+
+def _update_standalone(latest_version):
+    """Download, verify, and replace a PyInstaller standalone executable."""
+    import pathlib
+    import shutil
+    import subprocess
+    import tempfile
+
+    asset = _standalone_asset_name()
+    base_url = "https://github.com/wedabro/bro-skills/releases/latest/download"
+    temp_dir = pathlib.Path(tempfile.mkdtemp(prefix="bro-skills-update-"))
+    staged = temp_dir / asset
+    checksum = temp_dir / f"{asset}.sha256"
+
+    try:
+        print(f"Downloading {asset}...")
+        _download_file(f"{base_url}/{asset}", staged)
+        _download_file(f"{base_url}/{asset}.sha256", checksum)
+        _verify_sha256(staged, checksum)
+
+        target = pathlib.Path(sys.executable).resolve()
+        if sys.platform.startswith("win"):
+            updater = temp_dir / "finish-update.ps1"
+            updater.write_text(
+                "param([int]$ProcessId, [string]$Source, [string]$Target, [string]$TempDir)\n"
+                "$ErrorActionPreference = 'Stop'\n"
+                "Wait-Process -Id $ProcessId -ErrorAction SilentlyContinue\n"
+                "Move-Item -LiteralPath $Source -Destination $Target -Force\n"
+                "Remove-Item -LiteralPath $TempDir -Recurse -Force\n",
+                encoding="utf-8",
+            )
+            creation_flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+            subprocess.Popen(
+                [
+                    "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                    "-File", str(updater), str(os.getpid()), str(staged), str(target), str(temp_dir),
+                ],
+                creationflags=creation_flags,
+            )
+            print(f"✅ Update v{latest_version} verified and scheduled. Reopen your terminal shortly.")
+            return
+
+        pending = target.with_name(f"{target.name}.new")
+        shutil.copy2(staged, pending)
+        os.chmod(pending, 0o755)
+        os.replace(pending, target)
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        print(f"✅ Updated successfully to v{latest_version}.")
+    except Exception:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        raise
 
 
 def cmd_update(args):
     """Upgrade bro-skills to the latest version."""
     import subprocess
-    import shutil
 
     install_method = os.environ.get("BRO_SKILLS_INSTALL_METHOD", "pip")
 
@@ -818,15 +911,22 @@ def cmd_update(args):
     else:
         print("⚠️ Could not check for the latest version. Proceeding to update anyway...")
 
+    if getattr(sys, "frozen", False):
+        if not latest_version:
+            print("❌ Cannot update the standalone executable without release information.")
+            return
+        try:
+            _update_standalone(latest_version)
+        except Exception as e:
+            print(f"\n❌ Standalone update failed: {e}")
+        return
+
     print(f"Installation method: {install_method.upper()}")
 
     if install_method == "npm":
         cmd = ["npm", "install", "-g", "github:wedabro/bro-skills"]
     else:
-        pip_cmd = "pip"
-        if not shutil.which("pip") and shutil.which("pip3"):
-            pip_cmd = "pip3"
-        cmd = [sys.executable, "-m", pip_cmd, "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
+        cmd = [sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
 
     print(f"Running command: {' '.join(cmd)}")
     try:
