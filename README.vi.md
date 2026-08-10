@@ -37,15 +37,16 @@ Sự khác biệt vượt trội giữa việc sử dụng bộ cấu hình AI A
 
 ## 📋 Yêu cầu hệ thống
 
-- Python 3.9+ (Windows, Linux, macOS)
-- Node.js 16+ nếu bạn muốn chạy bằng `npx`
-- Không cần cài đặt thêm thư viện ngoài (chỉ sử dụng thư viện chuẩn của Python)
+- Bản standalone: Windows x64 hoặc Linux x64, có PowerShell hoặc `curl`/`wget`
+- Cài standalone không cần Python, pip, Node.js hay npm
+- Chỉ cần Python 3.9+ khi cài bằng pip, chạy source hoặc phát triển
+- Chỉ cần Node.js 16+ và Python 3.9+ khi sử dụng `npx`
 
 ---
 
-### Cách 1: Cài đặt 1 dòng lệnh bằng `curl` / `irm` (Khuyên dùng - Windows & Linux & macOS)
+### Cách 1: Cài standalone bằng 1 dòng lệnh (Khuyên dùng — không cần runtime)
 
-#### Trên Linux / macOS / WSL / Git Bash:
+#### Trên Linux x64:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | bash
 ```
@@ -59,6 +60,10 @@ Hoặc dùng `curl.exe` trên Windows (PowerShell / CMD):
 ```powershell
 curl.exe -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1
 ```
+
+Installer tải đúng executable từ GitHub Releases và kiểm tra SHA-256 trước khi
+cài. Windows cài vào `%LOCALAPPDATA%\Programs\bro-skills`; Linux mặc định cài
+vào `~/.local/bin`.
 
 ### Cách 2: Chạy bằng `npx` (không cần cài đặt toàn cục)
 
@@ -129,12 +134,19 @@ python bro-skills/ssd.py init --target /path/to/project
 ### Gỡ cài đặt
 
 ```bash
+# Bản standalone trên Linux
+rm ~/.local/bin/bro-skills
+
+# Bản cài Python/npm
 pip uninstall bro-skills
 # hoặc
 pipx uninstall bro-skills
 # hoặc nếu đã cài đặt toàn cục bằng npm từ GitHub
 npm uninstall -g bro-skills
 ```
+
+Với bản standalone trên Windows, xóa
+`%LOCALAPPDATA%\Programs\bro-skills` và bỏ thư mục đó khỏi `PATH` người dùng.
 
 ---
 
@@ -166,7 +178,7 @@ bro-skills validate --target /path/to/project
 bro-skills version
 bro-skills -v
 
-# Cập nhật lên phiên bản mới nhất (tự động phát hiện cài đặt qua pip hoặc npm)
+# Cập nhật lên phiên bản mới nhất (standalone, pip hoặc npm)
 bro-skills update
 ```
 

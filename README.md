@@ -37,17 +37,18 @@ Using an AI Agent configuration kit (`bro-skills`) vs. coding with raw/unconstra
 
 ## 📋 Requirements
 
-- Python 3.9+ (Windows, Linux, macOS)
-- Node.js 16+ if you want to run using `npx`
-- No need to add external libraries (Pure Python stdlib)
+- Standalone install: Windows x64 or Linux x64, with PowerShell or `curl`/`wget`
+- No Python, pip, Node.js, or npm is required for the standalone install
+- Python 3.9+ is required only for pip, source, or development installs
+- Node.js 16+ and Python 3.9+ are required only when using `npx`
 
 ---
 
-## 📦 Install/run CLI (Any OS)
+## 📦 Install/run CLI
 
-### Method 1: 1-Line Quick Install via `curl` / `irm` (Recommended - Windows, Linux, macOS)
+### Method 1: Standalone 1-line install (Recommended — no language runtime)
 
-#### Linux / macOS / WSL / Git Bash:
+#### Linux x64:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | bash
 ```
@@ -61,6 +62,10 @@ Or using `curl.exe` on Windows (PowerShell / CMD):
 ```powershell
 curl.exe -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1
 ```
+
+The installers download the matching executable from GitHub Releases and verify
+its SHA-256 checksum before installing it. Windows installs to
+`%LOCALAPPDATA%\Programs\bro-skills`; Linux installs to `~/.local/bin` by default.
 
 ### Method 2: Run with `npx` (do not install globally)
 
@@ -131,12 +136,19 @@ python bro-skills/ssd.py init --target /path/to/project
 ### Uninstall
 
 ```bash
+# Standalone Linux
+rm ~/.local/bin/bro-skills
+
+# Python/npm installations
 pip uninstall bro-skills
 # or
 pipx uninstall bro-skills
 # or if installed globally using npm from GitHub
 npm uninstall -g bro-skills
 ```
+
+For standalone Windows, remove `%LOCALAPPDATA%\Programs\bro-skills` and remove
+that directory from your user `PATH`.
 
 ---
 
@@ -168,7 +180,7 @@ bro-skills validate --target /path/to/project
 bro-skills version
 bro-skills -v
 
-# Update to the latest version (automatically detects installation via pip or npm)
+# Update to the latest version (standalone, pip, or npm)
 bro-skills update
 ```
 
