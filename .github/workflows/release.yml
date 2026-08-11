@@ -85,6 +85,7 @@ jobs:
         run: gh release create "${{ github.ref_name }}" dist/* release-assets/* --generate-notes
       - name: Discord Notification
         if: always() && env.DISCORD_WEBHOOK_URL != ''
+        continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
