@@ -66,7 +66,11 @@ chmod 755 "${temp_dir}/${asset}"
 mv "${temp_dir}/${asset}" "$destination"
 
 echo "bro-skills installed successfully at $destination"
-"$destination" version
+if ! "$destination" version; then
+    rm -f -- "$destination"
+    echo "The downloaded bro-skills binary cannot run on this Linux system; installation was rolled back." >&2
+    exit 1
+fi
 
 case ":${PATH}:" in
     *":${install_dir}:"*) ;;

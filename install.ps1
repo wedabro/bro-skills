@@ -49,6 +49,10 @@ try {
 
     Write-Host "bro-skills installed successfully." -ForegroundColor Green
     & $destination version
+    if ($LASTEXITCODE -ne 0) {
+        Remove-Item -LiteralPath $destination -Force
+        throw "The downloaded bro-skills executable could not run; installation was rolled back."
+    }
     Write-Host "Open a new terminal, then run: bro-skills" -ForegroundColor Cyan
 }
 finally {

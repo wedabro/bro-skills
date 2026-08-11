@@ -37,7 +37,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build standalone executable
+      - name: Build Linux standalone executable on an older glibc baseline
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src python:3.12-slim-bullseye sh -c '
+            apt-get update -qq &&
+            DEBIAN_FRONTEND=noninteractive apt-get install -y -qq binutils >/dev/null &&
+            python -m pip install --disable-pip-version-check . pyinstaller >/dev/null &&
+            pyinstaller --clean --onefile --name "${{ matrix.asset }}" bro_skills/__main__.py
+          '
+          "./dist/${{ matrix.asset }}" version
+      - name: Build Windows standalone executable
+        if: runner.os == 'Windows'
         shell: bash
         run: |
           python -m pip install --upgrade pip
