@@ -42,10 +42,12 @@ jobs:
         shell: bash
         run: |
           docker run --rm -v "$PWD:/src" -w /src python:3.12-slim-bullseye sh -c '
+            owner=$(stat -c "%u:%g" /src) &&
             apt-get update -qq &&
             DEBIAN_FRONTEND=noninteractive apt-get install -y -qq binutils >/dev/null &&
             python -m pip install --disable-pip-version-check . pyinstaller >/dev/null &&
-            pyinstaller --clean --onefile --name "${{ matrix.asset }}" bro_skills/__main__.py
+            pyinstaller --clean --onefile --name "${{ matrix.asset }}" bro_skills/__main__.py &&
+            chown -R "$owner" /src/build /src/dist /src/bro-skills-linux-x86_64.spec
           '
           "./dist/${{ matrix.asset }}" version
       - name: Build Windows standalone executable
