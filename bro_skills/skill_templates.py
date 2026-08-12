@@ -1111,52 +1111,146 @@ def skill_backend():
     return r"""
 ---
 name: speckit.backend
-description: Backend/API Developer - Build API services, business logic, authentication, authorization, and standards-based integrations.
+description: Backend/API Developer - Build production API services, business logic, authentication and authorization, data-safe integrations, reliability controls, and verifiable contracts.
 role: Backend Engineer
 ---
 
-## 🎯 Mission
-Build backend/API production: standard REST/GraphQL endpoint, layered business logic, solid auth/authz, stable integration. Match `knowledge_base/api_standards.md` .
+## Mission
 
-## 📥 Input
-- `.agent/specs/[feature]/spec.md` + `plan.md` (data model, API contracts)
-- `.agent/knowledge_base/api_standards.md`, `data_schema.md`
-- `.agent/memory/constitution.md` (runtime, ENV, and port policy)
+Build the smallest production-ready backend change that honors the feature
+specification and the existing architecture. Prefer a modular monolith unless
+the specification demonstrates a need for distributed complexity. Match
+`.agent/knowledge_base/api_standards.md`, `data_schema.md`, and the project
+constitution.
 
-## 📋 Protocol
+## Required Inputs
 
-### 1. API Layer
-- `api_standards.md` compliance: versioning ( `/v1` ), naming, status codes, error envelope consistency.
-- Validation of input at the edge (DTO/schema). Reject soon, clear message.
-- Standardized pagination/filtering/sorting for list endpoints.
+- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- Existing API contracts, domain model, data schema, and error conventions
+- `.agent/memory/constitution.md` for ENV, Docker, port, and safety policy
 
-### 2. Architecture (Layered)
-- Detach `controller → service → repository` . DO NOT put business logic in the controller.
-- Dependency injection, no hard initialization of dependencies.
-- Idempotency for sensitive operations (payment, create).
+If the contract, ownership, caller, data classification, or failure behavior is
+unknown, resolve it in the specification before implementation. Use
+`speckit.database`, `speckit.security`, `speckit.devops`, or `speckit.tester`
+for specialized work rather than duplicating their scope.
 
-### 3. Auth & Security
-- AuthN (JWT/session) + AuthZ (RBAC/policy) in middleware.
-- Parameterized query (anti-SQLi). DO NOT concatenate SQL strings.
-- Rate limiting + input sanitization cho public endpoints.
+## Protocol
 
-### 4. Data & Transaction
-- Transaction boundary is clear; rollback on error.
-- N+1 query check; index theo `data_schema.md`.
+### 0. Preflight and Risk
 
-### 5. Observability
-- Structured logging (request id), health check endpoint, basic metrics.
-- Error handling is centralized, NOT exception swallowing.
+- Trace request, async-event, and data paths before editing. Identify callers,
+  authorization boundary, side effects, transaction owner, dependencies, and
+  rollback or recovery behavior.
+- Classify the change as read-only, reversible write, irreversible write, or
+  externally visible contract change. For payments, identity, PII, tenant data,
+  migrations, queues, or destructive work, state the risk and mitigation.
+- Reuse the project's error, validation, configuration, logging, persistence,
+  and dependency-injection patterns. Do not introduce a framework, vendor, or
+  architectural pattern without a documented need.
 
-## 📤 Output
-- API code + contract (OpenAPI/GraphQL schema).
-- Update `knowledge_base/api_standards.md` if pattern is added.
+### 1. Contract-First API
 
-## 🚫 Guard Rails
-- DO NOT hard-code URL/secret/port → ENV ( `API_*` , `DB_*` ).
-- DO NOT return raw error/stacktrace to the client.
-- DO NOT bypass authz check on sensitive endpoints.
-- DO NOT let public endpoints fail to authenticate without warning.
+- Define or update the contract before handler logic: consumer, resource or
+  operation, authorization, request/response schemas, examples, errors,
+  pagination/filter/sort semantics, limits, and rate-limit behavior.
+- Keep public changes additive when possible. Version, deprecate, and announce
+  breaking changes; never silently change a field's meaning or error shape.
+- Validate every untrusted boundary input (HTTP, webhook, queue, CLI, file,
+  environment) with a schema. Reject invalid input early with stable,
+  actionable client errors; normalize only after validation.
+- Use a consistent error envelope. Map expected domain failures deliberately;
+  centralize unexpected-error handling and never expose stack traces, secrets,
+  internal IDs, or provider responses.
+- Make retriable mutations idempotent when duplicate execution can charge,
+  create, send, or otherwise cause side effects. Define idempotency-key scope,
+  TTL, conflict response, and persisted result where applicable.
+
+### 2. Domain and Application Boundaries
+
+- Keep transport code thin: routes adapt transport, controllers coordinate,
+  services enforce use cases and invariants, repositories isolate persistence,
+  and integrations live behind explicit adapters.
+- Put authorization and business invariants close to the use case, not only in
+  UI or routing. Pass explicit actor and tenant context; do not rely on ambient
+  global state.
+- Depend on interfaces at external seams. Inject time, random IDs, network
+  clients, storage, and repositories when this improves testability.
+- Use typed domain results or known error classes for expected failures. Do not
+  use exceptions as ordinary branching or swallow errors after logging.
+
+### 3. Identity, Authorization, and Tenant Safety
+
+- Choose session, token, service identity, or delegated identity based on the
+  application and threat model. Verify issuer, audience, expiry, signature, and
+  required claims before trusting credentials.
+- Enforce least-privilege authorization server-side for every sensitive read or
+  mutation. Treat object ownership and tenant membership as authorization, not
+  merely route validation; protect against IDOR.
+- For multi-tenant features, propagate tenant context through HTTP, jobs,
+  caches, and data access. Scope every tenant query and use database-level
+  isolation where supported. Test with multiple tenants.
+- Keep credentials in ENV or approved secret storage; rotate, redact, and never
+  log tokens, passwords, connection strings, or sensitive request bodies.
+
+### 4. Data, Consistency, and Performance
+
+- Use parameterized queries and ORM bindings only. Constrain data in the
+  database with keys, foreign keys, uniqueness, checks, and appropriate
+  indexes; do not rely solely on application validation.
+- Make transaction boundaries explicit and short. Define isolation, lock order,
+  retry policy, and compensation for concurrent or external side effects.
+- For database-plus-message work, use an outbox or equivalent durable handoff;
+  consumers must tolerate at-least-once delivery and preserve idempotency.
+- Plan schema evolution as expand → backfill → switch → contract. Do not run
+  destructive migrations without a backup, rollback plan, impact assessment,
+  and explicit production approval.
+- Investigate N+1, full scans, hot rows, unbounded lists, and inefficient
+  pagination with real query plans and representative data. Add indexes for
+  proven access patterns, not guesses.
+
+### 5. Integration and Reliability
+
+- Set explicit connect/read/write timeouts, bounded retries with backoff and
+  jitter, cancellation propagation, and concurrency limits at remote calls.
+- Retry only safe or idempotent operations. Classify failures; use circuit
+  breaking, bulkheads, queues, or dead-letter handling when the dependency and
+  workload justify them.
+- Verify webhook signatures, timestamps, and replay protection. Acknowledge
+  asynchronously only after durable acceptance; make consumers idempotent.
+- Provide truthful health endpoints: liveness says the process can run,
+  readiness says it can accept traffic, and dependency checks do not leak
+  topology or credentials.
+
+### 6. Observability and Verification
+
+- Emit structured, redacted logs with request/correlation ID, actor/tenant
+  identifiers when safe, operation, outcome, latency, and error classification.
+- Add useful metrics and traces around request rate, errors, latency, queue
+  depth, dependency calls, and business-critical outcomes. Define SLO-relevant
+  signals and alert on user-impacting symptoms, not noise.
+- Write unit tests for use-case rules, integration tests for persistence and
+  adapters, contract tests for public interfaces, and failure/retry/idempotency
+  tests for risky paths. Test authorization and tenant isolation explicitly.
+- Run the project's formatter, type-check, lint, tests, migration validation,
+  and production build in Docker where available. Confirm generated contracts
+  and docs remain synchronized.
+
+## Completion Gate
+
+- Contract, authz, validation, error, side-effect, and rollback semantics are
+  explicit and tested for every changed operation.
+- No hard-coded URL, secret, credential, or environment-specific port exists;
+  use approved `API_*`, `DB_*`, or project ENV names.
+- Operational behavior has bounded timeouts/retries, safe logs, and applicable
+  health/metric/trace coverage.
+- No unrelated behavior, contract, schema, or dependency changed.
+
+## Guard Rails
+
+- Do not concatenate SQL, trust client-supplied ownership/tenant IDs, bypass
+  authorization, expose internal errors, or create unbounded queries.
+- Do not make distributed systems, queues, caching, event sourcing, or a new
+  database the default answer. Justify added complexity in the plan.
 - Use the language configured by the project or requested by the user.
 """
 
@@ -1165,104 +1259,135 @@ def skill_frontend():
     return r"""
 ---
 name: speckit.frontend
-description: Frontend Developer - Build UI components, state management, data fetching, accessibility, and performance without generic styling.
+description: Frontend Developer - Build production UI components, typed data flows, accessible interactions, responsive states, and performant interfaces without generic styling.
 role: Frontend Engineer
 ---
 
-## 🎯 Mission
-Realize Design System (from `@speckit.uiux` ) into production code: reusable components, clean state management, optimized data fetching, accessible & smooth animation standard taste-skill.
+## Mission
 
-## 📥 Input
-- `.agent/knowledge_base/ui_ux_standards.md` (Design System)
-- `.agent/specs/[feature]/spec.md` (UI requirements)
-- API contract from `@speckit.backend`
-- `.agent/memory/constitution.md` (ENV, Docker-First)
+Turn approved UI requirements and API contracts into cohesive production UI.
+Honor `.agent/knowledge_base/ui_ux_standards.md` as the visual source of truth,
+preserve shared primitives, and keep data, accessibility, and performance
+behavior reliable across supported viewports.
 
-## 📋 Protocol
+## Required Inputs
+
+- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- `.agent/knowledge_base/ui_ux_standards.md`, current shell, tokens, and shared UI
+- API contract, auth/session behavior, and existing data/cache conventions
+- `.agent/memory/constitution.md` for ENV and Docker policy
+
+Use `speckit.uiux` for new design-system decisions, `speckit.backend` for API
+contract changes, `speckit.security` for security review, and `speckit.tester`
+for broader test planning. Do not replace their ownership.
+
+## Protocol
 
 ### 0. Mandatory Preflight
+
 - Before writing code, inspect the current page family, shared layout,
-  components, design tokens, theme, and feature structure.
-- Report the reusable components found, the upstream source of truth to change,
-  and the files to create or update. Then implement.
+  components, design tokens, theme, feature structure, rendering boundary, and
+  API/data-cache conventions.
+- Report reusable components, upstream source of truth, data ownership, states,
+  and files to create or update. Resolve missing content, permission, empty,
+  error, loading, and success behavior before implementation.
 - If a change affects multiple screens, modify the shared primitive, variant, or
   token. Do not patch the same visual property page by page.
 
-### 1. Layout & Component Architecture
-- Compose every page from the shared application shell, container, breadcrumb,
-  page header, and content primitives. Pages of the same type use the same
-  structure, width, horizontal padding, and title placement.
-- Small, reusable, single responsibility components. Viewport uses `100dvh` instead of `100vh` to avoid layout jump on mobile.
-- Before creating a component, search for an existing primitive that can be
-  reused, extended with typed props/variants, or composed. When two components
-  overlap by roughly 70% or more, prefer one shared component with variants.
-- Keep feature-only components inside the feature. Promote a component to
-  shared UI/layout only when multiple features use it.
-- Keep page files focused on composition and page-level data flow. At roughly
-  250–300 lines, review the file and extract independent UI or logic.
-- Do not copy repeated JSX, form structure, modal shells, control styles,
-  pagination, state views, formatting, or API error handling. At the second
-  occurrence, evaluate a component, hook, utility, config, schema, or service.
-- According to Design System: spacing/typography/color tokens. Absolutely do not hardcode inline style unless required.
-- ALWAYS prefer existing framework/theme classes such as `p-4`, `text-lg`,
-  `gap-4`, and `rounded-md` so the interface stays on one shared scale.
-- Use `gap-4` as the primary component/grid gap. Reserve `gap-2` for tightly
-  related controls and `gap-6`/`gap-8` for clear hierarchy boundaries.
-- DO NOT use arbitrary fixed-pixel utilities when an existing class or token
-  covers the intent. Fixed `px` values are limited to hairline borders
-  (`border-[1px]`), blur/shadow tuning, and very small precision radii.
-- Promote any repeated pixel exception to a named theme token or reusable class.
+### 1. Layout and Component Architecture
 
-### 2. Shared Primitives & Variants
-- Build display modes as centrally defined, explicitly typed variants. Do not
-  create separate components that differ only by color or state.
-- Use shared `FormField` and control primitives for label, helper, error,
-  required, disabled, read-only, success, and loading states.
-- Use a shared table/data-table primitive for loading, empty state, pagination,
-  sorting, filtering, row actions, selection, responsiveness, and formatting as
-  applicable.
-- Use shared dialog/drawer shell, header, content, and footer primitives.
-  Centralize overlay, width, padding, radius, z-index, and animation.
+- Compose pages from the shared application shell, container, breadcrumb, page
+  header, and content primitives. Same-type pages use the same structure,
+  width, horizontal padding, and title placement.
+- Before creating a component, search for an existing primitive to reuse,
+  extend with typed props/variants, or compose. When two components overlap by
+  roughly 70% or more, prefer one shared component with variants.
+- Keep feature-only components, hooks, schemas, and API adapters within the
+  feature. Promote a component only when multiple features use it; keep page
+  files focused on composition and page-level data flow.
+- At roughly 250–300 lines, review a file and extract independent UI or logic.
+  At the second repeated JSX, form, modal, state view, formatter, or API-error
+  pattern, evaluate a component, hook, utility, config, schema, or service.
+- Use `100dvh` rather than `100vh` for viewport-sized mobile layouts. Use
+  semantic HTML before ARIA and typed variants rather than style-only forks.
 
-### 3. State, Data & TypeScript
-- It is PROHIBITED to use `useState` for continuous values ​​(mouse position, scroll progress). Use `useMotionValue` / `useTransform` of Framer Motion / GSAP.
-- Data fetching: MUST have Skeletal loader states (match the final UI shape), do not use generic circular spinner.
-- Put repeated status labels, visual variants, navigation, and display mappings
-  in typed configuration rather than inline JSX conditionals.
-- Type component props, API models, view models, and variant unions explicitly.
-  Avoid `any`; isolate and justify it when an external boundary requires it.
+### 2. Visual System and Shared States
 
-### 4. Accessibility, Responsive & UI Rules
-- Semantic HTML, ARIA. MANDATORY contrast ratio test (WCAG AA). Button CTA text must be easy to read on the button background.
-- Button text must NOT wrap on the desktop. Label button is brief (maximum 3 words).
-- Tactile Feedback: use built-in utilities such as `active:scale-95` or
-  `active:translate-y-px`.
-- Design mobile-first with the established `sm`, `md`, `lg`, `xl`, and `2xl`
-  breakpoints. Do not add a page-local breakpoint without a reusable need.
-- Let each shared component own its responsive behavior when appropriate.
+- Follow design-system spacing, typography, color, radius, shadow, sizing,
+  z-index, and motion tokens. Prefer existing `p-4`, `text-lg`, `gap-4`, and
+  `rounded-md` utilities; `gap-4` is the primary rhythm, `gap-2` is for tight
+  controls, and `gap-6`/`gap-8` signal hierarchy boundaries.
+- Do not use arbitrary fixed-pixel utilities when a token exists. Limit fixed
+  pixels to hairlines (`border-[1px]`), shadow/blur tuning, and tiny precision
+  radii; promote repeated exceptions to a named token or reusable class.
+- Use shared FormField/control, dialog/drawer, toast, confirmation, and
+  data-table primitives. Support all applicable default, hover, focus,
+  disabled, read-only, loading, empty, error, and success states.
+- Match skeleton loading to final layout; do not substitute generic spinners.
+  Use shared empty and error states with a recovery action when recovery is
+  possible. Never use native `alert` or `confirm` for product interactions.
 
-### 5. Motion & Performance
-- Animate `transform` and `opacity` (supports hardware acceleration). It is PROHIBITED to animate top/left/width/height continuously.
-- REQUIRED respect for `prefers-reduced-motion` if adding complex animations.
-- GSAP / Framer Motion must be cleared in time (to avoid memory leaks).
+### 3. Rendering, Data, and State
 
-### 6. ENV & Config
-- Use `NEXT_PUBLIC_*` for client config. NO hard-code endpoints.
+- Choose server/static/client rendering based on data sensitivity, freshness,
+  interactivity, bundle cost, and SEO needs. Keep secrets and privileged data
+  server-side; expose only approved `NEXT_PUBLIC_*` client configuration.
+- Put API calls behind typed feature adapters. Parse/validate external data at
+  the boundary, model loading/error/success states explicitly, and do not leak
+  transport shapes throughout UI.
+- Define cache key, freshness, invalidation, optimistic-update rollback, and
+  post-mutation refresh behavior. Cancel stale requests and prevent race
+  conditions when filters, navigation, or identity changes.
+- Keep local state local and derive values instead of duplicating them. Put
+  repeated labels, variants, navigation, and display mappings in typed config;
+  type props, models, view models, events, and variant unions explicitly.
+- Use form schemas and shared controls; preserve accessible labels and errors,
+  disable duplicate submits, surface field/server errors safely, and retain
+  user input after recoverable failures. Avoid `any` except at isolated,
+  justified external boundaries.
 
-### 7. Completion Gate
-- Verify responsive behavior and default, hover, focus, disabled, read-only,
-  loading, empty, error, and success states that apply.
-- Run the project's type-check, lint, tests, and production build.
-- Confirm no unrelated business behavior changed and no avoidable JSX/style
-  duplication or arbitrary visual values were introduced.
+### 4. Accessibility and Responsive Behavior
 
-## 📤 Output
-- UI component code + basic tests (render/interaction).
+- Make keyboard operation, visible focus, logical focus order, labels, error
+  announcements, modal focus management, and target-size behavior part of the
+  component contract. Verify WCAG AA contrast, including CTA text.
+- Use real buttons/links for their native behavior; provide meaningful names
+  for icon-only controls and text alternatives for non-text content.
+- Design mobile-first with existing `sm`, `md`, `lg`, `xl`, and `2xl`
+  breakpoints. Avoid page-local breakpoints unless reusable; let shared
+  components own their responsive behavior when appropriate.
+- Keep desktop button labels short (maximum three words) and non-wrapping.
+  Provide tactile feedback with established utilities such as `active:scale-95`
+  or `active:translate-y-px`; never create duplicate CTAs for the same intent.
 
-## 🚫 Guard Rails
-- DO NOT hard-code text/URL/color → use i18n/tokens/ENV.
-- DO NOT use 2 CTA buttons for the same purpose on one screen.
-- DO NOT violate a11y (missing label, button with white text on light background).
+### 5. Motion and Performance
+
+- Animate `transform` and `opacity`; do not continuously animate top, left,
+  width, or height. Respect `prefers-reduced-motion` and clean up GSAP/Framer
+  Motion subscriptions, timelines, and listeners.
+- Avoid unnecessary client components, waterfalls, duplicate fetches, large
+  client dependencies, layout shift, and eager non-critical media. Size,
+  lazy-load, and reserve dimensions for visual assets.
+- Measure before optimizing. Use project tooling to check bundle impact, web
+  vital regressions, rendering cost, and slow interactions where applicable.
+
+### 6. Verification and Completion Gate
+
+- Test render and interaction behavior for permission, loading, empty, error,
+  success, keyboard/focus, form, mutation, and recovery paths that apply.
+- Test API adapters and state transitions; include responsive visual/manual
+  verification for changed layouts. Do not treat mocked happy paths as proof of
+  backend compatibility.
+- Run the project formatter, type-check, lint, tests, and production build in
+  Docker where available. Confirm no avoidable JSX/style duplication, arbitrary
+  values, secret exposure, or unrelated business change was introduced.
+
+## Guard Rails
+
+- Do not hard-code endpoint, credential, token, color, or reusable copy; use
+  ENV, tokens, and project i18n/configuration conventions.
+- Do not bypass accessibility, permission states, error recovery, or responsive
+  verification to make a happy-path screen look complete.
 - Use the language configured by the project or requested by the user.
 """
 
@@ -1271,53 +1396,320 @@ def skill_database():
     return r"""
 ---
 name: speckit.database
-description: Database Architect - Design schemas, indexes, migrations, query optimization, and data integrity controls.
+description: Database Architect - Design schemas, indexes, migrations, query optimization, data integrity, recoverability, and reliable production operations.
 role: Database Architect
 ---
 
-## 🎯 Mission
-Design and optimize the data layer: reasonable standardized schema, effective indexing, safe migration, fast query, data integrity.
+## Mission
 
-## 📥 Input
-- `.agent/knowledge_base/data_schema.md`
-- `.agent/specs/[feature]/spec.md` + `plan.md` (data model)
-- `.agent/memory/constitution.md`
+Design data systems that are correct, performant, recoverable, and operable.
+Use `.agent/knowledge_base/data_schema.md`, the feature plan, and the project
+constitution. Coordinate with `speckit.backend` for transaction ownership,
+`speckit.security` for sensitive data, and `speckit.devops` for runtime setup.
 
-## 📋 Protocol
+## Protocol
 
-### 1. Schema Design
-- Normalize (3NF) default; Denormalize intentionally when performance is needed (specify the reason).
-- Clear primary/foreign keys, constraints (NOT NULL, UNIQUE, CHECK) in the DB.
-- Naming convention is consistent; update `data_schema.md` .
+### 0. Preflight
 
-### 2. Indexing & Performance
-- Index according to actual query pattern (WHERE/JOIN/ORDER BY).
-- Avoid over-indexing (slow writing). Composite index correct column order.
-- Detect & process N+1, full table scan.
+- Identify data classification, ownership, access paths, expected growth,
+  write/read ratio, retention, RPO, RTO, availability target, and production
+  blast radius before choosing a schema or operation.
+- Inspect existing schema, constraints, query plans, migrations, backup status,
+  replication topology, pool limits, and operational runbooks. State unknowns
+  rather than treating a backup or replica as verified.
 
-### 3. Migration (Safe)
-- Migration versioned, reversible (up/down).
-- Zero-downtime pattern: expand → migrate → contract.
-- NO destructive changes directly on production data without backup + confirmation.
+### 1. Schema and Integrity
 
-### 4. Integrity & Transaction
-- Transaction isolation level is appropriate; avoid deadlock.
-- Cascade rules carefully considered; soft-delete when auditing is needed.
+- Normalize to 3NF by default; denormalize only for a measured query or scale
+  need and record the consistency/maintenance cost.
+- Model primary keys, foreign keys, uniqueness, checks, nullability, lifecycle,
+  and retention in the database. Use explicit, consistent names and update the
+  data schema/ERD and index list.
+- Select data types for semantics, range, timezone, precision, and collation;
+  avoid unbounded JSON or text fields where a constrained model is required.
+- Define transaction boundaries, isolation, lock ordering, and conflict policy.
+  Use parameterized queries only; prevent N+1 and unbounded reads.
 
-### 5. Security
-- Least-privilege DB user; DO NOT use root/admin for the app.
-- Encryption at-rest for sensitive data; mask PII.
+### 2. Query and Capacity Design
 
-## 📤 Output
-- Schema DDL + migration files.
-- Update `knowledge_base/data_schema.md` (ERD, index list).
+- Index proven WHERE, JOIN, ORDER BY, and tenant access patterns; order
+  composite indexes for actual predicates. Do not add speculative indexes.
+- Validate expensive paths with representative `EXPLAIN`/query-plan evidence;
+  investigate scans, hot rows, lock waits, large offsets, and write amplification.
+- Forecast storage, IOPS, connection, replica, and maintenance headroom. Set
+  per-service pool limits and backpressure so clients cannot exhaust the DB.
 
-## 🚫 Guard Rails
-- DO NOT run destructive migration on prod without backup + confirmation.
-- NO hard-code credential → ENV ( `DB_*` ).
-- DO NOT drop index on FK/hot query columns.
-- DO NOT save plaintext passwords (must be hashed).
-- Use the language configured by the project or requested by the user.
+### 3. Safe Evolution
+
+- Version migrations and make rollback/forward-recovery behavior explicit.
+  Use expand → backfill in batches → dual read/write when needed → validate →
+  contract for live data changes.
+- Assess lock behavior and runtime cost before production DDL; use online or
+  concurrent operations where supported. Separate destructive removal into a
+  later, explicitly approved release.
+- Back up and prove a restoration path before destructive/high-impact changes.
+  Never run migration, backfill, delete, or index operation blindly on prod.
+
+### 4. Reliability and Recovery
+
+- Define business-approved RPO (acceptable data loss) and RTO (acceptable
+  downtime). Design backup cadence, log/binlog archiving, replica strategy,
+  retention, and cross-region recovery to meet them.
+- Treat an untested backup as unverified. Schedule restores into an isolated
+  environment, check integrity, record measured RTO, and alert on failures or
+  stale backup/restore evidence.
+- Design replication and failover with a stable application endpoint, fencing
+  or split-brain prevention, replica-lag monitoring, and read-after-write
+  correctness. Drill failover and failback; do not promote an unknown-lag replica.
+- Monitor backup age, restore-test status, replication lag, connections, slow
+  queries, locks, long transactions, disk/WAL pressure, IOPS, and capacity.
+  Maintain executable incident, restore, and change runbooks.
+
+## Outputs
+
+- Schema/ERD, constraints, index rationale, migration/recovery plan, and query
+  evidence where relevant.
+- RPO/RTO decision, backup/restore verification evidence, capacity limits, and
+  a rollback or forward-recovery procedure for significant changes.
+
+## Guard Rails
+
+- Do not use root/admin credentials for the application, hard-code `DB_*`
+  values, store plaintext passwords, or expose PII in logs/exports.
+- Do not claim high availability, backup, or disaster recovery without a recent
+  tested restore/failover result.
+- Do not execute destructive production data operations without backup, impact
+  assessment, rollback/forward plan, and explicit approval.
+"""
+
+
+def skill_identity_access():
+    return r"""
+---
+name: speckit.identity-access
+description: Identity and Access Engineer - Design and implement secure authentication, authorization, federation, provisioning, sessions, and account lifecycle controls.
+role: Identity & Access Engineer
+---
+
+## Mission
+
+Design identity and access flows that are standards-based, usable, auditable,
+and safe under failure. Use this skill for authentication and authorization
+architecture; use `speckit.security` to audit the completed implementation and
+`speckit.backend` to implement service boundaries.
+
+## Required Inputs
+
+- Actors, roles/permissions, tenancy, data sensitivity, regulatory constraints,
+  supported clients, recovery needs, and existing identity provider contracts.
+- The feature spec, threat model, session/token storage constraints, and user
+  lifecycle requirements (join, change role, disable, recover, delete).
+
+## Protocol
+
+### 0. Identity Decision Record
+
+- State authenticators, relying parties, identity provider, trust boundaries,
+  token/session model, credential storage, recovery channel, audit events, and
+  availability/failure behavior before implementation.
+- Choose the simplest standards-based flow compatible with the clients. For
+  browser/native delegated login, prefer OAuth 2.0/OIDC authorization code with
+  PKCE; do not use implicit flow or expose client secrets in public clients.
+
+### 1. Authentication and Sessions
+
+- Verify issuer, audience, signature, expiry, nonce/state, redirect URI, and
+  required claims before accepting an identity assertion. Use short-lived,
+  scoped credentials and rotation/revocation appropriate to the risk.
+- Use secure, HttpOnly, SameSite cookies for browser sessions when practical;
+  protect state-changing cookie requests from CSRF. Never put secrets or
+  long-lived credentials in URLs, logs, browser storage, or client bundles.
+- Implement rate limits, credential-stuffing defenses, secure password hashing
+  where passwords exist, MFA/passkey enrollment, recovery, logout, session
+  invalidation, and concurrent-session policy deliberately.
+
+### 2. Authorization and Tenancy
+
+- Model permissions around actions and resources, not UI visibility. Enforce
+  RBAC, ABAC, or policy checks server-side on every sensitive read and write.
+- Check object ownership, organization/tenant membership, role state, and scope
+  at the use-case boundary. Never trust a client role, owner ID, or tenant ID.
+- Propagate actor, tenant, delegated authority, and correlation context through
+  APIs, jobs, caches, and data access. For tenant systems, add database-level
+  isolation where feasible and test cross-tenant denial explicitly.
+- Define privileged/admin break-glass access, approval, audit, expiry, and
+  review. Apply least privilege by default and deny on missing context.
+
+### 3. Federation and Provisioning
+
+- For enterprise SSO, document OIDC/SAML metadata, claim mapping, domain
+  discovery, IdP-initiated/initiated flow constraints, JIT provisioning,
+  certificate/metadata rotation, and failure mode.
+- For SCIM, implement stable external identifiers, idempotent create/update,
+  deprovisioning, group mapping, replay-safe webhooks, and reconciliation.
+- Use WebAuthn/passkeys through established libraries/platform APIs; verify
+  origin, RP ID, challenge, user verification, credential binding, and recovery.
+
+### 4. Lifecycle, Audit, and Verification
+
+- Define invitation, activation, role change, suspension, deletion, data
+  retention, and offboarding behavior. Revoke sessions/tokens promptly after
+  disablement or permission loss.
+- Audit authentication, enrollment, recovery, authorization denial, privileged
+  change, federation, and provisioning events without recording secrets.
+- Test successful and failed login, token/session expiry, CSRF, logout,
+  recovery, disabled account, privilege change, IDOR, role/tenant boundaries,
+  IdP failure, and provisioning retry paths. Review with `speckit.security`.
+
+## Outputs
+
+- Identity decision record, actor/permission matrix, flow diagrams, claim and
+  session contract, lifecycle rules, audit event list, and test plan.
+
+## Guard Rails
+
+- Do not invent cryptography, parse unsigned tokens, bypass authorization for
+  support convenience, or log credentials, assertions, recovery codes, or PII.
+- Do not expose a public-client secret or rely on client-side checks for access.
+"""
+
+
+def skill_architecture():
+    return r"""
+---
+name: speckit.architecture
+description: Software Architect - Make evidence-based system design decisions, document trade-offs and ADRs, and define modular, reliable implementation boundaries.
+role: Software Architect
+---
+
+## Mission
+
+Turn product constraints into the simplest architecture that can meet them.
+Use this skill for significant technical decisions; use `speckit.plan` for the
+feature implementation plan, `speckit.ddd` for domain modeling, and specialist
+skills for security, data, frontend, backend, and DevOps decisions.
+
+## Protocol
+
+### 0. Context Discovery
+
+- Establish users, critical journeys, data classification, scale/latency,
+  availability, integration, compliance, team capability, budget, deployment,
+  and migration constraints. Separate verified facts from assumptions.
+- Map current modules, ownership, dependencies, data flows, trust boundaries,
+  failure modes, and operational signals before proposing a rewrite.
+
+### 1. Option and Boundary Design
+
+- Start with the simplest viable option. Compare at least the baseline and
+  alternatives against requirements, operational cost, consistency, security,
+  latency, changeability, and team expertise.
+- Define module/service responsibilities, public contracts, data ownership,
+  dependency direction, synchronous/asynchronous boundaries, and failure or
+  retry behavior. Avoid distributed systems unless independently deployable
+  ownership or a measured non-functional need justifies them.
+- Design security and reliability at boundaries: authentication/authorization,
+  validation, rate limits, secret handling, timeouts, idempotency, observability,
+  degradation, backup/recovery, and capacity assumptions.
+
+### 2. Decision Records
+
+- Write an ADR before material, difficult-to-reverse choices. Include status,
+  context, drivers, considered options, decision, consequences, risks,
+  rollback/reversal path, implementation owner, and links to evidence.
+- Never rewrite an accepted ADR to hide a changed decision; create a superseding
+  ADR and preserve the original rationale. Keep a searchable ADR index.
+
+### 3. Validation and Handoff
+
+- Turn the chosen architecture into measurable quality attributes, explicit
+  contracts, migration slices, test/load/DR gates, and operational runbooks.
+- Run a constitution check and threat/data/operability review. Record unknowns,
+  rejected options, and decisions requiring user approval.
+- Hand approved boundaries to `speckit.plan` and atomic tasks; update mapping
+  artifacts after significant implementation changes.
+
+## Outputs
+
+- Context diagram, module/service boundaries, interface/data-flow summary,
+  ADRs, trade-off table, quality-attribute tests, and migration roadmap.
+
+## Guard Rails
+
+- Do not select technology from fashion, turn every module into a service, or
+  hide cost/operational consequences.
+- Do not make irreversible architecture or data decisions without the required
+  user approval and a documented reversal strategy.
+"""
+
+
+def skill_ddd():
+    return r"""
+---
+name: speckit.ddd
+description: Domain-Driven Design Specialist - Discover bounded contexts and ubiquitous language, then model aggregates, invariants, events, and safe domain boundaries.
+role: Domain-Driven Design Specialist
+---
+
+## Mission
+
+Use DDD only where domain complexity justifies it. Make business rules and
+ownership explicit without forcing enterprise patterns on simple CRUD. Pair with
+`speckit.architecture` for system decisions and `speckit.backend` for delivery.
+
+## Protocol
+
+### 0. Suitability and Discovery
+
+- Confirm the problem has complex, evolving rules, competing meanings, or
+  coordination costs. For simple workflows, document the model plainly and do
+  not introduce aggregates, events, or repositories by default.
+- Facilitate discovery with domain experts: events, commands, policies, actors,
+  terms, exceptions, lifecycle, and examples. Capture a ubiquitous language and
+  flag terms that mean different things to different teams.
+
+### 1. Strategic Design
+
+- Identify subdomains and classify core, supporting, and generic work. Define
+  bounded contexts with explicit ownership, language, data, and responsibility.
+- Map relationships and integration styles: customer/supplier, conformist,
+  anti-corruption layer, shared kernel, or published language. Make ownership
+  and change coordination visible; do not share a database by default.
+- Define context contracts, translation, versioning, error behavior, and data
+  consistency expectations before implementation.
+
+### 2. Tactical Model
+
+- Model entities by identity, value objects by immutable meaning, aggregates by
+  transactional consistency boundary, and domain services only for behavior
+  that belongs to no entity/value object.
+- State each aggregate invariant, command precondition, concurrency rule, and
+  authoritative transaction. Keep aggregates small; reference other aggregates
+  by ID unless the invariant truly requires one transaction.
+- Publish domain events only after durable state change. Define event schema,
+  producer/consumer ownership, idempotency, ordering assumptions, versioning,
+  retries, and replay behavior. Use an outbox when database and event delivery
+  must remain consistent.
+
+### 3. Delivery and Validation
+
+- Convert model decisions into examples, acceptance criteria, API/event
+  contracts, persistence mapping, and tests of invariants and edge cases.
+- Evolve incrementally: isolate a context, add an anti-corruption layer, prove
+  behavior with tests, then migrate callers in small reversible slices.
+- Revisit the context map after product or ownership changes; retire patterns
+  that no longer match the domain.
+
+## Outputs
+
+- Ubiquitous-language glossary, subdomain map, context map, ownership/contracts,
+  aggregate/invariant list, event catalog, and executable acceptance examples.
+
+## Guard Rails
+
+- Do not equate DDD with microservices or create an aggregate for every table.
+- Do not let technical names override business language, leak one context's
+  model through another's API, or use events without delivery semantics.
 """
 
 
@@ -2190,6 +2582,9 @@ SKILL_TEMPLATE_MAP = {
     "speckit.backend": skill_backend,
     "speckit.frontend": skill_frontend,
     "speckit.database": skill_database,
+    "speckit.identity-access": skill_identity_access,
+    "speckit.architecture": skill_architecture,
+    "speckit.ddd": skill_ddd,
     "speckit.ios": skill_ios,
     "speckit.android": skill_android,
     "speckit.mobile": skill_mobile,

@@ -211,7 +211,10 @@ def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
         assert "shared application shell" in content
         assert "70% or more" in content
         assert "250–300 lines" in content
-        assert "### 7. Completion Gate" in content
+        assert "### 6. Verification and Completion Gate" in content
+        assert "Cancel stale requests" in content
+        assert "prefers-reduced-motion" in content
+        assert "keyboard operation" in content
 
     checked_in_ui = (
         REPO_ROOT / ".agent/knowledge_base/ui_ux_standards.md"
@@ -226,6 +229,57 @@ def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
         assert "Single Change Point" in content
         assert "`gap-4` as the default gap" in content
         assert "## 📱 Responsive System" in content
+
+
+def test_backend_policy_enforces_contract_safety_and_operational_reliability():
+    backend_sources = (
+        (REPO_ROOT / ".agent/skills/speckit.backend/SKILL.md").read_text(
+            encoding="utf-8"
+        ),
+        SKILL_TEMPLATE_MAP["speckit.backend"](),
+    )
+    for content in backend_sources:
+        assert "### 0. Preflight and Risk" in content
+        assert "### 1. Contract-First API" in content
+        assert "idempotency-key scope" in content
+        assert "tenant isolation" in content
+        assert "expand → backfill → switch → contract" in content
+        assert "bounded retries with backoff and" in content
+        assert "SLO-relevant" in content
+        assert "contract tests for public interfaces" in content
+
+
+def test_core_engineering_specialists_are_registered_and_policy_complete():
+    expected = {
+        "speckit.identity-access": (
+            "authorization code with\n  PKCE",
+            "cross-tenant denial",
+            "SCIM",
+        ),
+        "speckit.architecture": (
+            "### 0. Context Discovery",
+            "### 2. Decision Records",
+            "superseding\n  ADR",
+        ),
+        "speckit.ddd": (
+            "bounded contexts",
+            "aggregate invariant",
+            "outbox",
+        ),
+        "speckit.database": (
+            "RPO",
+            "untested backup",
+            "restore/failover",
+        ),
+    }
+    for name, clauses in expected.items():
+        checked_in = (REPO_ROOT / ".agent/skills" / name / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        generated = SKILL_TEMPLATE_MAP[name]()
+        for content in (checked_in, generated):
+            for clause in clauses:
+                assert clause in content, f"{name}: {clause}"
 
 
 def test_workflow_registry_matches_templates_and_checked_in_files():

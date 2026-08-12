@@ -354,8 +354,26 @@ SKILLS_REGISTRY = [
     },
     {
         "name": "speckit.database",
-        "description": "Database Architect - Schema, index, migration, query optimization, data integrity.",
+        "description": "Database Architect - Schema, migration, performance, integrity, recoverability, and production reliability.",
         "role": "Database Architect",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.identity-access",
+        "description": "Identity and Access Engineer - Authentication, authorization, federation, provisioning, sessions, and lifecycle controls.",
+        "role": "Identity & Access Engineer",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.architecture",
+        "description": "Software Architect - Evidence-based system decisions, ADRs, modular boundaries, and quality attributes.",
+        "role": "Software Architect",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.ddd",
+        "description": "Domain-Driven Design Specialist - Bounded contexts, aggregates, invariants, and domain events.",
+        "role": "Domain-Driven Design Specialist",
         "project_types": "builder",
     },
     {
