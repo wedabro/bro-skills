@@ -102,9 +102,25 @@
   - Thiết kế của Skeleton Loader phải khớp 1:1 với kích thước, bo góc, cấu trúc phân cấp và layout của component thực tế khi hiển thị dữ liệu xong nhằm tránh hiện tượng giật lắc bố cục (layout shift).
   - Tactile Feedback: Use built-in utilities such as `active:translate-y-px`
     or `active:scale-95` for physical button feedback.
-- **Images**: REQUIRED to have real images (from image gen tools, Unsplash, Picsum). FORBIDDEN to use div fake screenshots.
+## 🌐 i18n & Internationalization Standards (Strict Anti-Hardcode)
+- **Khai Báo JSON Dịch Triệt Để (100% Analysis & Declaration)**: Với mọi dự án sử dụng i18n, BẮT BUỘC phân tích kỹ lưỡng và khai báo 100% các chuỗi văn bản giao diện vào các file JSON dịch trước hoặc trong quá trình phát triển UI. TUYỆT ĐỐI KHÔNG để sót chuỗi văn bản cứng (hardcoded string literals).
+- **Cấu Trúc Tách File JSON Dịch (Module & Common Isolation)**:
+  - **Chuỗi Dùng Chung (`common.json`)**: Các từ ngữ/hành động dùng chung trên toàn hệ thống (ví dụ: `Save`, `Cancel`, `Confirm`, `Delete`, `Edit`, `Search`, `Filter`, `Reset`, `Loading`, `No Data`, `Success`, `Error`) PHẢI được tập trung tại file/namespace chung: `locales/{lang}/common.json`.
+  - **Chuỗi Theo Module (`{module}.json`)**: Các văn bản thuộc riêng từng trang hoặc nghiệp vụ cụ thể (như `auth.json`, `dashboard.json`, `settings.json`) PHẢI được viết riêng thành các file JSON độc lập: `locales/{lang}/{module}.json`.
+  - **Dịch Chuẩn Xác Theo Ngôn Ngữ**: Mỗi ngôn ngữ (`vi`, `en`, `ja`,...) có file JSON riêng tương ứng và được dịch chuẩn nghĩa theo đúng ngữ cảnh sử dụng. KHÔNG copy paste giữ nguyên tiếng Anh trong file tiếng Việt hoặc ngược lại.
+- **Phủ Sóng Đồng Bộ 360° Trên UI (Strict Consistent Usage)**:
+  Khi đã khai báo trong JSON, BẮT BUỘC phải dùng i18n key (`t('namespace:key')` hoặc tương đương) tại TẤT CẢ các thuộc tính và vị trí hiển thị giao diện:
+  - **Form Controls**: `label`, `input placeholder`, `helper text`, `validation error message`.
+  - **Dropdowns & Selects**: `dropdown title`, `select placeholder`, `option label`, `group title`.
+  - **Buttons & Actions**: `button label`, `CTA text`, `icon button tooltip`.
+  - **Tooltips & Popovers**: `tooltip content`, `popover header/body`.
+  - **Tables & Lists**: `table column header`, `pagination text`, `list item action`.
+  - **Modals & Dialogs**: `dialog title`, `dialog body content`, `confirm/cancel button label`.
+  - **Feedback & States**: `empty state title & description`, `error fallback text`, `toast notification message`.
+- **CẤM Trộn Lẫn Ngôn Ngữ (No Mixed Language)**: KHÔNG ĐƯỢC để tình trạng chỗ dùng tiếng Anh, chỗ dùng tiếng Việt hoặc nửa i18n key nửa hardcode trên cùng một giao diện. Vi phạm điều này bị tính là LỖI THIẾT KẾ & CODE THẤT BẠI.
 
 ## ✨ Micro-animations
 - Use `framer-motion` or `gsap` intentionally.
 - Animations must respect `prefers-reduced-motion`.
 - FORBIDDEN to repeat marquee texts more than once per page.
+
