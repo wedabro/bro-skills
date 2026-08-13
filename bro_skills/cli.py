@@ -748,6 +748,9 @@ def cmd_list_workflows(args):
     print(f"\n💡 Use: /<command> in Antigravity to run workflow\n")
 
 
+    print()
+
+
 def cmd_validate(args):
     """Validate the project's .agent/ structure."""
     target = os.path.abspath(args.target or os.getcwd())
@@ -785,18 +788,33 @@ def cmd_version(args):
 
 
 def _get_latest_github_version():
-    """Retrieve the latest version of bro-skills from GitHub Releases."""
+    """Retrieve the latest version of bro-skills from GitHub Releases or raw package metadata."""
     import urllib.request
     import json
 
+    # 1. Try GitHub Releases API first
     url = "https://api.github.com/repos/wedabro/bro-skills/releases/latest"
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'bro-skills-cli'})
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
-            return data.get("tag_name", "").lstrip("v") or None
+            tag = data.get("tag_name", "").lstrip("v")
+            if tag:
+                return tag
     except Exception:
-        return None
+        pass
+
+    # 2. Fallback to raw package.json on main branch
+    raw_url = "https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json"
+    try:
+        req = urllib.request.Request(raw_url, headers={'User-Agent': 'bro-skills-cli'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            return data.get("version", "").lstrip("v") or None
+    except Exception:
+        pass
+
+    return None
 
 
 def _standalone_asset_name():
@@ -865,9 +883,14 @@ def _update_standalone(latest_version):
             updater = temp_dir / "finish-update.ps1"
             updater.write_text(
                 "param([int]$ProcessId, [string]$Source, [string]$Target, [string]$TempDir)\n"
-                "$ErrorActionPreference = 'Stop'\n"
+                "$ErrorActionPreference = 'SilentlyContinue'\n"
                 "Wait-Process -Id $ProcessId -ErrorAction SilentlyContinue\n"
-                "Move-Item -LiteralPath $Source -Destination $Target -Force\n"
+                "Start-Sleep -Seconds 1\n"
+                "for ($i = 0; $i -lt 5; $i++) {\n"
+                "    Move-Item -LiteralPath $Source -Destination $Target -Force\n"
+                "    if ($?) { break }\n"
+                "    Start-Sleep -Seconds 1\n"
+                "}\n"
                 "Remove-Item -LiteralPath $TempDir -Recurse -Force\n",
                 encoding="utf-8",
             )
@@ -896,20 +919,23 @@ def _update_standalone(latest_version):
 def cmd_update(args):
     """Upgrade bro-skills to the latest version."""
     import subprocess
+    import shutil
 
+    force = getattr(args, "force", False)
     install_method = os.environ.get("BRO_SKILLS_INSTALL_METHOD", "pip")
 
     print("\n⚡ bro-skills - Checking for updates...")
     latest_version = _get_latest_github_version()
     
     if latest_version:
-        if __version__ == latest_version:
-            print(f"✅ You are already on the latest version (v{__version__}). No update needed.\n")
+        if __version__ == latest_version and not force:
+            print(f"✅ You are already on the latest version (v{__version__}). No update needed.")
+            print("💡 Pass --force (or -f) to force re-installing/upgrading to the latest version.\n")
             return
         else:
             print(f"🔄 New version available: v{__version__} ➔ v{latest_version}")
     else:
-        print("⚠️ Could not check for the latest version. Proceeding to update anyway...")
+        print("⚠️ Could not check for the latest version online. Proceeding to update anyway...")
 
     if getattr(sys, "frozen", False):
         if not latest_version:
@@ -922,6 +948,7 @@ def cmd_update(args):
         return
 
     print(f"Installation method: {install_method.upper()}")
+    is_windows = sys.platform.startswith('win')
 
     if install_method == "npm":
         cmd = ["npm", "install", "-g", "github:wedabro/bro-skills"]
@@ -930,24 +957,168 @@ def cmd_update(args):
 
     print(f"Running command: {' '.join(cmd)}")
     try:
-        is_windows = sys.platform.startswith('win')
         result = subprocess.run(cmd, check=True, text=True, shell=is_windows)
         if result.returncode == 0:
             print("\n✅ Updated successfully! Please run 'bro-skills version' to check.")
-        else:
-            print(f"\n❌ Update failed with error code: {result.returncode}")
+            return
     except Exception as e:
-        print(f"\n❌ Error executing update command: {e}")
-        if sys.platform.startswith('win'):
-            print("\n💡 Tip: On Windows, updating directly from the running CLI might fail with 'Access is denied' (WinError 5) because the executable is currently in use.")
-            print("Please close any active bro-skills processes and run the upgrade command manually in your terminal:")
-        else:
-            print(f"💡 You can run the following command to update manually:")
+        print(f"\n⚠️ Primary update command failed: {e}")
+
+    # Fallback strategies for non-standalone / python installations
+    if install_method != "npm":
+        # Fallback 1: Try raw zip archive (works even without git installed on Windows/Linux)
+        zip_url = "https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip"
+        fallback_zip_cmd = [sys.executable, "-m", "pip", "install", "--upgrade", zip_url]
+        print(f"\n🔄 Retrying with fallback zip download (git not required): {' '.join(fallback_zip_cmd)}")
+        try:
+            res_zip = subprocess.run(fallback_zip_cmd, check=True, text=True, shell=is_windows)
+            if res_zip.returncode == 0:
+                print("\n✅ Updated successfully via fallback archive! Please run 'bro-skills version' to check.")
+                return
+        except Exception as e2:
+            print(f"⚠️ Fallback zip install failed: {e2}")
+
+        # Fallback 2: Check if pipx is available
+        if shutil.which("pipx"):
+            pipx_cmd = ["pipx", "upgrade", "bro-skills"]
+            print(f"\n🔄 Retrying with pipx upgrade: {' '.join(pipx_cmd)}")
+            try:
+                res_pipx = subprocess.run(pipx_cmd, check=True, text=True, shell=is_windows)
+                if res_pipx.returncode == 0:
+                    print("\n✅ Updated successfully via pipx!")
+                    return
+            except Exception as e3:
+                print(f"⚠️ Pipx upgrade failed: {e3}")
+
+    print("\n❌ Update failed. You can update manually using one of the following commands:")
+    if install_method == "npm":
+        print("   npm install -g github:wedabro/bro-skills")
+        print("   or for npx usage: npx --clear-cache github:wedabro/bro-skills version")
+    else:
+        print("   pip install --upgrade git+https://github.com/wedabro/bro-skills.git")
+        print("   or (if git is not installed):")
+        print("   pip install --upgrade https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip")
+
+def clean_empty_parents(path, root_dir):
+    """Clean empty parent directories up to root_dir."""
+    current = os.path.dirname(path)
+    while current and current != root_dir and len(current) > len(root_dir):
+        if os.path.exists(current) and os.path.isdir(current):
+            try:
+                if not os.listdir(current):
+                    os.rmdir(current)
+                else:
+                    break
+            except Exception:
+                break
+        current = os.path.dirname(current)
+
+
+def cmd_uninstall(args):
+    """Uninstall bro-skills by removing .agent/ and IDE rules from the project."""
+    import shutil
+
+    target = os.path.abspath(args.target or os.getcwd())
+    force = getattr(args, 'force', False)
+    agent_dir = os.path.join(target, ".agent")
+
+    # If the user didn't specify --force, we should double check if .agent exists
+    # If not even .agent exists and not force, we exit
+    if not os.path.exists(agent_dir) and not force:
+        print("❌ Không tìm thấy thư mục `.agent` tại dự án này.")
+        return
+
+    print(f"\n⚡ bro-skills - Gỡ cài đặt (Uninstall)")
+    print(f"{'─' * 50}")
+    print(f"  📁 Target:  {target}")
+    print(f"{'─' * 50}\n")
+
+    if not force:
+        confirm = input("⚠️  Bạn có chắc chắn muốn gỡ bỏ hoàn toàn bro-skills khỏi dự án này không? (y/N): ").strip().lower()
+        if confirm != 'y':
+            print("❌ Đã hủy yêu cầu gỡ cài đặt.")
+            return
+
+    print("\n🧹 Bắt đầu gỡ bỏ các tệp và thư mục liên quan...")
+
+    paths_to_delete = [
+        ".agent",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".clinerules",
+        ".roomember",
+        ".traerules",
+        ".cursor/rules/bro-skills.mdc",
+        ".windsurf/rules/bro-skills.md",
+        ".github/copilot-instructions.md",
+        ".aiassistant/rules/bro-skills.md",
+        ".kiro/steering/tech.md",
+        ".kiro/settings/mcp.json",
+        ".kiro/skills",
+        ".qoder/rules/bro-skills.md",
+        ".opencode/rules/bro-skills.md",
+        ".gemini/rules/bro-skills.md",
+        ".continue/config.json",
+        ".agents/AGENTS.md",
+        ".agents/skills",
+    ]
+
+    deleted_count = 0
+    for rel_path in paths_to_delete:
+        abs_path = os.path.join(target, rel_path)
+        if os.path.exists(abs_path) or os.path.islink(abs_path):
+            success = False
+            try:
+                if os.path.islink(abs_path) or os.path.isfile(abs_path):
+                    os.unlink(abs_path)
+                    success = True
+                elif os.path.isdir(abs_path):
+                    if os.name == "nt":
+                        try:
+                            os.rmdir(abs_path)
+                            success = True
+                        except OSError:
+                            shutil.rmtree(abs_path, ignore_errors=True)
+                            success = True
+                    else:
+                        shutil.rmtree(abs_path, ignore_errors=True)
+                        success = True
+            except Exception as e:
+                print(f"  ⚠️ Lỗi khi xóa {rel_path}: {e}")
             
-        if install_method == "npm":
-            print("   npm install -g github:wedabro/bro-skills")
-        else:
-            print("   pip install --upgrade git+https://github.com/wedabro/bro-skills.git")
+            if success:
+                print(f"  🗑️ Đã xóa: {rel_path}")
+                deleted_count += 1
+                clean_empty_parents(abs_path, target)
+
+    print(f"\n✅ Hoàn tất gỡ bỏ! Đã dọn dẹp {deleted_count} tệp/thư mục.")
+
+
+def main():
+    if sys.platform.startswith('win'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+            sys.stderr.reconfigure(encoding='utf-8')
+        except AttributeError:
+            pass
+
+    parser = argparse.ArgumentParser(
+        prog="bro-skills",
+        description="⚡ bro-skills - Spec-Driven Development CLI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""For example:
+    bro-skills init # Init at current directory
+    bro-skills init --target /path/to/project # Init at the specified directory
+    bro-skills init --name "My Project" # Init with project name
+    bro-skills init → /01-speckit.constitution → /util-speckit.migrate → /02-speckit.specify → /07-speckit.implement"""
+    )
+
+    parser.add_argument(
+        "-v", "--version",
+        action="version",
+        version=f"%(prog)s {__version__}"
+    )
+    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
 
 def clean_empty_parents(path, root_dir):
@@ -1131,7 +1302,8 @@ AVAILABLE project process:
     subparsers.add_parser("version", help="Show version")
 
     # update
-    subparsers.add_parser("update", help="Upgrade bro-skills to the latest version")
+    update_parser = subparsers.add_parser("update", help="Upgrade bro-skills to the latest version")
+    update_parser.add_argument("--force", "-f", action="store_true", help="Force re-installing/upgrading to the latest version")
 
     # uninstall
     uninstall_parser = subparsers.add_parser("uninstall", help="Remove all files and directories created by bro-skills")

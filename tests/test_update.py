@@ -82,3 +82,35 @@ def test_update_keeps_pip_path_for_non_frozen_install(monkeypatch):
     cli.cmd_update(SimpleNamespace())
 
     assert commands == [[cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]]
+
+
+def test_update_force_flag_triggers_update_even_when_versions_match(monkeypatch):
+    commands = []
+    monkeypatch.delattr(cli.sys, "frozen", raising=False)
+    monkeypatch.setattr(cli, "_get_latest_github_version", lambda: cli.__version__)
+    monkeypatch.setattr("subprocess.run", lambda command, **kwargs: commands.append(command) or SimpleNamespace(returncode=0))
+
+    cli.cmd_update(SimpleNamespace(force=True))
+
+    assert commands == [[cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]]
+
+
+def test_update_fallback_to_zip_archive_when_git_pip_fails(monkeypatch):
+    commands = []
+
+    def fake_run(command, **kwargs):
+        commands.append(command)
+        if "git+https" in command[-1]:
+            return SimpleNamespace(returncode=1)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.delattr(cli.sys, "frozen", raising=False)
+    monkeypatch.setattr(cli, "_get_latest_github_version", lambda: "99.0.0")
+    monkeypatch.setattr("subprocess.run", fake_run)
+
+    cli.cmd_update(SimpleNamespace())
+
+    assert len(commands) == 2
+    assert commands[0] == [cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
+    assert commands[1] == [cli.sys.executable, "-m", "pip", "install", "--upgrade", "https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip"]
+
