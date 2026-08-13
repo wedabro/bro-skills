@@ -959,12 +959,14 @@ def cmd_update(args):
     latest_version = _get_latest_github_version()
     
     if latest_version:
-        if __version__ == latest_version and not force:
+        if _parse_version_tuple(latest_version) <= _parse_version_tuple(__version__) and not force:
             print(f"✅ You are already on the latest version (v{__version__}). No update needed.")
             print("💡 Pass --force (or -f) to force re-installing/upgrading to the latest version.\n")
             return
-        else:
+        elif _parse_version_tuple(latest_version) > _parse_version_tuple(__version__):
             print(f"🔄 New version available: v{__version__} ➔ v{latest_version}")
+        else:
+            print(f"🔄 Re-installing version v{latest_version} (--force)...")
     else:
         print("⚠️ Could not check for the latest version online. Proceeding to update anyway...")
 
