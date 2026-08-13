@@ -1065,6 +1065,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - **Typography**: PROHIBITED using `Inter` and Serif as default for anything. Use `Geist` , `Satoshi` , `Cabinet Grotesk` or a sans-serif font of your choice.
 
 ### Phase 2: Spacing, Layout & Rhythm
+- **Main Layout Protection**: Shared Page Shell (Header/Sidebar/Footer/Main Container) là layout chuẩn cố định toàn bộ website. KHÔNG ĐƯỢC tự ý chỉnh sửa hay làm biến dạng Layout chính khi làm việc ở các trang con. Hạn chế sửa layout chính, khi bắt buộc cần sửa PHẢI HỎI VÀ XÁC NHẬN VỚI USER trước.
+- **Mandatory Pre-Flight Check**: Mỗi khi tạo mới hoặc thiết kế bất kỳ trang nào, BẮT BUỘC phải đọc và kiểm tra đối chiếu lại hệ thống khoảng cách (Padding/Margin scale), Grid rhythm (`gap-4`), và Bảng màu sắc Global.
 - ALWAYS prefer existing framework/theme classes (`p-4`, `text-lg`,
   `rounded-md`) over arbitrary values so every screen uses the same scale.
 - Use `gap-4` as the primary gap. Use `gap-2` only for tightly related controls
@@ -1076,10 +1078,13 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - Misuse of "eyebrow" (titles in super small caps) is PROHIBITED. Maximum 1 eyebrow per 3 sections.
 - Bento Grid must have rhythm, not leave empty cells, diversify the background of the cells (images, subtle gradients, text).
 
-### Phase 3: Core Components Design
+### Phase 3: Core Components Design & i18n Protocol
 - **RULE TỐI CAO: Reuse & Separation**:
-  - Bắt buộc kiểm tra kỹ xem component có sẵn chưa trước khi tạo mới.
+  - Bắt buộc kiểm tra kỹ xem component có sẵn chưa trước khi tạo mới. Ưu tiên 100% tái sử dụng các khối component quen thuộc có sẵn trong thư mục components.
   - Tuyệt đối không tự ý viết code tạo UI form, card design hoặc các widget phức tạp trực tiếp bên trong các file Page. Phải tách biệt hoàn toàn thành các component độc lập để tái sử dụng.
+- **i18n Strict Protocol**:
+  - Phân tích và khai báo 100% văn bản vào file JSON dịch (`locales/{lang}/common.json` cho chuỗi dùng chung, `locales/{lang}/{module}.json` cho chuỗi theo module/trang).
+  - Sử dụng i18n key đồng bộ tại 100% các thuộc tính UI (`label`, `placeholder`, `dropdown title`, `button text`, `tooltip`, `modal`, `toast`, `table header`, `empty state`).
 - **Buttons**: Text does not wrap lines on the desktop. Contrast WCAG AA.
 - **Cards**: Limit dark shadows on light backgrounds. Do not nest cards within cards.
 - **Forms**: Label on input, do not use placeholder instead of label.
@@ -1095,6 +1100,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - File: `.agent/specs/[feature]/ui-specs.md` (for each feature)
 
 ## 🚫 Guard Rails
+- FORBIDDEN: Modifying the main page layout shell without asking and getting explicit user approval.
+- MANDATORY: Perform pre-flight check of grid rhythm, padding scale, and color tokens before creating any new page.
 - DO NOT use browser default colors.
 - DO NOT mix Serif and Sans-serif in the same headline.
 - DO NOT use 2 CTAs with the same purpose (same intent) on the same page.
@@ -1103,6 +1110,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
 - DO NOT write form designs or detailed UI blocks directly inside page files.
 - MANDATORY: Check and reuse existing components before creating new ones.
 - MANDATORY: Apply 1:1 skeleton loading to all asynchronous components.
+- MANDATORY: Declare 100% UI texts in separate JSON files per module & common (`locales/{lang}/common.json` & `locales/{lang}/{module}.json`).
+- FORBIDDEN: Hardcode string literals in UI or mix languages (English & Vietnamese) on the same interface.
 - MANDATORY Mobile-first design priority.
 """
 
@@ -1234,6 +1243,32 @@ for specialized work rather than duplicating their scope.
 - Run the project's formatter, type-check, lint, tests, migration validation,
   and production build in Docker where available. Confirm generated contracts
   and docs remain synchronized.
+
+### 7. Comprehensive 4-Layer Backend Optimization Standard (Tối Ưu Hóa Backend 4 Tầng)
+
+When optimizing backend performance, throughput, response latency, and load capacity, systematically enforce controls across all 4 key layers:
+
+#### Layer 1: Database Layer Optimization (Tầng Cơ Sở Dữ Liệu)
+- **Targeted Indexing**: Create B-Tree/Composite indexes for columns frequently used in `WHERE`, `JOIN`, or `ORDER BY` predicates. Order composite index columns based on selectivity and actual execution plans.
+- **Query & Plan Optimization**: FORBIDDEN to use `SELECT *`. Eliminate N+1 query loops using eager loading/joins/batching. Use `EXPLAIN` / execution plans to analyze and refactor slow SQL queries.
+- **Database Replication (Read/Write Separation)**: Separate read traffic (Read Replicas) from write operations (Master/Primary) to offload heavy read queries from the primary node.
+- **Data Partitioning & Sharding**: Apply Table Partitioning or Database Sharding to split multi-million row tables into smaller, highly manageable data partitions.
+
+#### Layer 2: Code & Application Layer Optimization (Tầng Ứng Dụng & Mã Nguồn)
+- **High-Performance Caching**: Cache low-volatility, read-heavy data in fast in-memory stores like Redis or Memcached to prevent unnecessary database queries.
+- **Asynchronous Execution & Message Queues**: Offload heavy or time-consuming operations (email delivery, report generation, video encoding, webhooks) to background workers via Message Queues (RabbitMQ, Kafka) to provide instantaneous client API responses.
+- **Algorithm & Memory Efficiency**: Audit algorithms to eliminate memory leaks and minimize time complexity (targeting $O(n)$ or $O(1)$).
+- **Payload Compression**: Enable Gzip or Brotli compression for HTTP/API response payloads.
+
+#### Layer 3: Architecture & Network Layer Optimization (Tầng Kiến Trúc & API)
+- **Lean API & BFF Design**: Return only requested data fields. Consider GraphQL or Backend for Frontend (BFF) patterns for optimized frontend data consumption.
+- **Strict Pagination**: MANDATORY to enforce pagination (`LIMIT`/`OFFSET` or Cursor-based pagination) for all list-returning API endpoints.
+- **Microservices & Load Balancing**: Decouple independent domains into dedicated microservices and distribute traffic evenly across instances using Load Balancers (Nginx, HAProxy).
+- **CDN Acceleration**: Offload all static assets (images, videos, documents) to Content Delivery Networks (CDNs).
+
+#### Layer 4: Infrastructure & DevOps Layer Optimization (Tầng Hạ Tầng & DevOps)
+- **Auto-scaling Policies**: Configure dynamic auto-scaling of containers/instances based on real-time metrics (CPU/RAM usage, request rate).
+- **Container & OS Kernel Tuning**: Use minimal base Docker images (e.g. Alpine Linux). Tune file descriptor limits (`ulimit`) and Linux kernel parameters (`sysctl.conf`) for high-concurrency network handling.
 
 ## Completion Gate
 

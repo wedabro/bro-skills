@@ -247,6 +247,11 @@ def test_backend_policy_enforces_contract_safety_and_operational_reliability():
         assert "bounded retries with backoff and" in content
         assert "SLO-relevant" in content
         assert "contract tests for public interfaces" in content
+        assert "### 7. Comprehensive 4-Layer Backend Optimization Standard" in content
+        assert "Database Replication" in content
+        assert "Asynchronous Execution & Message Queues" in content
+        assert "Microservices & Load Balancing" in content
+        assert "Auto-scaling Policies" in content
 
 
 def test_core_engineering_specialists_are_registered_and_policy_complete():

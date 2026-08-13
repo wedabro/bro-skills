@@ -123,6 +123,32 @@ for specialized work rather than duplicating their scope.
   and production build in Docker where available. Confirm generated contracts
   and docs remain synchronized.
 
+### 7. Comprehensive 4-Layer Backend Optimization Standard (Tối Ưu Hóa Backend 4 Tầng)
+
+When optimizing backend performance, throughput, response latency, and load capacity, systematically enforce controls across all 4 key layers:
+
+#### Layer 1: Database Layer Optimization (Tầng Cơ Sở Dữ Liệu)
+- **Targeted Indexing**: Create B-Tree/Composite indexes for columns frequently used in `WHERE`, `JOIN`, or `ORDER BY` predicates. Order composite index columns based on selectivity and actual execution plans.
+- **Query & Plan Optimization**: FORBIDDEN to use `SELECT *`. Eliminate N+1 query loops using eager loading/joins/batching. Use `EXPLAIN` / execution plans to analyze and refactor slow SQL queries.
+- **Database Replication (Read/Write Separation)**: Separate read traffic (Read Replicas) from write operations (Master/Primary) to offload heavy read queries from the primary node.
+- **Data Partitioning & Sharding**: Apply Table Partitioning or Database Sharding to split multi-million row tables into smaller, highly manageable data partitions.
+
+#### Layer 2: Code & Application Layer Optimization (Tầng Ứng Dụng & Mã Nguồn)
+- **High-Performance Caching**: Cache low-volatility, read-heavy data in fast in-memory stores like Redis or Memcached to prevent unnecessary database queries.
+- **Asynchronous Execution & Message Queues**: Offload heavy or time-consuming operations (email delivery, report generation, video encoding, webhooks) to background workers via Message Queues (RabbitMQ, Kafka) to provide instantaneous client API responses.
+- **Algorithm & Memory Efficiency**: Audit algorithms to eliminate memory leaks and minimize time complexity (targeting $O(n)$ or $O(1)$).
+- **Payload Compression**: Enable Gzip or Brotli compression for HTTP/API response payloads.
+
+#### Layer 3: Architecture & Network Layer Optimization (Tầng Kiến Trúc & API)
+- **Lean API & BFF Design**: Return only requested data fields. Consider GraphQL or Backend for Frontend (BFF) patterns for optimized frontend data consumption.
+- **Strict Pagination**: MANDATORY to enforce pagination (`LIMIT`/`OFFSET` or Cursor-based pagination) for all list-returning API endpoints.
+- **Microservices & Load Balancing**: Decouple independent domains into dedicated microservices and distribute traffic evenly across instances using Load Balancers (Nginx, HAProxy).
+- **CDN Acceleration**: Offload all static assets (images, videos, documents) to Content Delivery Networks (CDNs).
+
+#### Layer 4: Infrastructure & DevOps Layer Optimization (Tầng Hạ Tầng & DevOps)
+- **Auto-scaling Policies**: Configure dynamic auto-scaling of containers/instances based on real-time metrics (CPU/RAM usage, request rate).
+- **Container & OS Kernel Tuning**: Use minimal base Docker images (e.g. Alpine Linux). Tune file descriptor limits (`ulimit`) and Linux kernel parameters (`sysctl.conf`) for high-concurrency network handling.
+
 ## Completion Gate
 
 - Contract, authz, validation, error, side-effect, and rollback semantics are
