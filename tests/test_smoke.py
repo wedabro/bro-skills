@@ -51,8 +51,11 @@ def test_module_version_command_runs():
 
 def test_console_script_version_command_runs():
     import sys
+    import shutil
+    cmd = shutil.which("bro-skills")
+    args = [cmd, "version"] if cmd else [sys.executable, "-m", "bro_skills", "version"]
     result = subprocess.run(
-        ["bro-skills", "version"],
+        args,
         check=True,
         capture_output=True,
         text=True,

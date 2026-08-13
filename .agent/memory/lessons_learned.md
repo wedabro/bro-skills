@@ -110,6 +110,18 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: `git push origin vX.Y.Z` creates a Git Tag on GitHub, but does not publish a GitHub Release UI object. The GitHub Releases page & API `/releases/latest` only update when `gh release create vX.Y.Z` or Web UI Release form is published.
 - **Prevention Rule**: Release scripts MUST run `gh release create vX.Y.Z --title "vX.Y.Z" --generate-notes` or generate a 1-click web release creation URL (`https://github.com/owner/repo/releases/new?tag=vX.Y.Z&title=vX.Y.Z`) so the official GitHub Releases page stays synced with Git tags.
 
+---
+
+### [LESSON-011] GitHub Actions CI Dependencies & Test Command Invocation
+- **Date**: 2026-08-13
+- **Category**: CI/CD / GitHub Actions
+- **Symptom**: GitHub Actions CI test matrix failed across Python 3.9 - 3.13.
+- **Root Cause**:
+  1. Python 3.12+ GitHub Actions runners lack pre-installed `setuptools` and `wheel`, causing `pip install -e .` build failures.
+  2. Running `pytest -q` directly failed when the `bro-skills` binary PATH was not exported or when `pytest` was invoked as a bare CLI tool.
+- **Prevention Rule**: In GitHub Actions workflow files, always run `python -m pip install --upgrade pip setuptools wheel`, `python -m pip install -e ".[test]"`, and invoke test suites via `python -m pytest -q`.
+
+
 
 
 
