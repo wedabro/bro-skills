@@ -74,10 +74,11 @@ def select_menu(options, title="", lang="en", multi=False):
         sys.stdout.write(f"\r\033[K{title}\n")
         for i, opt in enumerate(options):
             label = opt[2] if lang == "vi" else opt[1]
+            num_str = f"[{i + 1:2d}] " if opt[0] not in ("back", "cancel") else "     "
             if multi and opt[0] not in ("back", "cancel"):
-                prefix = "[✓] " if i in selected_indices else "[ ] "
+                prefix = f"{num_str}[✓] " if i in selected_indices else f"{num_str}[ ] "
             else:
-                prefix = ""
+                prefix = num_str
             
             display_text = f"{prefix}{label}"
             if i == selected_idx:
@@ -144,10 +145,11 @@ def select_menu(options, title="", lang="en", multi=False):
     initial_visual_lines = 0
     for i, opt in enumerate(options):
         label = opt[2] if lang == "vi" else opt[1]
+        num_str = f"[{i + 1:2d}] " if opt[0] not in ("back", "cancel") else "     "
         if multi and opt[0] not in ("back", "cancel"):
-            prefix = "[✓] " if i in selected_indices else "[ ] "
+            prefix = f"{num_str}[✓] " if i in selected_indices else f"{num_str}[ ] "
         else:
-            prefix = ""
+            prefix = num_str
         text_len = len(prefix) + len(label) + 4
         initial_visual_lines += max(1, (text_len + cols - 1) // cols)
     initial_title_lines = max(1, (len(title) + cols - 1) // cols)
@@ -172,6 +174,22 @@ def select_menu(options, title="", lang="en", multi=False):
                             selected_indices.remove(selected_idx)
                         else:
                             selected_indices.add(selected_idx)
+                elif ch in (b'j', b'J', b's', b'S'):
+                    selected_idx = (selected_idx + 1) % len(options)
+                elif ch in (b'k', b'K', b'w', b'W'):
+                    selected_idx = (selected_idx - 1) % len(options)
+                elif ch and ch.isdigit():
+                    num_val = int(ch.decode('ascii', errors='ignore'))
+                    if 1 <= num_val <= len(options):
+                        idx = num_val - 1
+                        selected_idx = idx
+                        if multi and options[idx][0] not in ("back", "cancel"):
+                            if idx in selected_indices:
+                                selected_indices.remove(idx)
+                            else:
+                                selected_indices.add(idx)
+                        elif not multi:
+                            break
                 elif ch == b'\x1b':
                     if msvcrt.kbhit():
                         ch2 = msvcrt.getch()
@@ -186,8 +204,6 @@ def select_menu(options, title="", lang="en", multi=False):
                             selected_idx = (selected_idx - 1) % len(options)
                         elif ch2 in (b'B', b'P'):
                             selected_idx = (selected_idx + 1) % len(options)
-                    else:
-                        return "cancel"
                 elif ch in (b'q', b'Q'):
                     return "cancel"
                 elif ch in (b'\xe0', b'\x00'):
@@ -215,28 +231,50 @@ def select_menu(options, title="", lang="en", multi=False):
                                 selected_indices.remove(selected_idx)
                             else:
                                 selected_indices.add(selected_idx)
+                    elif char1 in ('j', 'J', 's', 'S'):
+                        selected_idx = (selected_idx + 1) % len(options)
+                    elif char1 in ('k', 'K', 'w', 'W'):
+                        selected_idx = (selected_idx - 1) % len(options)
+                    elif char1.isdigit():
+                        num_val = int(char1)
+                        if 1 <= num_val <= len(options):
+                            idx = num_val - 1
+                            selected_idx = idx
+                            if multi and options[idx][0] not in ("back", "cancel"):
+                                if idx in selected_indices:
+                                    selected_indices.remove(idx)
+                                else:
+                                    selected_indices.add(idx)
+                            elif not multi:
+                                break
                     elif char1 in ('q', 'Q'):
                         return "cancel"
                     elif char1 == '\x1b':
-                        rlist, _, _ = select.select([sys.stdin], [], [], 0.25)
+                        rlist, _, _ = select.select([sys.stdin], [], [], 0.35)
                         if rlist:
                             char2 = sys.stdin.read(1)
                             if char2 in ('[', 'O'):
-                                char3 = sys.stdin.read(1)
-                                if char3 == 'A':
-                                    selected_idx = (selected_idx - 1) % len(options)
-                                elif char3 == 'B':
-                                    selected_idx = (selected_idx + 1) % len(options)
-                                elif char3.isdigit():
-                                    extra = sys.stdin.read(1)
-                                    while extra and extra not in ('A', 'B', '~'):
-                                        extra = sys.stdin.read(1)
-                                    if extra == 'A':
+                                rlist3, _, _ = select.select([sys.stdin], [], [], 0.35)
+                                if rlist3:
+                                    char3 = sys.stdin.read(1)
+                                    if char3 in ('A', 'H'):
                                         selected_idx = (selected_idx - 1) % len(options)
-                                    elif extra == 'B':
+                                    elif char3 in ('B', 'P'):
                                         selected_idx = (selected_idx + 1) % len(options)
-                        else:
-                            return "cancel"
+                                    elif char3.isdigit():
+                                        while True:
+                                            rlist_ex, _, _ = select.select([sys.stdin], [], [], 0.1)
+                                            if not rlist_ex:
+                                                break
+                                            ex = sys.stdin.read(1)
+                                            if ex in ('A', 'H'):
+                                                selected_idx = (selected_idx - 1) % len(options)
+                                                break
+                                            elif ex in ('B', 'P'):
+                                                selected_idx = (selected_idx + 1) % len(options)
+                                                break
+                                            elif ex == '~':
+                                                break
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     finally:

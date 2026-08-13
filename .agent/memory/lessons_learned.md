@@ -121,6 +121,16 @@ All AI Agents working on this project **MUST** consult this log before starting 
   2. Running `pytest -q` directly failed when the `bro-skills` binary PATH was not exported or when `pytest` was invoked as a bare CLI tool.
 - **Prevention Rule**: In GitHub Actions workflow files, always run `python -m pip install --upgrade pip setuptools wheel`, `python -m pip install -e ".[test]"`, and invoke test suites via `python -m pytest -q`.
 
+---
+
+### [LESSON-012] Hybrid Numeric & Keypress Menu Navigation For Laggy SSH VPS Connections
+- **Date**: 2026-08-13
+- **Category**: CLI / UX / Interactive Menu
+- **Symptom**: User requested numeric shortcuts on SSH VPS because arrow keys were unreliable over high-latency SSH connections.
+- **Root Cause**: High SSH latency / packet fragmentation can delay arrow key ANSI escape sequences, making arrow-only menus frustrating.
+- **Prevention Rule**: Display explicit index numbers `[1]`, `[2]`, `[3]` in interactive menus, allow typing digits `1`-`9` directly to toggle/select items, support Vim/WASD keys (`j`/`k`/`s`/`w`), and allow non-interactive CLI flags (`bro-skills init -a codex,cursor,antigravity`).
+
+
 
 
 
