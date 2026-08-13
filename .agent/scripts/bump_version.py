@@ -4,8 +4,8 @@ import re
 import os
 import subprocess
 
-def bump_version(new_version):
-    print(f"🔄Start upgrading version: {new_version}...🔄")
+def bump_version(new_version, auto_push=False):
+    print(f"🔄 Start upgrading version: {new_version}... 🔄")
     
     # 1. Update package.json
     pkg_path = "package.json"
@@ -48,23 +48,37 @@ def bump_version(new_version):
         print("✅ Updated bro_skills/generator.py")
 
     print("\n🎉 All configuration files have been successfully updated!")
-    print("\n💡 Suggested next Git command:")
-    print(f"  git add .")
-    print(f'  git commit -m "chore(release): bump version to {new_version}"')
-    print(f"  git push origin main")
-    print(f"  git tag v{new_version}")
-    print(f"  git push origin v{new_version}")
+
+    if auto_push:
+        print("\n🚀 Executing Git commit, tag, and push...")
+        subprocess.run(["git", "add", "package.json", "pyproject.toml", "bro_skills/__init__.py", "bro_skills/generator.py"], check=True)
+        subprocess.run(["git", "commit", "-m", f"chore(release): bump version to {new_version}"], check=True)
+        subprocess.run(["git", "tag", f"v{new_version}"], check=True)
+        subprocess.run(["git", "push", "origin", "main"], check=True)
+        subprocess.run(["git", "push", "origin", f"v{new_version}"], check=True)
+        print(f"\n✅ Successfully bumped version to v{new_version}, created tag, and pushed to GitHub!")
+    else:
+        print("\n💡 Suggested next Git commands:")
+        print(f"  git add .")
+        print(f'  git commit -m "chore(release): bump version to {new_version}"')
+        print(f"  git tag v{new_version}")
+        print(f"  git push origin main")
+        print(f"  git push origin v{new_version}")
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("❌ Error: Please provide a new version number.")
-        print("Use: python .agent/scripts/bump_version.py <new_version>")
+        print("Use: python .agent/scripts/bump_version.py <new_version> [--push]")
         sys.exit(1)
         
     version_arg = sys.argv[1]
+    auto_push_flag = "--push" in sys.argv or "--git" in sys.argv
+
     # Simple regex to check version format x.y.z
     if not re.match(r'^\d+\.\d+\.\d+$', version_arg):
-        print(f"❌Error: Invalid version format '{version_arg}'. Must be x.y.z (e.g. 1.3.2)❌")
+        print(f"❌ Error: Invalid version format '{version_arg}'. Must be x.y.z (e.g. 1.8.0) ❌")
         sys.exit(1)
         
-    bump_version(version_arg)
+    bump_version(version_arg, auto_push=auto_push_flag)
+
