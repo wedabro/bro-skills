@@ -3,123 +3,77 @@
 
 $ErrorActionPreference = "Stop"
 $repo = "wedabro/bro-skills"
-$asset = "bro-skills-windows-x86_64.exe"
 $installDir = Join-Path $env:LOCALAPPDATA "Programs\bro-skills"
-$destination = Join-Path $installDir "bro-skills.exe"
-$baseUrl = "https://github.com/$repo/releases/latest/download"
-$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("bro-skills-" + [guid]::NewGuid())
+$destination = Join-Path $installDir "bro-skills.cmd"
+$srcDir = Join-Path $env:LOCALAPPDATA "bro-skills-src"
 
-# 1. Prefer Python / Pip installation if available to get the latest main release
 $pyCmd = Get-Command python, python3, py -ErrorAction SilentlyContinue | Select-Object -First 1
-if ($pyCmd) {
-    $ts = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-    # Check if pip is available
-    $hasPip = $false
-    try {
-        & $pyCmd.Name -m pip --version *>$null
-        if ($LASTEXITCODE -eq 0) { $hasPip = $true }
-    } catch {}
-
-    if ($hasPip) {
-        Write-Host "⚡ Installing latest bro-skills via Python ($($pyCmd.Name))..." -ForegroundColor Cyan
-        try {
-            & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/$repo.git@main"
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ bro-skills installed successfully!" -ForegroundColor Green
-                & bro-skills version
-                exit 0
-            }
-        } catch {
-            try {
-                & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/$repo/archive/refs/heads/main.zip?t=$ts"
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "✅ bro-skills installed successfully via fallback archive!" -ForegroundColor Green
-                    & bro-skills version
-                    exit 0
-                }
-            } catch {}
-        }
-    }
-
-    # Python is available without pip: Download main.zip and create source wrapper
-    Write-Host "⚡ Installing latest bro-skills via $($pyCmd.Name) source runner..." -ForegroundColor Cyan
-    $srcDir = Join-Path $env:LOCALAPPDATA "bro-skills-src"
-    $zipPath = Join-Path $tempDir "main.zip"
-    Invoke-WebRequest "https://github.com/$repo/archive/refs/heads/main.zip?t=$ts" -OutFile $zipPath -UseBasicParsing
-
-    New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
-    & $pyCmd.Name -c "import zipfile; zipfile.ZipFile(r'$zipPath').extractall(r'$tempDir')"
-    
-    if (Test-Path $srcDir) { Remove-Item -LiteralPath $srcDir -Recurse -Force }
-    New-Item -ItemType Directory -Force -Path $srcDir | Out-Null
-    Copy-Item -Path (Join-Path $tempDir "bro-skills-main\*") -Destination $srcDir -Recurse -Force
-
-    $cmdWrapper = Join-Path $installDir "bro-skills.cmd"
-    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-    Set-Content -Path $cmdWrapper -Value "@echo off`r`n`"$($pyCmd.Source)`" `"$srcDir\ssd.py`" %*" -Encoding ASCII
-
-    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $pathEntries = @($userPath -split ";" | Where-Object { $_ })
-    if ($pathEntries -notcontains $installDir) {
-        $newPath = (($pathEntries + $installDir) -join ";")
-        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    }
-
-    Write-Host "✅ bro-skills installed successfully at $cmdWrapper!" -ForegroundColor Green
-    & $cmdWrapper version
-    exit 0
+if (-not $pyCmd) {
+    throw "Python 3 is required to install bro-skills. Please install Python 3 and try again."
 }
 
-# 2. Fallback to standalone binary download
-$architecture = $env:PROCESSOR_ARCHITEW6432
-if (-not $architecture) {
-    $architecture = $env:PROCESSOR_ARCHITECTURE
-}
-if ($architecture -notin @("AMD64", "x86_64")) {
-    throw "bro-skills currently provides a standalone Windows binary for x64 only (detected: $architecture)."
-}
+Write-Host "⚡ Installing latest bro-skills from GitHub main branch..." -ForegroundColor Cyan
 
-Write-Host "Installing bro-skills standalone binary..." -ForegroundColor Cyan
-
+# 1. Try pip install first if pip is available
+$hasPip = $false
 try {
-    New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
-    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+    & $pyCmd.Name -m pip --version *>$null
+    if ($LASTEXITCODE -eq 0) { $hasPip = $true }
+} catch {}
 
-    $download = Join-Path $tempDir $asset
-    $checksumFile = "$download.sha256"
-    Invoke-WebRequest "$baseUrl/$asset" -OutFile $download -UseBasicParsing
-    Invoke-WebRequest "$baseUrl/$asset.sha256" -OutFile $checksumFile -UseBasicParsing
-
-    $expected = ((Get-Content -Raw $checksumFile).Trim() -split "\s+")[0].ToLowerInvariant()
-    $actual = (Get-FileHash $download -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($actual -ne $expected) {
-        throw "SHA-256 verification failed. Expected $expected but downloaded $actual."
-    }
-
-    Move-Item -Force $download $destination
-
-    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $pathEntries = @($userPath -split ";" | Where-Object { $_ })
-    if ($pathEntries -notcontains $installDir) {
-        $newPath = (($pathEntries + $installDir) -join ";")
-        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-        Write-Host "Added $installDir to your user PATH." -ForegroundColor Yellow
-    }
-    if (($env:Path -split ";") -notcontains $installDir) {
-        $env:Path = "$env:Path;$installDir"
-    }
-
-    Write-Host "bro-skills installed successfully." -ForegroundColor Green
-    & $destination version
-    if ($LASTEXITCODE -ne 0) {
-        Remove-Item -LiteralPath $destination -Force
-        throw "The downloaded bro-skills executable could not run; installation was rolled back."
-    }
-    Write-Host "Open a new terminal, then run: bro-skills" -ForegroundColor Cyan
-}
-finally {
-    if (Test-Path $tempDir) {
-        Remove-Item -LiteralPath $tempDir -Recurse -Force
-    }
+if ($hasPip) {
+    try {
+        & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/$repo.git@main"
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ bro-skills installed successfully via pip!" -ForegroundColor Green
+            & bro-skills version
+            exit 0
+        }
+    } catch {}
 }
 
+# 2. Fallback: Use Python stdlib to download and extract main.zip
+$pyScript = @"
+import urllib.request, zipfile, io, os, shutil, time
+ts = int(time.time())
+url = f'https://github.com/$repo/archive/refs/heads/main.zip?t={ts}'
+headers = {'User-Agent': 'bro-skills-installer', 'Cache-Control': 'no-cache'}
+
+print('Downloading latest source archive...')
+req = urllib.request.Request(url, headers=headers)
+with urllib.request.urlopen(req) as resp:
+    data = resp.read()
+
+tmp_extract = os.path.expanduser('~/.bro-skills-tmp')
+if os.path.exists(tmp_extract):
+    shutil.rmtree(tmp_extract)
+
+print('Extracting package contents...')
+with zipfile.ZipFile(io.BytesIO(data)) as zf:
+    zf.extractall(tmp_extract)
+
+src_folder = os.path.join(tmp_extract, 'bro-skills-main')
+dest_folder = r'$srcDir'
+
+if os.path.exists(dest_folder):
+    shutil.rmtree(dest_folder)
+
+shutil.copytree(src_folder, dest_folder)
+shutil.rmtree(tmp_extract, ignore_errors=True)
+print('Source files installed successfully.')
+"@
+
+& $pyCmd.Name -c $pyScript
+
+New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+Set-Content -Path $destination -Value "@echo off`r`n`"$($pyCmd.Source)`" `"$srcDir\ssd.py`" %*" -Encoding ASCII
+
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$pathEntries = @($userPath -split ";" | Where-Object { $_ })
+if ($pathEntries -notcontains $installDir) {
+    $newPath = (($pathEntries + $installDir) -join ";")
+    [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+}
+
+Write-Host "✅ bro-skills installed successfully at $destination!" -ForegroundColor Green
+& $destination version

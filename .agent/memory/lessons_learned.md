@@ -83,5 +83,15 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: `install.sh` and `install.ps1` downloaded standalone compiled PyInstaller binaries from `releases/latest/download`, which pointed to old GitHub Releases assets rather than the latest git commit on `main`.
 - **Prevention Rule**: Installer scripts MUST check for `python3`/`pip` first and install the latest `main` code directly via `pip install --no-cache-dir --upgrade git+https://github.com/wedabro/bro-skills.git@main`, falling back to standalone binaries only if Python is absent.
 
+---
+
+### [LESSON-008] Python Stdlib Zip Extractor For Zero-Dependency Installations
+- **Date**: 2026-08-13
+- **Category**: Installer / Cross-Platform Compatibility
+- **Symptom**: `install.sh` failed on Linux servers where `python3-pip` and `unzip` were not installed, jumping to old standalone binary download.
+- **Root Cause**: Relying on external shell tools (`pip`, `unzip`, `cp -r`) inside `install.sh` caused silent shell aborts on minimal Linux distros (Ubuntu/Debian server).
+- **Prevention Rule**: Use Python stdlib (`urllib.request`, `zipfile`, `io`, `os`, `shutil`) to download and extract `main.zip` directly in Python, requiring zero external packages or tools.
+
+
 
 
