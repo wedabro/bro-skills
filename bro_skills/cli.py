@@ -787,34 +787,65 @@ def cmd_version(args):
     print(f"bro-skills v{__version__}")
 
 
+def _parse_version_tuple(v_str):
+    """Parse version string into a comparable tuple of ints."""
+    if not v_str:
+        return (0, 0, 0)
+    cleaned = v_str.lstrip("v").strip()
+    parts = []
+    for part in cleaned.split("."):
+        digits = "".join(c for c in part if c.isdigit())
+        parts.append(int(digits) if digits else 0)
+    return tuple(parts)
+
+
 def _get_latest_github_version():
-    """Retrieve the latest version of bro-skills from GitHub Releases or raw package metadata."""
+    """Retrieve the latest version of bro-skills from GitHub Releases, Tags, or raw package metadata."""
     import urllib.request
     import json
 
-    # 1. Try GitHub Releases API first
-    url = "https://api.github.com/repos/wedabro/bro-skills/releases/latest"
+    candidates = set()
+
+    # 1. Check GitHub Releases API
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'bro-skills-cli'})
+        req = urllib.request.Request("https://api.github.com/repos/wedabro/bro-skills/releases/latest", headers={'User-Agent': 'bro-skills-cli'})
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
             tag = data.get("tag_name", "").lstrip("v")
             if tag:
-                return tag
+                candidates.add(tag)
     except Exception:
         pass
 
-    # 2. Fallback to raw package.json on main branch
-    raw_url = "https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json"
+    # 2. Check GitHub Tags API
     try:
-        req = urllib.request.Request(raw_url, headers={'User-Agent': 'bro-skills-cli'})
+        req = urllib.request.Request("https://api.github.com/repos/wedabro/bro-skills/tags", headers={'User-Agent': 'bro-skills-cli'})
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
-            return data.get("version", "").lstrip("v") or None
+            if isinstance(data, list):
+                for item in data[:5]:
+                    t = item.get("name", "").lstrip("v")
+                    if t:
+                        candidates.add(t)
     except Exception:
         pass
 
-    return None
+    # 3. Check raw package.json on main branch
+    try:
+        req = urllib.request.Request("https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json", headers={'User-Agent': 'bro-skills-cli'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            v = data.get("version", "").lstrip("v")
+            if v:
+                candidates.add(v)
+    except Exception:
+        pass
+
+    if not candidates:
+        return None
+
+    return max(candidates, key=_parse_version_tuple)
+
 
 
 def _standalone_asset_name():
