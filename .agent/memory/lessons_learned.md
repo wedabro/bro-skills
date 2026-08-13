@@ -61,3 +61,17 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: Lack of explicit rule prohibiting automatic version bumps after completing routine tasks.
 - **Prevention Rule**: The Agent MUST NEVER automatically bump version numbers or create/push release tags (`vX.Y.Z`) on its own. Version bumping and release tagging MUST ONLY be performed when the User explicitly requests/commands to raise the version!
 
+---
+
+### [LESSON-006] Anti-Caching In Pip, NPM & GitHub CDN During Updates
+- **Date**: 2026-08-13
+- **Category**: CLI / Update Pipeline / Caching
+- **Symptom**: Running CLI update commands did not update `bro-skills` to the latest version on user's machine.
+- **Root Cause**: 
+  1. `pip install --upgrade git+...` re-used cached wheels from `pip` cache (`~/.cache/pip`).
+  2. `raw.githubusercontent.com` served cached `package.json` for up to 5 minutes via Fastly CDN.
+- **Prevention Rule**: 
+  - Always pass `--no-cache-dir --force-reinstall --no-deps` to `pip` update commands.
+  - Always append `?t=<timestamp>` query parameters and `Cache-Control: no-cache` headers to raw GitHub URL requests.
+
+

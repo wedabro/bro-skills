@@ -803,12 +803,20 @@ def _get_latest_github_version():
     """Retrieve the latest version of bro-skills from GitHub Releases, Tags, or raw package metadata."""
     import urllib.request
     import json
+    import time
 
     candidates = set()
+    timestamp = int(time.time())
+    headers = {
+        'User-Agent': 'bro-skills-cli',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+    }
 
     # 1. Check GitHub Releases API
     try:
-        req = urllib.request.Request("https://api.github.com/repos/wedabro/bro-skills/releases/latest", headers={'User-Agent': 'bro-skills-cli'})
+        url = f"https://api.github.com/repos/wedabro/bro-skills/releases/latest?t={timestamp}"
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
             tag = data.get("tag_name", "").lstrip("v")
@@ -819,7 +827,8 @@ def _get_latest_github_version():
 
     # 2. Check GitHub Tags API
     try:
-        req = urllib.request.Request("https://api.github.com/repos/wedabro/bro-skills/tags", headers={'User-Agent': 'bro-skills-cli'})
+        url = f"https://api.github.com/repos/wedabro/bro-skills/tags?t={timestamp}"
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
             if isinstance(data, list):
@@ -832,7 +841,8 @@ def _get_latest_github_version():
 
     # 3. Check raw package.json on main branch
     try:
-        req = urllib.request.Request("https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json", headers={'User-Agent': 'bro-skills-cli'})
+        url = f"https://raw.githubusercontent.com/wedabro/bro-skills/main/package.json?t={timestamp}"
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
             v = data.get("version", "").lstrip("v")
@@ -845,6 +855,7 @@ def _get_latest_github_version():
         return None
 
     return max(candidates, key=_parse_version_tuple)
+
 
 
 
@@ -982,11 +993,13 @@ def cmd_update(args):
 
     print(f"Installation method: {install_method.upper()}")
     is_windows = sys.platform.startswith('win')
+    import time
+    ts = int(time.time())
 
     if install_method == "npm":
-        cmd = ["npm", "install", "-g", "github:wedabro/bro-skills"]
+        cmd = ["npm", "install", "--no-cache", "-g", f"github:wedabro/bro-skills#main"]
     else:
-        cmd = [sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
+        cmd = [sys.executable, "-m", "pip", "install", "--no-cache-dir", "--force-reinstall", "--no-deps", f"git+https://github.com/wedabro/bro-skills.git@main?t={ts}"]
 
     print(f"Running command: {' '.join(cmd)}")
     try:
@@ -1000,8 +1013,8 @@ def cmd_update(args):
     # Fallback strategies for non-standalone / python installations
     if install_method != "npm":
         # Fallback 1: Try raw zip archive (works even without git installed on Windows/Linux)
-        zip_url = "https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip"
-        fallback_zip_cmd = [sys.executable, "-m", "pip", "install", "--upgrade", zip_url]
+        zip_url = f"https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip?t={ts}"
+        fallback_zip_cmd = [sys.executable, "-m", "pip", "install", "--no-cache-dir", "--force-reinstall", "--no-deps", zip_url]
         print(f"\n🔄 Retrying with fallback zip download (git not required): {' '.join(fallback_zip_cmd)}")
         try:
             res_zip = subprocess.run(fallback_zip_cmd, check=True, text=True, shell=is_windows)
