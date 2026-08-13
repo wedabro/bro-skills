@@ -50,48 +50,74 @@ class ProjectScanner:
 
     def scan(self):
         """Run the entire scan process."""
-        self._scan_package_json()
-        self._scan_pyproject()
-        self._scan_docker()
-        self._scan_prisma()
-        self._scan_env()
-        self._scan_api_routes()
-        self._scan_pages()
-        self._scan_readme()
-        self._scan_source_structure()
-        self._detect_framework()
+        for scan_func in [
+            self._scan_package_json,
+            self._scan_pyproject,
+            self._scan_docker,
+            self._scan_prisma,
+            self._scan_env,
+            self._scan_api_routes,
+            self._scan_pages,
+            self._scan_readme,
+            self._scan_source_structure,
+            self._detect_framework,
+        ]:
+            try:
+                scan_func()
+            except Exception:
+                pass
 
-        # Mark whether code exists
-        if (self.profile["tech_stack"]
-            or self.profile["dependencies"]
-            or self.profile["dev_dependencies"]
-            or self.profile["docker"]["has_docker"]
-            or self.profile["docker"]["has_compose"]):
-            self.profile["has_existing_code"] = True
+        try:
+            # Mark whether code exists
+            if (self.profile.get("tech_stack")
+                or self.profile.get("dependencies")
+                or self.profile.get("dev_dependencies")
+                or (isinstance(self.profile.get("docker"), dict) and (self.profile["docker"].get("has_docker") or self.profile["docker"].get("has_compose")))):
+                self.profile["has_existing_code"] = True
+        except Exception:
+            pass
 
         return self.profile
 
+    # =========================================================================
     # =========================================================================
     # PACKAGE.JSON
     # =========================================================================
     def _scan_package_json(self):
         """Read package.json to get dependencies, scripts, and project name."""
         pkg_path = os.path.join(self.target_dir, "package.json")
-        if not os.path.exists(pkg_path):
-            return
-
         try:
+            if not os.path.exists(pkg_path):
+                return
+
             with open(pkg_path, "r", encoding="utf-8") as f:
                 pkg = json.load(f)
-        except (json.JSONDecodeError, UnicodeDecodeError):
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError):
             return
 
-        self.profile["project_name"] = pkg.get("name", "")
-        self.profile["project_version"] = pkg.get("version", "")
-        self.profile["project_description"] = pkg.get("description", "")
+        if not isinstance(pkg, dict):
+            return
 
-        deps = pkg.get("dependencies", {})
-        dev_deps = pkg.get("devDependencies", {})
+        name = pkg.get("name")
+        if isinstance(name, str):
+            self.profile["project_name"] = name
+        version = pkg.get("version")
+        if isinstance(version, str):
+            self.profile["project_version"] = version
+        description = pkg.get("description")
+        if isinstance(description, str):
+            self.profile["project_description"] = description
+
+        deps = pkg.get("dependencies")
+        if not isinstance(deps, dict):
+            deps = {}
+        dev_deps = pkg.get("devDependencies")
+        if not isinstance(dev_deps, dict):
+            dev_deps = {}
+        scripts = pkg.get("scripts")
+        if not isinstance(scripts, dict):
+            scripts = {}
+
         self.profile["dependencies"] = deps
         self.profile["dev_dependencies"] = dev_deps
 
@@ -123,19 +149,22 @@ class ProjectScanner:
             if dep_name in all_deps and tech_label not in self.profile["tech_stack"]:
                 self.profile["tech_stack"].append(tech_label)
 
-        self.profile["scripts"] = pkg.get("scripts", {})
+        self.profile["scripts"] = scripts
         self.profile["language"] = "JavaScript"
         if "typescript" in all_deps or "ts-node" in all_deps or "tsx" in all_deps:
             self.profile["language"] = "TypeScript"
 
         # Package manager detection
-        if os.path.exists(os.path.join(self.target_dir, "pnpm-workspace.yaml")) or os.path.exists(os.path.join(self.target_dir, "pnpm-lock.yaml")):
-            self.profile["package_manager"] = "pnpm"
-            if "pnpm" not in self.profile["tech_stack"]:
-                self.profile["tech_stack"].append("pnpm Monorepo")
-        elif os.path.exists(os.path.join(self.target_dir, "yarn.lock")):
-            self.profile["package_manager"] = "yarn"
-        else:
+        try:
+            if os.path.exists(os.path.join(self.target_dir, "pnpm-workspace.yaml")) or os.path.exists(os.path.join(self.target_dir, "pnpm-lock.yaml")):
+                self.profile["package_manager"] = "pnpm"
+                if "pnpm Monorepo" not in self.profile["tech_stack"]:
+                    self.profile["tech_stack"].append("pnpm Monorepo")
+            elif os.path.exists(os.path.join(self.target_dir, "yarn.lock")):
+                self.profile["package_manager"] = "yarn"
+            else:
+                self.profile["package_manager"] = "npm"
+        except OSError:
             self.profile["package_manager"] = "npm"
 
     # =========================================================================
@@ -144,13 +173,13 @@ class ProjectScanner:
     def _scan_pyproject(self):
         """Read pyproject.toml for Python projects."""
         pyproject_path = os.path.join(self.target_dir, "pyproject.toml")
-        if not os.path.exists(pyproject_path):
-            return
-
         try:
+            if not os.path.exists(pyproject_path):
+                return
+
             with open(pyproject_path, "r", encoding="utf-8") as f:
                 content = f.read()
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, OSError):
             return
 
         self.profile["language"] = "Python"
@@ -158,26 +187,26 @@ class ProjectScanner:
             self.profile["tech_stack"].append("Python")
 
         # Extract name
-        name_match = re.search(r'name\s*=\s*"([^"]+)"', content)
+        name_match = re.search(r'name\s*=\s*["\']([^"\']+)["\']', content)
         if name_match and not self.profile["project_name"]:
             self.profile["project_name"] = name_match.group(1)
 
         # Extract version
-        ver_match = re.search(r'version\s*=\s*"([^"]+)"', content)
+        ver_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
         if ver_match:
             self.profile["project_version"] = ver_match.group(1)
 
         # Extract description
-        desc_match = re.search(r'description\s*=\s*"([^"]+)"', content)
+        desc_match = re.search(r'description\s*=\s*["\']([^"\']+)["\']', content)
         if desc_match and not self.profile["project_description"]:
             self.profile["project_description"] = desc_match.group(1)
 
         # Detect frameworks
-        if "django" in content.lower():
+        if "django" in content.lower() and "Django" not in self.profile["tech_stack"]:
             self.profile["tech_stack"].append("Django")
-        if "fastapi" in content.lower():
+        if "fastapi" in content.lower() and "FastAPI" not in self.profile["tech_stack"]:
             self.profile["tech_stack"].append("FastAPI")
-        if "flask" in content.lower():
+        if "flask" in content.lower() and "Flask" not in self.profile["tech_stack"]:
             self.profile["tech_stack"].append("Flask")
 
     # =========================================================================
@@ -186,58 +215,117 @@ class ProjectScanner:
     def _scan_docker(self):
         """Scan Docker files to get services and ports."""
         # Dockerfile
-        dockerfiles = glob.glob(os.path.join(self.target_dir, "**/Dockerfile"), recursive=True)
-        if dockerfiles:
-            self.profile["docker"]["has_docker"] = True
-            if "Docker" not in self.profile["tech_stack"]:
-                self.profile["tech_stack"].append("Docker")
+        try:
+            dockerfiles = None
+            try:
+                dockerfiles = glob.glob("**/Dockerfile", root_dir=self.target_dir, recursive=True)
+            except (TypeError, ValueError, OSError):
+                pass
+            if not dockerfiles:
+                escaped_dir = glob.escape(self.target_dir)
+                dockerfiles = glob.glob(os.path.join(escaped_dir, "**/Dockerfile"), recursive=True)
+            if dockerfiles:
+                self.profile["docker"]["has_docker"] = True
+                if "Docker" not in self.profile["tech_stack"]:
+                    self.profile["tech_stack"].append("Docker")
+        except (OSError, RecursionError, ValueError):
+            pass
 
         # docker-compose.yml
         for compose_name in ["docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"]:
             compose_path = os.path.join(self.target_dir, compose_name)
-            if os.path.exists(compose_path):
-                self.profile["docker"]["has_compose"] = True
-                self._parse_compose(compose_path)
-                break
+            try:
+                if os.path.exists(compose_path):
+                    self.profile["docker"]["has_compose"] = True
+                    self._parse_compose(compose_path)
+                    break
+            except (OSError, ValueError):
+                continue
 
         # docker-compose.prod.yml
         for prod_name in ["docker-compose.prod.yml", "docker-compose.prod.yaml", "docker-compose.production.yml"]:
             prod_path = os.path.join(self.target_dir, prod_name)
-            if os.path.exists(prod_path):
-                self.profile["docker"]["has_prod_compose"] = True
-                break
+            try:
+                if os.path.exists(prod_path):
+                    self.profile["docker"]["has_prod_compose"] = True
+                    break
+            except (OSError, ValueError):
+                continue
 
     def _parse_compose(self, filepath):
         """Parse docker-compose to get services and ports (simple parser)."""
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, OSError):
             return
 
-        # Extract services (simple regex)
         in_services = False
+        in_ports = False
         current_service = None
 
         for line in content.split("\n"):
-            stripped = line.strip()
-            if stripped.startswith("services:"):
-                in_services = True
+            comment_idx = line.find("#")
+            if comment_idx != -1:
+                quote_count = line[:comment_idx].count('"') + line[:comment_idx].count("'")
+                if quote_count % 2 == 0:
+                    clean_line = line[:comment_idx]
+                else:
+                    clean_line = line
+            else:
+                clean_line = line
+
+            stripped = clean_line.strip()
+            if not stripped:
+                continue
+
+            # Top-level key check (no leading spaces/tabs)
+            if not clean_line.startswith(" ") and not clean_line.startswith("\t"):
+                if stripped.startswith("services:"):
+                    in_services = True
+                    current_service = None
+                    in_ports = False
+                else:
+                    in_services = False
+                    current_service = None
+                    in_ports = False
                 continue
 
             if in_services:
                 # Service name (2-space indent, ends with :)
-                if re.match(r"^  \w", line) and stripped.endswith(":") and not stripped.startswith("-"):
+                if (re.match(r"^  [a-zA-Z0-9_-]+", clean_line) or re.match(r"^\t[a-zA-Z0-9_-]+", clean_line)) and stripped.endswith(":") and not stripped.startswith("-"):
                     current_service = stripped.rstrip(":")
+                    in_ports = False
                     if current_service not in self.profile["docker"]["services"]:
                         self.profile["docker"]["services"].append(current_service)
+                    continue
 
-                # Port mapping
-                port_match = re.search(r'["\']?(\d+):(\d+)["\']?', stripped)
-                if port_match and current_service:
-                    port_entry = f"{current_service}: {port_match.group(1)}:{port_match.group(2)}"
-                    if port_entry not in self.profile["docker"]["ports"]:
-                        self.profile["docker"]["ports"].append(port_entry)
+                if current_service:
+                    if stripped.startswith("ports:"):
+                        in_ports = True
+                        # check one-line ports: ["8900:8000"]
+                        port_match = re.search(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', stripped)
+                        if port_match:
+                            host_port, container_port = port_match.group(1), port_match.group(2)
+                            if 1 <= int(host_port) <= 65535 and 1 <= int(container_port) <= 65535:
+                                port_entry = f"{current_service}: {host_port}:{container_port}"
+                                if port_entry not in self.profile["docker"]["ports"]:
+                                    self.profile["docker"]["ports"].append(port_entry)
+                        continue
+
+                    # If key at service-level indent change (e.g., environment:, volumes:)
+                    if not clean_line.startswith("      ") and not clean_line.startswith("    -") and not clean_line.startswith("\t\t\t") and not clean_line.startswith("\t\t-"):
+                        if not stripped.startswith("-") and not stripped.startswith("ports:"):
+                            in_ports = False
+
+                    if in_ports:
+                        port_match = re.search(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', stripped)
+                        if port_match:
+                            host_port, container_port = port_match.group(1), port_match.group(2)
+                            if 1 <= int(host_port) <= 65535 and 1 <= int(container_port) <= 65535:
+                                port_entry = f"{current_service}: {host_port}:{container_port}"
+                                if port_entry not in self.profile["docker"]["ports"]:
+                                    self.profile["docker"]["ports"].append(port_entry)
 
     # =========================================================================
     # PRISMA
@@ -252,9 +340,12 @@ class ProjectScanner:
 
         schema_path = None
         for p in schema_paths:
-            if os.path.exists(p):
-                schema_path = p
-                break
+            try:
+                if os.path.exists(p):
+                    schema_path = p
+                    break
+            except OSError:
+                continue
 
         if not schema_path:
             return
@@ -266,7 +357,7 @@ class ProjectScanner:
         try:
             with open(schema_path, "r", encoding="utf-8") as f:
                 content = f.read()
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, OSError):
             return
 
         # Detect database type
@@ -306,93 +397,153 @@ class ProjectScanner:
     # =========================================================================
     def _scan_env(self):
         """Scan .env.example or .env to get variable names (DO NOT get values)."""
-        env_files = [".env.example", ".env.local.example", ".env.development"]
+        env_files = [".env.example", ".env.local.example", ".env.development", ".env", ".env.local", ".env.test"]
         for env_name in env_files:
             env_path = os.path.join(self.target_dir, env_name)
-            if not os.path.exists(env_path):
-                continue
-
             try:
+                if not os.path.exists(env_path):
+                    continue
+
                 with open(env_path, "r", encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
-                        if not line or line.startswith("#"):
+                        if not line or line.startswith("#") or "=" not in line:
                             continue
                         key = line.split("=")[0].strip()
+                        key = re.sub(r"^export\s+", "", key).strip()
+                        key = key.strip("'\"")
                         if key and key not in self.profile["env_vars"]:
                             self.profile["env_vars"].append(key)
-            except UnicodeDecodeError:
-                pass
-            break  # Only read first found
+                break  # Only read first found
+            except (UnicodeDecodeError, OSError):
+                continue
 
     # =========================================================================
     # API ROUTES
     # =========================================================================
     def _scan_api_routes(self):
         """Scan API routes from folder structure."""
-        # Next.js App Router
-        api_dir = os.path.join(self.target_dir, "app", "api")
-        if not os.path.exists(api_dir):
-            api_dir = os.path.join(self.target_dir, "src", "app", "api")
+        try:
+            # Next.js App Router
+            api_dir = os.path.join(self.target_dir, "app", "api")
+            if not os.path.exists(api_dir):
+                api_dir = os.path.join(self.target_dir, "src", "app", "api")
 
-        if os.path.exists(api_dir):
-            self.profile["api"]["has_api_dir"] = True
-            for root, dirs, files in os.walk(api_dir):
-                for f in files:
-                    if f in ("route.ts", "route.js"):
-                        rel = os.path.relpath(root, api_dir)
-                        route = "/api/" + rel.replace("\\", "/").replace("[", ":").replace("]", "")
-                        if route not in self.profile["api"]["routes"]:
-                            self.profile["api"]["routes"].append(route)
+            if os.path.exists(api_dir):
+                self.profile["api"]["has_api_dir"] = True
+                for root, dirs, files in os.walk(api_dir):
+                    for f in files:
+                        if f in ("route.ts", "route.js"):
+                            rel = os.path.relpath(root, api_dir)
+                            if rel == ".":
+                                route = "/api"
+                            else:
+                                route = "/api/" + rel.replace("\\", "/").replace("[", ":").replace("]", "")
+                            if route not in self.profile["api"]["routes"]:
+                                self.profile["api"]["routes"].append(route)
+        except OSError:
+            pass
 
-        # NestJS controllers
-        src_dir = os.path.join(self.target_dir, "src")
-        if os.path.exists(src_dir):
-            for root, dirs, files in os.walk(src_dir):
-                for f in files:
-                    if f.endswith(".controller.ts") or f.endswith(".controller.js"):
-                        controller_name = f.replace(".controller.ts", "").replace(".controller.js", "")
-                        route = f"/api/{controller_name}"
-                        if route not in self.profile["api"]["routes"]:
-                            self.profile["api"]["routes"].append(route)
+        try:
+            # NestJS controllers
+            src_dir = os.path.join(self.target_dir, "src")
+            if os.path.exists(src_dir):
+                for root, dirs, files in os.walk(src_dir):
+                    for f in files:
+                        if f.endswith(".controller.ts") or f.endswith(".controller.js"):
+                            controller_name = f.replace(".controller.ts", "").replace(".controller.js", "")
+                            route = f"/api/{controller_name}"
+                            if route not in self.profile["api"]["routes"]:
+                                self.profile["api"]["routes"].append(route)
+        except OSError:
+            pass
 
     # =========================================================================
     # PAGES
     # =========================================================================
     def _scan_pages(self):
         """Scan public pages from folder structure."""
-        # Next.js App Router pages
-        app_dir = os.path.join(self.target_dir, "app")
-        if not os.path.exists(app_dir):
-            app_dir = os.path.join(self.target_dir, "src", "app")
+        try:
+            # Next.js App Router pages
+            app_dir = os.path.join(self.target_dir, "app")
+            if not os.path.exists(app_dir):
+                app_dir = os.path.join(self.target_dir, "src", "app")
 
-        if os.path.exists(app_dir):
-            for root, dirs, files in os.walk(app_dir):
-                rel = os.path.relpath(root, app_dir)
-                if rel.startswith("api") or rel.startswith("_"):
-                    continue
-                for f in files:
-                    if f in ("page.tsx", "page.jsx", "page.ts", "page.js"):
-                        if rel == ".":
-                            page_route = "/"
-                        else:
-                            page_route = "/" + rel.replace("\\", "/").replace("(", "").replace(")", "")
-                        if page_route not in self.profile["pages"]:
-                            self.profile["pages"].append(page_route)
+            if os.path.exists(app_dir):
+                for root, dirs, files in os.walk(app_dir):
+                    rel = os.path.relpath(root, app_dir)
+                    norm_rel = rel.replace("\\", "/")
+                    rel_parts = norm_rel.split("/")
+                    if "api" in rel_parts or any(p.startswith("_") for p in rel_parts):
+                        continue
+                    for f in files:
+                        if f in ("page.tsx", "page.jsx", "page.ts", "page.js"):
+                            if rel == ".":
+                                page_route = "/"
+                            else:
+                                path_segments = [p for p in rel_parts if not (p.startswith("(") and p.endswith(")"))]
+                                if not path_segments:
+                                    page_route = "/"
+                                else:
+                                    page_route = "/" + "/".join(path_segments)
+                            if page_route not in self.profile["pages"]:
+                                self.profile["pages"].append(page_route)
+        except OSError:
+            pass
+
+        try:
+            # Next.js Pages Router pages
+            pages_dir = os.path.join(self.target_dir, "pages")
+            if not os.path.exists(pages_dir):
+                pages_dir = os.path.join(self.target_dir, "src", "pages")
+
+            if os.path.exists(pages_dir):
+                for root, dirs, files in os.walk(pages_dir):
+                    rel = os.path.relpath(root, pages_dir)
+                    norm_rel = rel.replace("\\", "/")
+                    rel_parts = norm_rel.split("/")
+                    if "api" in rel_parts or any(p.startswith("_") for p in rel_parts):
+                        continue
+                    for f in files:
+                        if f.endswith((".tsx", ".jsx", ".ts", ".js")) and not f.startswith("_"):
+                            filename_no_ext = os.path.splitext(f)[0]
+                            if filename_no_ext == "index":
+                                if rel == ".":
+                                    page_route = "/"
+                                else:
+                                    page_route = "/" + norm_rel
+                            else:
+                                if rel == ".":
+                                    page_route = "/" + filename_no_ext
+                                else:
+                                    page_route = "/" + norm_rel + "/" + filename_no_ext
+                            if page_route not in self.profile["pages"]:
+                                self.profile["pages"].append(page_route)
+        except OSError:
+            pass
 
     # =========================================================================
     # README
     # =========================================================================
     def _scan_readme(self):
         """Read README to get project description."""
-        readme_path = os.path.join(self.target_dir, "README.md")
-        if not os.path.exists(readme_path):
+        readme_path = None
+        for name in ["README.md", "readme.md", "Readme.md", "README.markdown", "README.txt"]:
+            p = os.path.join(self.target_dir, name)
+            try:
+                if os.path.exists(p):
+                    readme_path = p
+                    break
+            except OSError:
+                continue
+
+        if not readme_path:
             return
 
         try:
             with open(readme_path, "r", encoding="utf-8") as f:
                 content = f.read()
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, OSError):
             return
 
         # Get content after first heading (usually the description)
@@ -400,15 +551,26 @@ class ProjectScanner:
         desc_lines = []
         found_heading = False
         for line in lines:
-            if line.startswith("# ") and not found_heading:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            if stripped.startswith("#") and not found_heading:
                 found_heading = True
                 continue
             if found_heading:
-                if line.startswith("## "):
+                if stripped.startswith("#"):
                     break
-                stripped = line.strip()
-                if stripped and not stripped.startswith("[") and not stripped.startswith("!"):
+                if not stripped.startswith("[") and not stripped.startswith("!") and not stripped.startswith("```"):
                     desc_lines.append(stripped)
+                if len(desc_lines) >= 3:
+                    break
+
+        if not desc_lines:
+            for line in lines:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#") or stripped.startswith("[") or stripped.startswith("!") or stripped.startswith("```"):
+                    continue
+                desc_lines.append(stripped)
                 if len(desc_lines) >= 3:
                     break
 
@@ -426,27 +588,33 @@ class ProjectScanner:
             "test-output", "test-output-deep", "test-output-infra",
         }
 
-        if not os.path.isdir(self.target_dir):
-            return
+        try:
+            if not os.path.isdir(self.target_dir):
+                return
 
-        for item in sorted(os.listdir(self.target_dir)):
-            if item.startswith(".") and item not in (".env.example",):
-                if item == ".agent":
-                    self.profile["source_structure"].append(f"📁 {item}/ (Agent config)")
-                continue
-            if item in ignore_dirs:
-                continue
+            for item in sorted(os.listdir(self.target_dir)):
+                if item.startswith(".") and item not in (".env.example",):
+                    if item == ".agent":
+                        self.profile["source_structure"].append(f"📁 {item}/ (Agent config)")
+                    continue
+                if item in ignore_dirs:
+                    continue
 
-            full_path = os.path.join(self.target_dir, item)
-            if os.path.isdir(full_path):
-                # Count children
+                full_path = os.path.join(self.target_dir, item)
                 try:
-                    children = [c for c in os.listdir(full_path) if not c.startswith(".") and c not in ignore_dirs]
-                    self.profile["source_structure"].append(f"📁 {item}/ ({len(children)} items)")
-                except PermissionError:
-                    self.profile["source_structure"].append(f"📁 {item}/")
-            else:
-                self.profile["source_structure"].append(f"📄 {item}")
+                    if os.path.isdir(full_path):
+                        # Count children
+                        try:
+                            children = [c for c in os.listdir(full_path) if not c.startswith(".") and c not in ignore_dirs]
+                            self.profile["source_structure"].append(f"📁 {item}/ ({len(children)} items)")
+                        except OSError:
+                            self.profile["source_structure"].append(f"📁 {item}/")
+                    else:
+                        self.profile["source_structure"].append(f"📄 {item}")
+                except OSError:
+                    continue
+        except OSError:
+            pass
 
     # =========================================================================
     # FRAMEWORK DETECTION
@@ -462,6 +630,8 @@ class ProjectScanner:
             self.profile["framework"] = "Django"
         elif "FastAPI" in ts:
             self.profile["framework"] = "FastAPI"
+        elif "Flask" in ts:
+            self.profile["framework"] = "Flask"
         elif "Express.js" in ts:
             self.profile["framework"] = "Express.js"
         elif "Vue.js" in ts:
