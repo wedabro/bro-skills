@@ -172,13 +172,29 @@ def select_menu(options, title="", lang="en", multi=False):
                             selected_indices.remove(selected_idx)
                         else:
                             selected_indices.add(selected_idx)
-                elif ch == b'\x1b' or ch in (b'q', b'Q'):
+                elif ch == b'\x1b':
+                    if msvcrt.kbhit():
+                        ch2 = msvcrt.getch()
+                        if ch2 in (b'[', b'O'):
+                            if msvcrt.kbhit():
+                                ch3 = msvcrt.getch()
+                                if ch3 in (b'A', b'H'):
+                                    selected_idx = (selected_idx - 1) % len(options)
+                                elif ch3 in (b'B', b'P'):
+                                    selected_idx = (selected_idx + 1) % len(options)
+                        elif ch2 in (b'A', b'H'):
+                            selected_idx = (selected_idx - 1) % len(options)
+                        elif ch2 in (b'B', b'P'):
+                            selected_idx = (selected_idx + 1) % len(options)
+                    else:
+                        return "cancel"
+                elif ch in (b'q', b'Q'):
                     return "cancel"
                 elif ch in (b'\xe0', b'\x00'):
                     ch2 = msvcrt.getch()
-                    if ch2 == b'H':
+                    if ch2 in (b'H', b'A'):
                         selected_idx = (selected_idx - 1) % len(options)
-                    elif ch2 == b'P':
+                    elif ch2 in (b'P', b'B'):
                         selected_idx = (selected_idx + 1) % len(options)
         else:
             import tty
@@ -202,15 +218,23 @@ def select_menu(options, title="", lang="en", multi=False):
                     elif char1 in ('q', 'Q'):
                         return "cancel"
                     elif char1 == '\x1b':
-                        rlist, _, _ = select.select([sys.stdin], [], [], 0.05)
+                        rlist, _, _ = select.select([sys.stdin], [], [], 0.25)
                         if rlist:
                             char2 = sys.stdin.read(1)
-                            if char2 == '[':
+                            if char2 in ('[', 'O'):
                                 char3 = sys.stdin.read(1)
                                 if char3 == 'A':
                                     selected_idx = (selected_idx - 1) % len(options)
                                 elif char3 == 'B':
                                     selected_idx = (selected_idx + 1) % len(options)
+                                elif char3.isdigit():
+                                    extra = sys.stdin.read(1)
+                                    while extra and extra not in ('A', 'B', '~'):
+                                        extra = sys.stdin.read(1)
+                                    if extra == 'A':
+                                        selected_idx = (selected_idx - 1) % len(options)
+                                    elif extra == 'B':
+                                        selected_idx = (selected_idx + 1) % len(options)
                         else:
                             return "cancel"
             finally:
@@ -307,11 +331,11 @@ def cmd_init(args):
     project_type = getattr(args, 'type', None)
     agent_dir = os.path.join(target, ".agent")
 
-    print(f"\n⚡ bro-skills v{__version__} - Spec-Driven Development")
-    print(f"{'─' * 50}")
+    print(f"\n⚡ bro-skills v{__version__} — Antigravity Spec Framework 4.0 Elite")
+    print(f"{'─' * 55}")
     print(f"  📁 Target:  {target}")
     print(f"  📛 Project: {name}")
-    print(f"{'─' * 50}\n")
+    print(f"{'─' * 55}\n")
 
     # MIGRATION AUDIT LOGIC
     existing_config = {}
@@ -338,16 +362,16 @@ def cmd_init(args):
                 print(f"  {item['name']:<25} {item['status']:<15} {item['action']}")
 
             print("\n💡 Optimal recommendation:")
-            print(f" - Upgrade core skills & workflows to version {__version__} (ASF 3.3 standard)")
+            print(f" - Upgrade core skills & workflows to version {__version__} (ASF 4.0 Elite standard)")
             print(" - Set up Identity & Knowledge Base layer to orient AI")
             print(" - Move old constitution to memory/constitution.md")
 
-            response = input("\n🚀 Upgrade & Optimize to ASF 3.3 now? (y/N): ").strip().lower()
+            response = input("\n🚀 Upgrade & Optimize to ASF 4.0 Elite now? (y/N): ").strip().lower()
             if response != 'y':
                 print("❌ Canceled.")
                 return
         else:
-            print("✅ The current structure meets ASF 3.3 standards.")
+            print("✅ The current structure meets ASF 4.0 Elite standards.")
             response = input("♻️ Do you still want to reinstall (Re-init)? (y/N): ").strip().lower()
             if response != 'y':
                 print("❌ Canceled.")

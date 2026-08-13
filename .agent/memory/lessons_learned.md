@@ -92,6 +92,16 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: Relying on external shell tools (`pip`, `unzip`, `cp -r`) inside `install.sh` caused silent shell aborts on minimal Linux distros (Ubuntu/Debian server).
 - **Prevention Rule**: Use Python stdlib (`urllib.request`, `zipfile`, `io`, `os`, `shutil`) to download and extract `main.zip` directly in Python, requiring zero external packages or tools.
 
+---
+
+### [LESSON-009] ANSI Escape Sequence & Terminal Arrow Key Parsing Fix
+- **Date**: 2026-08-13
+- **Category**: CLI / Interactive Prompt / Key Handling
+- **Symptom**: Pressing Down Arrow in `bro-skills init` multiselect menu automatically triggered `❌ Canceled / Đã hủy`.
+- **Root Cause**: Windows Terminal & VT100 / ANSI terminals send escape sequence `\x1b[B` or `\x1bOB`. In `select_menu()`, reading `\x1b` immediately returned `"cancel"` because it did not check `msvcrt.kbhit()` or SS3 application mode (`\x1bOB`) / VT100 (`\x1b[B`).
+- **Prevention Rule**: Key reading loops MUST check if `\x1b` is followed by `[B`, `[A`, `OB`, `OA` arrow sequences before assuming the standalone ESC key was pressed, and use extended timeouts (>200ms) for POSIX select.
+
+
 
 
 

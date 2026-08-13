@@ -66,7 +66,7 @@ class AgentMatcher:
 
 
 class ProjectGenerator:
-    """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 3.3."""
+    """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 4.0 Elite."""
 
     def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None, vault_path: str = None, force: bool = False):
         self.target_dir = target_dir
@@ -131,7 +131,7 @@ class ProjectGenerator:
         self.use_docker = type_info.get("use_docker", True)
         self.is_soft_rules = type_info.get("is_soft_rules", False)
 
-        print(f"📁 Scaffolding directory structure (ASF 3.3 Standard — {self.project_type})...")
+        print(f"📁 Scaffolding directory structure (ASF 4.0 Elite Standard — {self.project_type})...")
         self._create_directories()
 
         # ─── 0. Check Port (Only if project uses Docker and port config is missing in .env) ───
@@ -466,7 +466,7 @@ class ProjectGenerator:
         print("  📄 Kiro Skills  → .kiro/skills (copy — symlink/junction unavailable)")
 
     def _create_directories(self):
-        """Scaffold .agent/ directory structure compliant with ASF 3.3."""
+        """Scaffold .agent/ directory structure compliant with ASF 4.0 Elite."""
         dirs = [
             ".agent/identity",       # Identity layer
             ".agent/knowledge_base", # Project knowledge base layer
@@ -807,7 +807,7 @@ No tag -> inferred from keyword + project_type.
 - `knowledge_base/seo_standards.md`: Checklist & JSON-LD templates
 """
 
-        content = f"""# 🤖 bro-skills Configuration (ASF 3.3)
+        content = f"""# 🤖 bro-skills Configuration (ASF 4.0 Elite)
 
 > **Project**: {self.project_name}
 > **Type**: {type_label}
@@ -915,7 +915,7 @@ No tag -> inferred from keyword + project_type.
         type_info = PROJECT_TYPES.get(self.project_type, {})
         type_label = type_info.get("label", self.project_type)
         print(f"\n{'─' * 50}")
-        print(f"Scaffolding stats (ASF 3.3 — {type_label}):")
+        print(f"Scaffolding stats (ASF 4.0 Elite — {type_label}):")
         print(f"  🎭 Identity:  {self.stats['identity']}")
         print(f"  🧠 Knowledge: {self.stats['knowledge']}")
         print(f"  🛠️ Skills:    {self.stats['skills']}")

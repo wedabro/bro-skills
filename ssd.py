@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-⚡ bro-skills - Spec-Driven Development CLI (ASF 3.3)
+⚡ bro-skills — Antigravity Spec Framework 4.0 Elite CLI
 
 Backward compatibility wrapper.
 If pip installed, use the `bro-skills` command directly.
