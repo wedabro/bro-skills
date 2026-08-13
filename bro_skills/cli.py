@@ -996,26 +996,40 @@ def cmd_update(args):
     import time
     ts = int(time.time())
 
+    # Check if pip module is available in current Python environment
+    has_pip = False
+    try:
+        pip_check = subprocess.run([sys.executable, "-m", "pip", "--version"], capture_output=True, text=True)
+        if pip_check.returncode == 0:
+            has_pip = True
+    except Exception:
+        pass
+
     if install_method == "npm":
         cmd = ["npm", "install", "--no-cache", "-g", f"github:wedabro/bro-skills#main"]
-    else:
+        print(f"Running command: {' '.join(cmd)}")
+        try:
+            result = subprocess.run(cmd, check=True, text=True, shell=is_windows)
+            if result.returncode == 0:
+                print("\n✅ Updated successfully! Please run 'bro-skills version' to check.")
+                return
+        except Exception as e:
+            print(f"\n⚠️ Primary update command failed: {e}")
+    elif has_pip:
         cmd = [sys.executable, "-m", "pip", "install", "--no-cache-dir", "--force-reinstall", "--no-deps", f"git+https://github.com/wedabro/bro-skills.git@main?t={ts}"]
+        print(f"Running command: {' '.join(cmd)}")
+        try:
+            result = subprocess.run(cmd, check=True, text=True, shell=is_windows)
+            if result.returncode == 0:
+                print("\n✅ Updated successfully! Please run 'bro-skills version' to check.")
+                return
+        except Exception as e:
+            print(f"\n⚠️ Primary pip update command failed: {e}")
 
-    print(f"Running command: {' '.join(cmd)}")
-    try:
-        result = subprocess.run(cmd, check=True, text=True, shell=is_windows)
-        if result.returncode == 0:
-            print("\n✅ Updated successfully! Please run 'bro-skills version' to check.")
-            return
-    except Exception as e:
-        print(f"\n⚠️ Primary update command failed: {e}")
-
-    # Fallback strategies for non-standalone / python installations
-    if install_method != "npm":
-        # Fallback 1: Try raw zip archive (works even without git installed on Windows/Linux)
+        # Fallback 1: Try raw zip archive via pip
         zip_url = f"https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip?t={ts}"
         fallback_zip_cmd = [sys.executable, "-m", "pip", "install", "--no-cache-dir", "--force-reinstall", "--no-deps", zip_url]
-        print(f"\n🔄 Retrying with fallback zip download (git not required): {' '.join(fallback_zip_cmd)}")
+        print(f"\n🔄 Retrying with fallback zip download via pip: {' '.join(fallback_zip_cmd)}")
         try:
             res_zip = subprocess.run(fallback_zip_cmd, check=True, text=True, shell=is_windows)
             if res_zip.returncode == 0:
@@ -1024,59 +1038,48 @@ def cmd_update(args):
         except Exception as e2:
             print(f"⚠️ Fallback zip install failed: {e2}")
 
-        # Fallback 2: Check if pipx is available
         if shutil.which("pipx"):
             pipx_cmd = ["pipx", "upgrade", "bro-skills"]
-            print(f"\n🔄 Retrying with pipx upgrade: {' '.join(pipx_cmd)}")
             try:
                 res_pipx = subprocess.run(pipx_cmd, check=True, text=True, shell=is_windows)
                 if res_pipx.returncode == 0:
                     print("\n✅ Updated successfully via pipx!")
                     return
-            except Exception as e3:
-                print(f"⚠️ Pipx upgrade failed: {e3}")
+            except Exception:
+                pass
 
-        # Fallback 3: Re-download source archive directly via Python stdlib (no pip required!)
-        try:
-            import urllib.request
-            import zipfile
-            import io
-            import time
+    # Pure Python stdlib update (works everywhere, no pip, no git, no npm required!)
+    try:
+        import urllib.request
+        import zipfile
+        import io
 
-            print("\n🔄 Updating source package via Python stdlib...")
-            ts = int(time.time())
-            url = f"https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip?t={ts}"
-            headers = {'User-Agent': 'bro-skills-cli', 'Cache-Control': 'no-cache, no-store'}
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req) as resp:
-                data = resp.read()
+        print("\n🔄 Updating source package via Python stdlib...")
+        url = f"https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip?t={ts}"
+        headers = {'User-Agent': 'bro-skills-cli', 'Cache-Control': 'no-cache, no-store'}
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req) as resp:
+            data = resp.read()
 
-            target_dir = os.path.expanduser("~/.local/share/bro-skills")
-            tmp_dir = os.path.expanduser("~/.local/share/bro-skills-tmp")
-            if os.path.exists(tmp_dir):
-                shutil.rmtree(tmp_dir, ignore_errors=True)
-            with zipfile.ZipFile(io.BytesIO(data)) as zf:
-                zf.extractall(tmp_dir)
+        target_dir = os.path.expanduser("~/.local/share/bro-skills")
+        tmp_dir = os.path.expanduser("~/.local/share/bro-skills-tmp")
+        if os.path.exists(tmp_dir):
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+        with zipfile.ZipFile(io.BytesIO(data)) as zf:
+            zf.extractall(tmp_dir)
 
-            extracted_src = os.path.join(tmp_dir, "bro-skills-main")
-            if os.path.exists(extracted_src):
-                if os.path.exists(target_dir):
-                    shutil.rmtree(target_dir, ignore_errors=True)
-                shutil.copytree(extracted_src, target_dir)
-                shutil.rmtree(tmp_dir, ignore_errors=True)
-                print("\n✅ Updated successfully via Python source runner! Please run 'bro-skills version' to verify.")
-                return
-        except Exception as std_err:
-            print(f"⚠️ Python stdlib update fallback failed: {std_err}")
+        extracted_src = os.path.join(tmp_dir, "bro-skills-main")
+        if os.path.exists(extracted_src):
+            if os.path.exists(target_dir):
+                shutil.rmtree(target_dir, ignore_errors=True)
+            shutil.copytree(extracted_src, target_dir)
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            print("\n✅ Updated successfully via Python source runner! Please run 'bro-skills version' to verify.")
+            return
+    except Exception as std_err:
+        print(f"⚠️ Python stdlib update fallback failed: {std_err}")
 
-    print("\n❌ Update failed. You can update manually using one of the following commands:")
-    if install_method == "npm":
-        print("   npm install -g github:wedabro/bro-skills")
-        print("   or for npx usage: npx --clear-cache github:wedabro/bro-skills version")
-    else:
-        print("   pip install --upgrade git+https://github.com/wedabro/bro-skills.git")
-        print("   or (if git is not installed):")
-        print("   pip install --upgrade https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip")
+    print("\n❌ Update failed. Please check your internet connection.")
 
 def clean_empty_parents(path, root_dir):
     """Clean empty parent directories up to root_dir."""
