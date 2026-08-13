@@ -12,26 +12,62 @@ $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("bro-skills-" + [guid]::
 # 1. Prefer Python / Pip installation if available to get the latest main release
 $pyCmd = Get-Command python, python3, py -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($pyCmd) {
-    Write-Host "⚡ Installing latest bro-skills via Python ($($pyCmd.Name))..." -ForegroundColor Cyan
     $ts = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    # Check if pip is available
+    $hasPip = $false
     try {
-        & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/$repo.git@main"
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ bro-skills installed successfully!" -ForegroundColor Green
-            & bro-skills version
-            exit 0
-        }
-    } catch {
-        # Fallback to raw zip archive
+        & $pyCmd.Name -m pip --version *>$null
+        if ($LASTEXITCODE -eq 0) { $hasPip = $true }
+    } catch {}
+
+    if ($hasPip) {
+        Write-Host "⚡ Installing latest bro-skills via Python ($($pyCmd.Name))..." -ForegroundColor Cyan
         try {
-            & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/$repo/archive/refs/heads/main.zip?t=$ts"
+            & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/$repo.git@main"
             if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ bro-skills installed successfully via fallback archive!" -ForegroundColor Green
+                Write-Host "✅ bro-skills installed successfully!" -ForegroundColor Green
                 & bro-skills version
                 exit 0
             }
-        } catch {}
+        } catch {
+            try {
+                & $pyCmd.Name -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/$repo/archive/refs/heads/main.zip?t=$ts"
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "✅ bro-skills installed successfully via fallback archive!" -ForegroundColor Green
+                    & bro-skills version
+                    exit 0
+                }
+            } catch {}
+        }
     }
+
+    # Python is available without pip: Download main.zip and create source wrapper
+    Write-Host "⚡ Installing latest bro-skills via $($pyCmd.Name) source runner..." -ForegroundColor Cyan
+    $srcDir = Join-Path $env:LOCALAPPDATA "bro-skills-src"
+    $zipPath = Join-Path $tempDir "main.zip"
+    Invoke-WebRequest "https://github.com/$repo/archive/refs/heads/main.zip?t=$ts" -OutFile $zipPath -UseBasicParsing
+
+    New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+    & $pyCmd.Name -c "import zipfile; zipfile.ZipFile(r'$zipPath').extractall(r'$tempDir')"
+    
+    if (Test-Path $srcDir) { Remove-Item -LiteralPath $srcDir -Recurse -Force }
+    New-Item -ItemType Directory -Force -Path $srcDir | Out-Null
+    Copy-Item -Path (Join-Path $tempDir "bro-skills-main\*") -Destination $srcDir -Recurse -Force
+
+    $cmdWrapper = Join-Path $installDir "bro-skills.cmd"
+    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+    Set-Content -Path $cmdWrapper -Value "@echo off`r`n`"$($pyCmd.Source)`" `"$srcDir\ssd.py`" %*" -Encoding ASCII
+
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $pathEntries = @($userPath -split ";" | Where-Object { $_ })
+    if ($pathEntries -notcontains $installDir) {
+        $newPath = (($pathEntries + $installDir) -join ";")
+        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+    }
+
+    Write-Host "✅ bro-skills installed successfully at $cmdWrapper!" -ForegroundColor Green
+    & $cmdWrapper version
+    exit 0
 }
 
 # 2. Fallback to standalone binary download

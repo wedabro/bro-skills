@@ -5,10 +5,9 @@
 set -eu
 
 repo="wedabro/bro-skills"
-asset="bro-skills-linux-x86_64"
 install_dir="${BRO_SKILLS_INSTALL_DIR:-${HOME}/.local/bin}"
 destination="${install_dir}/bro-skills"
-base_url="https://github.com/${repo}/releases/latest/download"
+src_dir="${HOME}/.local/share/bro-skills"
 temp_dir="$(mktemp -d)"
 
 cleanup() {
@@ -16,46 +15,7 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
-# 1. Prefer Python / Pip installation if available to get the latest main release
-PY_CMD=""
-if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
-    PY_CMD="python3"
-elif command -v python >/dev/null 2>&1 && python -m pip --version >/dev/null 2>&1; then
-    PY_CMD="python"
-fi
-
-if [ -n "$PY_CMD" ]; then
-    echo "⚡ Installing latest bro-skills via Python ($PY_CMD)..."
-    ts="$(date +%s)"
-    if command -v git >/dev/null 2>&1; then
-        if "$PY_CMD" -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/${repo}.git@main"; then
-            echo "✅ bro-skills installed successfully!"
-            bro-skills version || true
-            exit 0
-        fi
-    fi
-
-    echo "🔄 Installing via GitHub archive..."
-    if "$PY_CMD" -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/${repo}/archive/refs/heads/main.zip?t=${ts}"; then
-        echo "✅ bro-skills installed successfully!"
-        bro-skills version || true
-        exit 0
-    fi
-fi
-
-# 2. Fallback to standalone binary download
-if [ "$(uname -s)" != "Linux" ]; then
-    echo "bro-skills standalone currently supports Linux and Windows only." >&2
-    exit 1
-fi
-
-case "$(uname -m)" in
-    x86_64|amd64) ;;
-    *)
-        echo "bro-skills currently provides a standalone Linux binary for x64 only (detected: $(uname -m))." >&2
-        exit 1
-        ;;
-esac
+mkdir -p "$install_dir"
 
 download() {
     url="$1"
@@ -70,7 +30,70 @@ download() {
     fi
 }
 
-echo "Installing bro-skills standalone binary..."
+# Find Python 3 binary
+PY_BIN=""
+if command -v python3 >/dev/null 2>&1; then
+    PY_BIN="python3"
+elif command -v python >/dev/null 2>&1; then
+    PY_BIN="python"
+fi
+
+# 1. Try Python + Pip first
+if [ -n "$PY_BIN" ]; then
+    if "$PY_BIN" -m pip --version >/dev/null 2>&1; then
+        echo "⚡ Installing latest bro-skills via $PY_BIN pip..."
+        ts="$(date +%s)"
+        if command -v git >/dev/null 2>&1; then
+            if "$PY_BIN" -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/${repo}.git@main"; then
+                echo "✅ bro-skills installed successfully!"
+                bro-skills version || true
+                exit 0
+            fi
+        fi
+
+        if "$PY_BIN" -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/${repo}/archive/refs/heads/main.zip?t=${ts}"; then
+            echo "✅ bro-skills installed successfully!"
+            bro-skills version || true
+            exit 0
+        fi
+    fi
+
+    # 2. Python is installed without pip: Download source zip & create standalone Python wrapper
+    echo "⚡ Installing latest bro-skills via $PY_BIN source runner..."
+    ts="$(date +%s)"
+    zip_path="${temp_dir}/main.zip"
+    download "https://github.com/${repo}/archive/refs/heads/main.zip?t=${ts}" "$zip_path"
+    
+    mkdir -p "$src_dir"
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -q -o "$zip_path" -d "$temp_dir"
+        rm -rf "$src_dir"
+        mkdir -p "$src_dir"
+        cp -r "${temp_dir}/bro-skills-main/"* "$src_dir/"
+    elif "$PY_BIN" -c "import zipfile" >/dev/null 2>&1; then
+        "$PY_BIN" -c "import zipfile, shutil; zipfile.ZipFile('$zip_path').extractall('$temp_dir')"
+        rm -rf "$src_dir"
+        mkdir -p "$src_dir"
+        cp -r "${temp_dir}/bro-skills-main/"* "$src_dir/"
+    fi
+
+    if [ -f "${src_dir}/ssd.py" ]; then
+        cat << wrapper > "$destination"
+#!/usr/bin/env sh
+exec "$PY_BIN" "${src_dir}/ssd.py" "\$@"
+wrapper
+        chmod +x "$destination"
+        echo "✅ bro-skills installed successfully at $destination!"
+        "$destination" version || true
+        exit 0
+    fi
+fi
+
+# 3. Fallback: Standalone binary download from GitHub Releases
+echo "Installing bro-skills standalone binary from GitHub Releases..."
+asset="bro-skills-linux-x86_64"
+base_url="https://github.com/${repo}/releases/latest/download"
+
 download "${base_url}/${asset}" "${temp_dir}/${asset}"
 download "${base_url}/${asset}.sha256" "${temp_dir}/${asset}.sha256"
 
@@ -89,22 +112,10 @@ if [ "$actual" != "$expected" ]; then
     exit 1
 fi
 
-mkdir -p "$install_dir"
 chmod 755 "${temp_dir}/${asset}"
 mv "${temp_dir}/${asset}" "$destination"
 
-echo "bro-skills installed successfully at $destination"
-if ! "$destination" version; then
-    rm -f -- "$destination"
-    echo "The downloaded bro-skills binary cannot run on this Linux system; installation was rolled back." >&2
-    exit 1
-fi
+echo "bro-skills standalone binary installed successfully at $destination"
+"$destination" version || true
 
-case ":${PATH}:" in
-    *":${install_dir}:"*) ;;
-    *)
-        echo "Add this line to your shell profile, then open a new terminal:"
-        echo "  export PATH=\"${install_dir}:\$PATH\""
-        ;;
-esac
 
