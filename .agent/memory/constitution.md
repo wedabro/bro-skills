@@ -2,7 +2,7 @@
 
 ## §0 bro-skills Protocol (REQUIRED)
 - **REQUIRED**: All development (Code), testing (Test), and deployment (Deploy Production) activities MUST use `bro-skills`.
-- **Mandatory Feature Workflow**: Khi bắt đầu phát triển bất kỳ tính năng hoặc yêu cầu mới nào, Tác nhân AI (Antigravity hoặc bất kỳ Model AI nào) BẮT BUỘC phải kích hoạt và thực hiện chuẩn quy trình thông qua `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) để hoàn thành các bước SDLC (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) trước khi triển khai.
+- **MANDATORY AUTOMATIC TRIGGER (`/00-speckit.all`)**: Khi người dùng yêu cầu phát triển bất kỳ tính năng hoặc yêu cầu mới nào, Tác nhân AI (Antigravity hoặc bất kỳ Model AI nào) BẮT BUỘC TỰ ĐỘNG kích hoạt workflow `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) NGAY LẬP TỨC ở lượt trả lời đầu tiên mà KHÔNG ĐƯỢC ĐỢI NGƯỜI DÙNG NHẮC NHỞ để hoàn thành các bước SDLC (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) trước khi viết bất kỳ dòng code thực thi nào.
 - **Pipeline**: Strictly adhere to the SDLC pipeline: Brainstorm & Align → Specify → Plan → Tasks → Implement.
 - **Brainstorming-First**: Before writing any code/spec/plan, the Agent MUST brainstorm with the User to clarify requirements, propose solutions (with pros/cons), and recommend the best path.
 - **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
