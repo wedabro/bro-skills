@@ -9,6 +9,7 @@
 - **Shared Page Shell**: Manage the header, sidebar, footer, content container,
   breadcrumbs, page title, and page actions through shared layout components.
   Do not rebuild the shell inside individual pages.
+- **Strict Main Layout Protection (Khóa Cứng Layout Chính)**: Shared Page Shell (Header, Sidebar, Footer, Main Container) là layout chuẩn cố định toàn website. TUYỆT ĐỐI KHÔNG tự ý chỉnh sửa hay làm biến dạng Layout chính khi code các trang con. Hạn chế tối đa việc sửa Layout chính. Trong trường hợp đặc biệt cần điều chỉnh Layout chính, BẮT BUỘC PHẢI HỎI VÀ NHẬN ĐƯỢC XÁC NHẬN CỦA USER trước khi sửa.
 - **Page-Family Consistency**: Pages with the same purpose must share the same
   content width, horizontal padding, title position, and composition pattern.
 - **Single Change Point**: Centralize color, typography, spacing, radius, shadow,
@@ -17,6 +18,7 @@
 - **Shared Primitives**: Standardize buttons, fields, cards, tables, dialogs,
   drawers, loading states, empty states, and error states. Feature code composes
   these primitives instead of restyling them.
+
 
 ## 🔡 Typography & Font-Size Guidelines (Anti-Slop)
 - **Unit Standard**: Always use `rem` units (calculated from browser default root font-size, usually 16px) for scalability.
@@ -38,9 +40,11 @@
   - **Interactive-Heavy Pages**: Prefer Body 1rem (16px) and Line-height 1.5 for compact, high-density layouts.
 
 ## 📏 Layout, Spacing & Padding
+- **Mandatory Pre-Flight Rule Check (Check Rule Mỗi Khi Tạo Trang)**: Mỗi khi tạo mới hoặc thiết kế bất kỳ trang nào, Agent BẮT BUỘC phải đọc và kiểm tra lại hệ thống khoảng cách (Padding/Margin Scale), hệ thống lưới (Grid Rhythm), và Bảng màu sắc thiết kế Global của dự án để đảm bảo tính nhất quán tuyệt đối.
 - **Utility Class Priority**: ALWAYS prefer existing framework/theme classes
   such as `p-4`, `text-lg`, `gap-4`, and `rounded-md`. This shared scale is the
   source of truth for consistent spacing, typography, sizing, and radius.
+
 - **Primary Gap Rhythm**: Use `gap-4` as the default gap for components, grids,
   and ordinary content groups. Use `gap-2` only for tightly related controls
   and `gap-6`/`gap-8` only when a larger hierarchy boundary clearly requires it.
