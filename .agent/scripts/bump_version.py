@@ -163,16 +163,19 @@ def bump_version(new_version, auto_push=False, skip_tests=False):
 
             # Try publishing official GitHub Release Object via gh CLI if present
             gh_published = False
-            try:
-                gh_proc = subprocess.run(
-                    ["gh", "release", "create", f"v{new_version}", "--title", f"v{new_version}", "--generate-notes"],
-                    capture_output=True, text=True
-                )
-                if gh_proc.returncode == 0:
-                    gh_published = True
-                    print(f"📦 Published official GitHub Release object: v{new_version}")
-            except Exception:
-                pass
+            import shutil
+            gh_bin = shutil.which("gh") or (r"C:\Program Files\GitHub CLI\gh.exe" if os.path.exists(r"C:\Program Files\GitHub CLI\gh.exe") else None)
+            if gh_bin:
+                try:
+                    gh_proc = subprocess.run(
+                        [gh_bin, "release", "create", f"v{new_version}", "--title", f"v{new_version}", "--generate-notes"],
+                        capture_output=True, text=True
+                    )
+                    if gh_proc.returncode == 0:
+                        gh_published = True
+                        print(f"📦 Published official GitHub Release object: v{new_version}")
+                except Exception:
+                    pass
 
             print(f"\n✨ RELEASE SUCCESSFUL: v{new_version} published to GitHub!")
             if gh_published:
