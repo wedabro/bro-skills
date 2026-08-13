@@ -101,6 +101,16 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: Windows Terminal & VT100 / ANSI terminals send escape sequence `\x1b[B` or `\x1bOB`. In `select_menu()`, reading `\x1b` immediately returned `"cancel"` because it did not check `msvcrt.kbhit()` or SS3 application mode (`\x1bOB`) / VT100 (`\x1b[B`).
 - **Prevention Rule**: Key reading loops MUST check if `\x1b` is followed by `[B`, `[A`, `OB`, `OA` arrow sequences before assuming the standalone ESC key was pressed, and use extended timeouts (>200ms) for POSIX select.
 
+---
+
+### [LESSON-010] GitHub Release Object Creation vs Git Tag Pushing
+- **Date**: 2026-08-13
+- **Category**: Release Engineering / GitHub Releases
+- **Symptom**: GitHub Releases page (`https://github.com/wedabro/bro-skills/releases`) was stuck showing `v1.7.6` as the Latest Release despite tags `v1.8.0`..`v1.8.3` being pushed.
+- **Root Cause**: `git push origin vX.Y.Z` creates a Git Tag on GitHub, but does not publish a GitHub Release UI object. The GitHub Releases page & API `/releases/latest` only update when `gh release create vX.Y.Z` or Web UI Release form is published.
+- **Prevention Rule**: Release scripts MUST run `gh release create vX.Y.Z --title "vX.Y.Z" --generate-notes` or generate a 1-click web release creation URL (`https://github.com/owner/repo/releases/new?tag=vX.Y.Z&title=vX.Y.Z`) so the official GitHub Releases page stays synced with Git tags.
+
+
 
 
 

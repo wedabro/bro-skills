@@ -160,7 +160,25 @@ def bump_version(new_version, auto_push=False, skip_tests=False):
             subprocess.run(["git", "tag", f"v{new_version}"], check=True)
             subprocess.run(["git", "push", "origin", "main"], check=True)
             subprocess.run(["git", "push", "origin", f"v{new_version}"], check=True)
+
+            # Try publishing official GitHub Release Object via gh CLI if present
+            gh_published = False
+            try:
+                gh_proc = subprocess.run(
+                    ["gh", "release", "create", f"v{new_version}", "--title", f"v{new_version}", "--generate-notes"],
+                    capture_output=True, text=True
+                )
+                if gh_proc.returncode == 0:
+                    gh_published = True
+                    print(f"📦 Published official GitHub Release object: v{new_version}")
+            except Exception:
+                pass
+
             print(f"\n✨ RELEASE SUCCESSFUL: v{new_version} published to GitHub!")
+            if gh_published:
+                print(f"🔗 Release URL: https://github.com/wedabro/bro-skills/releases/tag/v{new_version}")
+            else:
+                print(f"🔗 Direct 1-Click Release Link: https://github.com/wedabro/bro-skills/releases/new?tag=v{new_version}&title=v{new_version}")
         except subprocess.CalledProcessError as err:
             print(f"❌ Git operation failed: {err}")
             sys.exit(1)
@@ -171,6 +189,7 @@ def bump_version(new_version, auto_push=False, skip_tests=False):
         print(f"  git tag v{new_version}")
         print(f"  git push origin main")
         print(f"  git push origin v{new_version}")
+        print(f"  gh release create v{new_version} --title \"v{new_version}\" --generate-notes")
 
 
 if __name__ == "__main__":
