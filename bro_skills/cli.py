@@ -1061,9 +1061,8 @@ def cmd_update(args):
     # Check if pip module is available in current Python environment
     has_pip = False
     try:
-        pip_check = subprocess.run([sys.executable, "-m", "pip", "--version"], capture_output=True, text=True)
-        if pip_check.returncode == 0:
-            has_pip = True
+        import importlib.util
+        has_pip = importlib.util.find_spec("pip") is not None
     except Exception:
         pass
 

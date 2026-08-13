@@ -561,3 +561,102 @@ def test_scan_readme_lowercase_filename(tmp_path: Path):
     assert scanner.profile["project_description"] == "This description comes from a lowercase readme file."
 
 
+def test_scan_package_json_bun_manager(tmp_path: Path):
+    pkg_file = tmp_path / "package.json"
+    pkg_file.write_text(json.dumps({"name": "bun-app"}), encoding="utf-8")
+    (tmp_path / "bun.lockb").touch()
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_package_json()
+
+    assert scanner.profile["package_manager"] == "bun"
+    assert "Bun" in scanner.profile["tech_stack"]
+
+
+def test_scan_pyproject_authors_table_precedence(tmp_path: Path):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '\n'.join([
+            '[project]',
+            'authors = [{ name = "John Author", email = "john@example.com" }]',
+            'name = "real-project-name"',
+            'version = "1.2.3"',
+            'description = "Real project description"',
+        ]),
+        encoding="utf-8",
+    )
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_pyproject()
+
+    assert scanner.profile["project_name"] == "real-project-name"
+    assert scanner.profile["project_version"] == "1.2.3"
+    assert scanner.profile["project_description"] == "Real project description"
+
+
+def test_scan_docker_compose_inline_array_and_env_var_default(tmp_path: Path):
+    compose = tmp_path / "docker-compose.yml"
+    compose.write_text(
+        "\n".join([
+            "services:",
+            "  web:",
+            '    ports: ["8900:8000", "8901:8001"]',
+            "  api:",
+            "    ports:",
+            '      - "${PORT:-8902}:80"',
+        ]),
+        encoding="utf-8",
+    )
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_docker()
+
+    assert "web: 8900:8000" in scanner.profile["docker"]["ports"]
+    assert "web: 8901:8001" in scanner.profile["docker"]["ports"]
+    assert "api: 8902:80" in scanner.profile["docker"]["ports"]
+
+
+def test_scan_prisma_schema_sqlite_and_mysql(tmp_path: Path):
+    prisma_dir = tmp_path / "prisma"
+    prisma_dir.mkdir()
+    schema = prisma_dir / "schema.prisma"
+    schema.write_text('datasource db { provider = "sqlite" }\nmodel User { id Int @id }', encoding="utf-8")
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_prisma()
+
+    assert scanner.profile["database"]["has_prisma"] is True
+    assert scanner.profile["database"]["type"] == "SQLite"
+    assert "SQLite" in scanner.profile["tech_stack"]
+
+
+def test_scan_api_routes_pages_router(tmp_path: Path):
+    pages_api = tmp_path / "pages" / "api"
+    pages_api.mkdir(parents=True)
+    (pages_api / "hello.ts").touch()
+    (pages_api / "users" / "index.ts").mkdir(parents=True)
+    (pages_api / "users" / "index.ts").touch()
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_api_routes()
+
+    assert scanner.profile["api"]["has_api_dir"] is True
+    assert "/api/hello" in scanner.profile["api"]["routes"]
+
+
+def test_scan_pages_ignore_test_files(tmp_path: Path):
+    pages_dir = tmp_path / "pages"
+    pages_dir.mkdir(parents=True)
+    (pages_dir / "about.tsx").touch()
+    (pages_dir / "about.test.tsx").touch()
+    (pages_dir / "about.spec.ts").touch()
+
+    scanner = ProjectScanner(str(tmp_path))
+    scanner._scan_pages()
+
+    assert "/about" in scanner.profile["pages"]
+    assert "/about.test" not in scanner.profile["pages"]
+    assert "/about.spec" not in scanner.profile["pages"]
+
+
+

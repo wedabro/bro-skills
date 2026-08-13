@@ -162,6 +162,10 @@ class ProjectScanner:
                     self.profile["tech_stack"].append("pnpm Monorepo")
             elif os.path.exists(os.path.join(self.target_dir, "yarn.lock")):
                 self.profile["package_manager"] = "yarn"
+            elif os.path.exists(os.path.join(self.target_dir, "bun.lockb")) or os.path.exists(os.path.join(self.target_dir, "bun.lock")):
+                self.profile["package_manager"] = "bun"
+                if "Bun" not in self.profile["tech_stack"]:
+                    self.profile["tech_stack"].append("Bun")
             else:
                 self.profile["package_manager"] = "npm"
         except OSError:
@@ -186,20 +190,52 @@ class ProjectScanner:
         if "Python" not in self.profile["tech_stack"]:
             self.profile["tech_stack"].append("Python")
 
-        # Extract name
-        name_match = re.search(r'name\s*=\s*["\']([^"\']+)["\']', content)
-        if name_match and not self.profile["project_name"]:
-            self.profile["project_name"] = name_match.group(1)
+        # Try tomllib standard library parsing first
+        try:
+            import tomllib
+            data = tomllib.loads(content)
+            if isinstance(data, dict):
+                proj = data.get("project")
+                if isinstance(proj, dict):
+                    name = proj.get("name")
+                    if isinstance(name, str) and name and not self.profile["project_name"]:
+                        self.profile["project_name"] = name
+                    version = proj.get("version")
+                    if isinstance(version, str) and version:
+                        self.profile["project_version"] = version
+                    description = proj.get("description")
+                    if isinstance(description, str) and description and not self.profile["project_description"]:
+                        self.profile["project_description"] = description
 
-        # Extract version
-        ver_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
-        if ver_match:
-            self.profile["project_version"] = ver_match.group(1)
+                poetry = data.get("tool", {}).get("poetry") if isinstance(data.get("tool"), dict) else None
+                if isinstance(poetry, dict):
+                    name = poetry.get("name")
+                    if isinstance(name, str) and name and not self.profile["project_name"]:
+                        self.profile["project_name"] = name
+                    version = poetry.get("version")
+                    if isinstance(version, str) and version and not self.profile["project_version"]:
+                        self.profile["project_version"] = version
+                    description = poetry.get("description")
+                    if isinstance(description, str) and description and not self.profile["project_description"]:
+                        self.profile["project_description"] = description
+        except Exception:
+            pass
 
-        # Extract description
-        desc_match = re.search(r'description\s*=\s*["\']([^"\']+)["\']', content)
-        if desc_match and not self.profile["project_description"]:
-            self.profile["project_description"] = desc_match.group(1)
+        # Regex fallback if metadata not found via tomllib
+        if not self.profile["project_name"]:
+            name_match = re.search(r'name\s*=\s*["\']([^"\']+)["\']', content)
+            if name_match:
+                self.profile["project_name"] = name_match.group(1)
+
+        if not self.profile["project_version"]:
+            ver_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
+            if ver_match:
+                self.profile["project_version"] = ver_match.group(1)
+
+        if not self.profile["project_description"]:
+            desc_match = re.search(r'description\s*=\s*["\']([^"\']+)["\']', content)
+            if desc_match:
+                self.profile["project_description"] = desc_match.group(1)
 
         # Detect frameworks
         if "django" in content.lower() and "Django" not in self.profile["tech_stack"]:
@@ -303,9 +339,8 @@ class ProjectScanner:
                 if current_service:
                     if stripped.startswith("ports:"):
                         in_ports = True
-                        # check one-line ports: ["8900:8000"]
-                        port_match = re.search(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', stripped)
-                        if port_match:
+                        subbed_line = re.sub(r'\$\{[^:]+:-([^}]+)\}', r'\1', stripped)
+                        for port_match in re.finditer(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', subbed_line):
                             host_port, container_port = port_match.group(1), port_match.group(2)
                             if 1 <= int(host_port) <= 65535 and 1 <= int(container_port) <= 65535:
                                 port_entry = f"{current_service}: {host_port}:{container_port}"
@@ -319,8 +354,8 @@ class ProjectScanner:
                             in_ports = False
 
                     if in_ports:
-                        port_match = re.search(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', stripped)
-                        if port_match:
+                        subbed_line = re.sub(r'\$\{[^:]+:-([^}]+)\}', r'\1', stripped)
+                        for port_match in re.finditer(r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:)?(\d+):(\d+)', subbed_line):
                             host_port, container_port = port_match.group(1), port_match.group(2)
                             if 1 <= int(host_port) <= 65535 and 1 <= int(container_port) <= 65535:
                                 port_entry = f"{current_service}: {host_port}:{container_port}"
@@ -361,14 +396,27 @@ class ProjectScanner:
             return
 
         # Detect database type
-        if 'provider = "postgresql"' in content:
-            self.profile["database"]["type"] = "PostgreSQL"
-            if "PostgreSQL" not in self.profile["tech_stack"]:
-                self.profile["tech_stack"].append("PostgreSQL")
-        elif 'provider = "mysql"' in content:
-            self.profile["database"]["type"] = "MySQL"
-        elif 'provider = "sqlite"' in content:
-            self.profile["database"]["type"] = "SQLite"
+        provider_match = re.search(r'provider\s*=\s*["\']([^"\']+)["\']', content, re.IGNORECASE)
+        if provider_match:
+            p_val = provider_match.group(1).lower()
+            db_type = None
+            if p_val in ("postgresql", "postgres"):
+                db_type = "PostgreSQL"
+            elif p_val == "mysql":
+                db_type = "MySQL"
+            elif p_val == "sqlite":
+                db_type = "SQLite"
+            elif p_val == "mongodb":
+                db_type = "MongoDB"
+            elif p_val in ("sqlserver", "sql-server"):
+                db_type = "SQL Server"
+            elif p_val == "cockroachdb":
+                db_type = "CockroachDB"
+
+            if db_type:
+                self.profile["database"]["type"] = db_type
+                if db_type not in self.profile["tech_stack"]:
+                    self.profile["tech_stack"].append(db_type)
 
         # Extract model names and their fields (summary)
         models = re.findall(r'model\s+(\w+)\s*\{([^}]+)\}', content, re.DOTALL)
@@ -458,6 +506,36 @@ class ProjectScanner:
         except OSError:
             pass
 
+        try:
+            # Next.js Pages Router API routes
+            pages_api_dir = os.path.join(self.target_dir, "pages", "api")
+            if not os.path.exists(pages_api_dir):
+                pages_api_dir = os.path.join(self.target_dir, "src", "pages", "api")
+
+            if os.path.exists(pages_api_dir):
+                self.profile["api"]["has_api_dir"] = True
+                for root, dirs, files in os.walk(pages_api_dir):
+                    rel = os.path.relpath(root, pages_api_dir)
+                    norm_rel = rel.replace("\\", "/")
+                    for f in files:
+                        if f.endswith((".ts", ".js")) and not f.startswith("_") and not any(ext in f for ext in (".test.", ".spec.", ".d.ts")):
+                            filename_no_ext = os.path.splitext(f)[0]
+                            if filename_no_ext == "index":
+                                if rel == ".":
+                                    route = "/api"
+                                else:
+                                    route = "/api/" + norm_rel
+                            else:
+                                if rel == ".":
+                                    route = "/api/" + filename_no_ext
+                                else:
+                                    route = "/api/" + norm_rel + "/" + filename_no_ext
+                            route = route.replace("[", ":").replace("]", "")
+                            if route not in self.profile["api"]["routes"]:
+                                self.profile["api"]["routes"].append(route)
+        except OSError:
+            pass
+
     # =========================================================================
     # PAGES
     # =========================================================================
@@ -505,7 +583,7 @@ class ProjectScanner:
                     if "api" in rel_parts or any(p.startswith("_") for p in rel_parts):
                         continue
                     for f in files:
-                        if f.endswith((".tsx", ".jsx", ".ts", ".js")) and not f.startswith("_"):
+                        if f.endswith((".tsx", ".jsx", ".ts", ".js")) and not f.startswith("_") and not any(ext in f for ext in (".test.", ".spec.", ".d.ts")):
                             filename_no_ext = os.path.splitext(f)[0]
                             if filename_no_ext == "index":
                                 if rel == ".":

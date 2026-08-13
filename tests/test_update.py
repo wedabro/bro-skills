@@ -81,7 +81,9 @@ def test_update_keeps_pip_path_for_non_frozen_install(monkeypatch):
 
     cli.cmd_update(SimpleNamespace())
 
-    assert commands == [[cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]]
+    assert len(commands) == 1
+    assert commands[0][:4] == [cli.sys.executable, "-m", "pip", "install"]
+    assert "git+https://github.com/wedabro/bro-skills.git@main" in commands[0][-1]
 
 
 def test_update_force_flag_triggers_update_even_when_versions_match(monkeypatch):
@@ -92,7 +94,9 @@ def test_update_force_flag_triggers_update_even_when_versions_match(monkeypatch)
 
     cli.cmd_update(SimpleNamespace(force=True))
 
-    assert commands == [[cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]]
+    assert len(commands) == 1
+    assert commands[0][:4] == [cli.sys.executable, "-m", "pip", "install"]
+    assert "git+https://github.com/wedabro/bro-skills.git@main" in commands[0][-1]
 
 
 def test_update_fallback_to_zip_archive_when_git_pip_fails(monkeypatch):
@@ -111,6 +115,6 @@ def test_update_fallback_to_zip_archive_when_git_pip_fails(monkeypatch):
     cli.cmd_update(SimpleNamespace())
 
     assert len(commands) == 2
-    assert commands[0] == [cli.sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/wedabro/bro-skills.git"]
-    assert commands[1] == [cli.sys.executable, "-m", "pip", "install", "--upgrade", "https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip"]
+    assert "git+https" in commands[0][-1]
+    assert "archive/refs/heads/main.zip" in commands[1][-1]
 

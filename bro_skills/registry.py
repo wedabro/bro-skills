@@ -455,16 +455,20 @@ SKILLS_REGISTRY = [
 # CLI until they have embedded templates and project-type selection metadata.
 REPOSITORY_EXTENSION_SKILLS = (
     "brandkit",
+    "ci-security-scanning-with-strix",
     "design-taste-frontend",
     "design-taste-frontend-v1",
+    "fix-security-vulnerabilities-with-strix",
     "full-output-enforcement",
     "gpt-taste",
     "high-end-visual-design",
+    "image-to-code",
     "imagegen-frontend-mobile",
     "imagegen-frontend-web",
-    "image-to-code",
     "industrial-brutalist-ui",
+    "managed-pentesting-with-strix",
     "minimalist-ui",
+    "penetration-testing-with-strix",
     "redesign-existing-projects",
     "stitch-design-taste",
 )
