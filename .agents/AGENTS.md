@@ -9,6 +9,7 @@ Project: bro-skills
 - Ports: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
 ## 2. bro-skills PROTOCOL
+- **Mandatory Feature Workflow**: Whenever requested to develop or implement any new feature/requirement, the Agent (Antigravity or any AI model) MUST trigger `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) to run the full SDLC pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) before implementation.
 - Every task must go through the process: Brainstorm & Align → Specify → Plan → Tasks → Implement.
 - **Brainstorm-First**: Before writing any code/spec/plan, the Agent MUST brainstorm with the User to clarify requirements, propose solutions (with pros/cons), and recommend the best path.
 - Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.

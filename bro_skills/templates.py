@@ -143,6 +143,7 @@ Bạn tuân thủ các tiêu chuẩn của **ASF 3.3**.
 3. **Định hướng Đặc tả**: Không viết code khi chưa có kế hoạch cụ thể.
 4. **Ngữ cảnh là số một**: Tuyệt đối không lập trình khi chưa hiểu rõ lý do "Tại sao".
 5. **bro-skills trước tiên**: Mọi thay đổi và vận hành phải đi qua luồng xử lý của bro-skills.
+6. **Kích hoạt 00-speckit.all Bắt buộc**: Mọi yêu cầu phát triển tính năng BẮT BUỘC phải thực thi `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) trước tiên.
 """
 
     seo_section = ""
@@ -182,6 +183,7 @@ You follow **ASF 3.3** standards.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
 5. **bro-skills First**: All changes and operations must go through bro-skills workflows.
+6. **Mandatory 00-speckit.all Execution**: Every feature request MUST execute `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) first.
 """
 
 def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynamic"):
@@ -207,6 +209,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §0 Giao thức bro-skills ({must_label})
 - **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test) và triển khai (Deploy Production) {shall_label} sử dụng tiện ích `bro-skills`.
+- **Luồng phát triển tính năng bắt buộc**: Khi bắt đầu phát triển bất kỳ tính năng hoặc yêu cầu mới nào, Tác nhân AI (Antigravity hoặc bất kỳ Model AI nào) BẮT BUỘC phải thực thi chuẩn quy trình thông qua `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) trước khi triển khai.
 - **Quy trình**: Tuân thủ nghiêm ngặt quy trình SDLC: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
 - **Công cụ**: Chỉ sử dụng các workflow trong thư mục `.agent/workflows` để thực hiện công việc.
 {docker_infra}
@@ -257,6 +260,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §0 bro-skills Protocol ({must_label})
 - **{must_label}**: All development (Code), testing (Test), and deployment (Deploy Production) activities {shall_label} use `bro-skills`.
+- **Mandatory Feature Workflow**: Whenever starting development on any new feature/requirement, the AI Agent (Antigravity or any AI model) MUST execute `/00-speckit.all` (`.agent/workflows/00-speckit.all.md`) before implementation.
 - **Pipeline**: Strictly adhere to the SDLC pipeline: Specify → Plan → Tasks → Implement.
 - **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
 {docker_infra}
@@ -608,6 +612,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 {port_rule_vi}
 
 ## 2. GIAO THỨC bro-skills
+- **Kích hoạt Workflow tính năng bắt buộc**: Khi bắt đầu phát triển hoặc gọi bất kỳ tính năng nào, Tác nhân AI (Antigravity hoặc bất kỳ Model nào) BẮT BUỘC phải gọi workflow `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) để thực thi chuẩn quy trình SDLC (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze).
 - Mọi tác vụ {shall_label_vi} đi qua quy trình: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
 - Sử dụng các Workflow trong `.agent/workflows/` và các Skill trong `.agent/skills/`.
 
@@ -644,6 +649,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 {port_rule}
 
 ## 2. bro-skills PROTOCOL
+- **Mandatory Feature Workflow**: Whenever requested to develop or implement any new feature/requirement, the Agent (Antigravity or any AI model) MUST trigger `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) to run the full SDLC pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) before implementation.
 - Every task {shall_label} go through the process: Specify → Plan → Tasks → Implement.
 - Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
 

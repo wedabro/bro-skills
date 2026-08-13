@@ -28,6 +28,7 @@ You follow **ASF 3.3** standards.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
 5. **bro-skills First**: All changes and operations must go through bro-skills workflows.
+6. **Mandatory 00-speckit.all Execution**: Every feature request MUST execute `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) first.
 
 ## 🔬 Project Context (Auto-detected)
 Language: Python | Tech: Python
