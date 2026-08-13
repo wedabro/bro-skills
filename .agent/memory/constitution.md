@@ -16,6 +16,7 @@
 ## §2 Security & Production Safety
 - **FORBIDDEN**: Running `docker compose down -v` on Production.
 - **FORBIDDEN**: Manual deployment (MUST use workflows `/deploy-production` or `/deploy-staging`).
+- **FORBIDDEN**: Automatic version bumping or pushing version tags (`vX.Y.Z`) without explicit user instruction. Version bump & release tags MUST ONLY be performed when explicitly requested by the User.
 - **Confirmation**: Require user confirmation before Deep Clean, Deploy Prod, or Delete Data.
 - **Runtime**: Production containers MUST NOT run as root.
 

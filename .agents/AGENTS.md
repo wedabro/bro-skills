@@ -24,12 +24,17 @@ Project: bro-skills
 - DO NOT run `docker compose down -v` on Production.
 - Generate automatic scripts (`.agent/scripts/`) for recurring errors.
 - Check logs immediately on error: `docker compose logs -f <service>`.
-- **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
+- **Version Bump Policy**: Agent MUST NEVER automatically bump version or create/push new version tags (`vX.Y.Z`). ONLY bump version and release when explicitly requested by the User.
+- **Auto-Commit**: MUST perform git commit after completing any function or task according to Conventional Commits standards. Push code/tags only when explicitly requested by the User.
 
 ## 5. AGENTIC MODE SYNC (Antigravity Only)
 - **Task Tracking**: Use `task_boundary` to synchronize status with `@speckit.tasks` (tasks.md).
 - **Planning Artifacts**: Always create `implementation_plan.md` when making large changes (atomic > 3 files).
 - **Verification**: After completing the task, use `walkthrough.md` to compare the results with `spec.md`.
+
+## 6. CONTINUOUS LEARNING & SELF-CORRECTION
+- **Lessons Log**: Strictly consult and maintain `.agent/memory/lessons_learned.md`.
+- **Anti-Regression**: After resolving any bug, edge case, or workflow issue, document the root cause and prevention rule in `lessons_learned.md` so the mistake is NEVER repeated.
 
 
 ## Build & Test
@@ -37,3 +42,4 @@ Project: bro-skills
 - Run: `docker compose up -d` (If using Docker)
 - Logs: `docker compose logs -f <service>`
 - Stop: `docker compose down`
+
