@@ -74,4 +74,14 @@ All AI Agents working on this project **MUST** consult this log before starting 
   - Always pass `--no-cache-dir --force-reinstall --no-deps` to `pip` update commands.
   - Always append `?t=<timestamp>` query parameters and `Cache-Control: no-cache` headers to raw GitHub URL requests.
 
+---
+
+### [LESSON-007] Installer Scripts Must Prefer Python/Pip To Guarantee Latest Version
+- **Date**: 2026-08-13
+- **Category**: Installer / Release Distribution
+- **Symptom**: Running `curl ... | bash` (`install.sh`) or `irm ... | iex` (`install.ps1`) downloaded v1.7.6 binary instead of v1.8.2.
+- **Root Cause**: `install.sh` and `install.ps1` downloaded standalone compiled PyInstaller binaries from `releases/latest/download`, which pointed to old GitHub Releases assets rather than the latest git commit on `main`.
+- **Prevention Rule**: Installer scripts MUST check for `python3`/`pip` first and install the latest `main` code directly via `pip install --no-cache-dir --upgrade git+https://github.com/wedabro/bro-skills.git@main`, falling back to standalone binaries only if Python is absent.
+
+
 

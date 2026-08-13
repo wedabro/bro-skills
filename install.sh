@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-# bro-skills standalone installer for Linux x64
-# Usage: curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | sh
+# bro-skills installer for Linux/macOS
+# Usage: curl -fsSL https://raw.githubusercontent.com/wedabro/bro-skills/main/install.sh | bash
 
 set -eu
 
@@ -16,6 +16,34 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
+# 1. Prefer Python / Pip installation if available to get the latest main release
+PY_CMD=""
+if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
+    PY_CMD="python3"
+elif command -v python >/dev/null 2>&1 && python -m pip --version >/dev/null 2>&1; then
+    PY_CMD="python"
+fi
+
+if [ -n "$PY_CMD" ]; then
+    echo "⚡ Installing latest bro-skills via Python ($PY_CMD)..."
+    ts="$(date +%s)"
+    if command -v git >/dev/null 2>&1; then
+        if "$PY_CMD" -m pip install --no-cache-dir --force-reinstall --upgrade "git+https://github.com/${repo}.git@main"; then
+            echo "✅ bro-skills installed successfully!"
+            bro-skills version || true
+            exit 0
+        fi
+    fi
+
+    echo "🔄 Installing via GitHub archive..."
+    if "$PY_CMD" -m pip install --no-cache-dir --force-reinstall --upgrade "https://github.com/${repo}/archive/refs/heads/main.zip?t=${ts}"; then
+        echo "✅ bro-skills installed successfully!"
+        bro-skills version || true
+        exit 0
+    fi
+fi
+
+# 2. Fallback to standalone binary download
 if [ "$(uname -s)" != "Linux" ]; then
     echo "bro-skills standalone currently supports Linux and Windows only." >&2
     exit 1
@@ -42,7 +70,7 @@ download() {
     fi
 }
 
-echo "Installing bro-skills standalone..."
+echo "Installing bro-skills standalone binary..."
 download "${base_url}/${asset}" "${temp_dir}/${asset}"
 download "${base_url}/${asset}.sha256" "${temp_dir}/${asset}.sha256"
 
@@ -79,3 +107,4 @@ case ":${PATH}:" in
         echo "  export PATH=\"${install_dir}:\$PATH\""
         ;;
 esac
+
