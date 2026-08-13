@@ -1036,6 +1036,39 @@ def cmd_update(args):
             except Exception as e3:
                 print(f"⚠️ Pipx upgrade failed: {e3}")
 
+        # Fallback 3: Re-download source archive directly via Python stdlib (no pip required!)
+        try:
+            import urllib.request
+            import zipfile
+            import io
+            import time
+
+            print("\n🔄 Updating source package via Python stdlib...")
+            ts = int(time.time())
+            url = f"https://github.com/wedabro/bro-skills/archive/refs/heads/main.zip?t={ts}"
+            headers = {'User-Agent': 'bro-skills-cli', 'Cache-Control': 'no-cache, no-store'}
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as resp:
+                data = resp.read()
+
+            target_dir = os.path.expanduser("~/.local/share/bro-skills")
+            tmp_dir = os.path.expanduser("~/.local/share/bro-skills-tmp")
+            if os.path.exists(tmp_dir):
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+            with zipfile.ZipFile(io.BytesIO(data)) as zf:
+                zf.extractall(tmp_dir)
+
+            extracted_src = os.path.join(tmp_dir, "bro-skills-main")
+            if os.path.exists(extracted_src):
+                if os.path.exists(target_dir):
+                    shutil.rmtree(target_dir, ignore_errors=True)
+                shutil.copytree(extracted_src, target_dir)
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                print("\n✅ Updated successfully via Python source runner! Please run 'bro-skills version' to verify.")
+                return
+        except Exception as std_err:
+            print(f"⚠️ Python stdlib update fallback failed: {std_err}")
+
     print("\n❌ Update failed. You can update manually using one of the following commands:")
     if install_method == "npm":
         print("   npm install -g github:wedabro/bro-skills")
