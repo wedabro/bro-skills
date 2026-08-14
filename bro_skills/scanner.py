@@ -806,7 +806,7 @@ class ProjectScanner:
                     sections.append(f"- {port}")
         else:
             sections.append("- **Docker**: Not configured — need to set up Docker environment")
-            sections.append("- **Ports**: Comply with port range **8900-8999**")
+            sections.append("- **Ports**: Flexibly configure ports via environment variables (.env)")
 
         # ENV
         if p["env_vars"]:

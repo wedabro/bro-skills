@@ -96,7 +96,7 @@ Reconnect servers from the MCP Server view in the Kiro feature panel after editi
 ### Always-On (AGENTS.md / steering)
 
 - bro-skills protocol (Specify → Plan → Tasks → Implement)
-- Docker-First + port range 8900-8999
+- Docker-First + flexible ENV ports
 - Respond to developers in Vietnamese
 
 ### On-Demand (Skills)

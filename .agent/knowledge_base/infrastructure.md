@@ -7,9 +7,9 @@
 
 ## 📂 Environment Mapping
 - **Docker**: Not configured — need to set up Docker environment
-- **Ports**: Comply with port range **8900-8999**
+- **Ports**: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
 ## 🔒 Security Protocol
 - Use `.env.example` for all sensitive variables.
 - Production images use Alpine/Slim versions.
-- Firewall rules: Only expose mapped ports 89XX.
+- Firewall rules: Only expose mapped ports configured in .env.

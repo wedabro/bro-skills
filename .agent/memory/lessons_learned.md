@@ -130,6 +130,16 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: High SSH latency / packet fragmentation can delay arrow key ANSI escape sequences, making arrow-only menus frustrating.
 - **Prevention Rule**: Display explicit index numbers `[1]`, `[2]`, `[3]` in interactive menus, allow typing digits `1`-`9` directly to toggle/select items, support Vim/WASD keys (`j`/`k`/`s`/`w`), and allow non-interactive CLI flags (`bro-skills init -a codex,cursor,antigravity`).
 
+---
+
+### [LESSON-013] Removal of Hardcoded Docker Port Ranges (8900-8999)
+- **Date**: 2026-08-14
+- **Category**: CLI / Port Allocation Policy
+- **Symptom**: User requested deleting automatic Docker port scanning and fixed 8900-8999 range enforcement during `bro-skills init`.
+- **Root Cause**: Hardcoding a fixed port range (8900-8999) or auto-assigning ports during init interfered with custom per-project port schemes managed by users.
+- **Prevention Rule**: Do not auto-scan or auto-assign port ranges during project initialization. All application ports should be flexibly configured via `.env` per project without enforcing fixed port range constraints.
+
+
 
 
 

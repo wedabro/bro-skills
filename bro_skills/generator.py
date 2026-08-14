@@ -135,26 +135,7 @@ class ProjectGenerator:
         self._create_directories()
 
         # ─── 0. Check Port (Only if project uses Docker and port config is missing in .env) ───
-        env_path = os.path.join(self.target_dir, ".env")
-        has_ports_in_env = False
-        if os.path.exists(env_path):
-            with open(env_path, "r", encoding="utf-8") as f:
-                env_content = f.read()
-                port_keys = ["PORT_FE", "NEXT_PUBLIC_PORT_FE", "ADMIN_PORT", "API_PORT", "VITE_PORT_FE"]
-                if any(k in env_content for k in port_keys):
-                    has_ports_in_env = True
-
-        if self.use_docker and not has_ports_in_env:
-             ports = self._find_available_ports()
-             if ports:
-                 self.assigned_ports = ports
-                 print(f"📡 Port assigned (8900-8999): Public:{ports[0]}, Admin:{ports[1]}, API:{ports[2]}")
-                 self._save_ports_to_env(ports)
-             else:
-                 print("⚠️  No available ports found in 8900-8999 range. Please check your system.")
-                 self.assigned_ports = (8900, 8901, 8902) # Safe fallback
-        else:
-             self.assigned_ports = None
+        self.assigned_ports = None
 
         print("🎭 Setting up Identity & Soul...")
         self._create_identity()
@@ -860,56 +841,7 @@ No tag -> inferred from keyword + project_type.
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
 
-    def _find_available_ports(self, start_port=8900, end_port=8999):
-        """Find 3 consecutive available ports in the range 8900-8999."""
-        import socket
 
-        def is_port_available(port):
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                try:
-                    sock.bind(("127.0.0.1", port))
-                except OSError:
-                    return False
-                return True
-
-        for p in range(start_port, end_port - 1):
-            if all(is_port_available(port) for port in (p, p + 1, p + 2)):
-                return (p, p + 1, p + 2)
-        return None
-
-    def _save_ports_to_env(self, ports):
-        """Write port configuration to .env file (ENV-first)."""
-        env_path = os.path.join(self.target_dir, ".env")
-        existing_content = ""
-        if os.path.exists(env_path):
-            with open(env_path, "r", encoding="utf-8") as f:
-                existing_content = f.read()
-
-        # Prepare port variables (including generic & Vite variables for non-NextJS projects)
-        port_vars = {
-            # Next.js
-            "NEXT_PUBLIC_PORT_FE": ports[0],
-            "ADMIN_PORT": ports[1],
-            "API_PORT": ports[2],
-            "NEXT_PUBLIC_API_URL": f"http://localhost:{ports[2]}",
-            # Generic / Other frameworks (Vite, Nuxt, etc.)
-            "PORT_FE": ports[0],
-            "VITE_PORT_FE": ports[0],
-            "VITE_API_URL": f"http://localhost:{ports[2]}",
-            "API_URL": f"http://localhost:{ports[2]}"
-        }
-
-        # Create or append new .env content
-        new_lines = [f"{k}={v}" for k, v in port_vars.items() if k not in existing_content]
-        
-        if new_lines:
-            with open(env_path, "a" if existing_content else "w", encoding="utf-8") as f:
-                if existing_content and not existing_content.endswith("\n"):
-                    f.write("\n")
-                f.write("\n# bro-skills Port Configuration (Auto-generated)\n")
-                f.write("\n".join(new_lines) + "\n")
-            print("  🔐 Ports saved to .env")
 
     def _print_stats(self):
         type_info = PROJECT_TYPES.get(self.project_type, {})
