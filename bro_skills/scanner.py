@@ -190,50 +190,87 @@ class ProjectScanner:
         if "Python" not in self.profile["tech_stack"]:
             self.profile["tech_stack"].append("Python")
 
-        # Try tomllib standard library parsing first
+        data = None
         try:
             import tomllib
             data = tomllib.loads(content)
-            if isinstance(data, dict):
-                proj = data.get("project")
-                if isinstance(proj, dict):
-                    name = proj.get("name")
-                    if isinstance(name, str) and name and not self.profile["project_name"]:
-                        self.profile["project_name"] = name
-                    version = proj.get("version")
-                    if isinstance(version, str) and version:
-                        self.profile["project_version"] = version
-                    description = proj.get("description")
-                    if isinstance(description, str) and description and not self.profile["project_description"]:
-                        self.profile["project_description"] = description
-
-                poetry = data.get("tool", {}).get("poetry") if isinstance(data.get("tool"), dict) else None
-                if isinstance(poetry, dict):
-                    name = poetry.get("name")
-                    if isinstance(name, str) and name and not self.profile["project_name"]:
-                        self.profile["project_name"] = name
-                    version = poetry.get("version")
-                    if isinstance(version, str) and version and not self.profile["project_version"]:
-                        self.profile["project_version"] = version
-                    description = poetry.get("description")
-                    if isinstance(description, str) and description and not self.profile["project_description"]:
-                        self.profile["project_description"] = description
+        except ImportError:
+            try:
+                import tomli
+                data = tomli.loads(content)
+            except ImportError:
+                try:
+                    import toml
+                    data = toml.loads(content)
+                except Exception:
+                    pass
         except Exception:
             pass
 
-        # Regex fallback if metadata not found via tomllib
+        if isinstance(data, dict):
+            proj = data.get("project")
+            if isinstance(proj, dict):
+                name = proj.get("name")
+                if isinstance(name, str) and name and not self.profile["project_name"]:
+                    self.profile["project_name"] = name
+                version = proj.get("version")
+                if isinstance(version, str) and version and not self.profile["project_version"]:
+                    self.profile["project_version"] = version
+                description = proj.get("description")
+                if isinstance(description, str) and description and not self.profile["project_description"]:
+                    self.profile["project_description"] = description
+
+            poetry = data.get("tool", {}).get("poetry") if isinstance(data.get("tool"), dict) else None
+            if isinstance(poetry, dict):
+                name = poetry.get("name")
+                if isinstance(name, str) and name and not self.profile["project_name"]:
+                    self.profile["project_name"] = name
+                version = poetry.get("version")
+                if isinstance(version, str) and version and not self.profile["project_version"]:
+                    self.profile["project_version"] = version
+                description = poetry.get("description")
+                if isinstance(description, str) and description and not self.profile["project_description"]:
+                    self.profile["project_description"] = description
+
+        # Section-aware fallback if metadata not found via TOML library
+        if not self.profile["project_name"] or not self.profile["project_version"] or not self.profile["project_description"]:
+            sections = {}
+            current_sec = None
+            for line in content.splitlines():
+                line_stripped = line.strip()
+                if line_stripped.startswith('[') and line_stripped.endswith(']'):
+                    current_sec = line_stripped[1:-1].strip()
+                    if current_sec not in sections:
+                        sections[current_sec] = {}
+                elif current_sec and '=' in line_stripped and not line_stripped.startswith('#'):
+                    parts = line_stripped.split('=', 1)
+                    k = parts[0].strip()
+                    v = parts[1].strip().strip('"\'')
+                    if k and v:
+                        sections[current_sec][k] = v
+
+            for sec_name in ["project", "tool.poetry"]:
+                sec_dict = sections.get(sec_name, {})
+                if not self.profile["project_name"] and "name" in sec_dict:
+                    self.profile["project_name"] = sec_dict["name"]
+                if not self.profile["project_version"] and "version" in sec_dict:
+                    self.profile["project_version"] = sec_dict["version"]
+                if not self.profile["project_description"] and "description" in sec_dict:
+                    self.profile["project_description"] = sec_dict["description"]
+
+        # Universal line-anchored regex fallback
         if not self.profile["project_name"]:
-            name_match = re.search(r'name\s*=\s*["\']([^"\']+)["\']', content)
+            name_match = re.search(r'^\s*name\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
             if name_match:
                 self.profile["project_name"] = name_match.group(1)
 
         if not self.profile["project_version"]:
-            ver_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
+            ver_match = re.search(r'^\s*version\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
             if ver_match:
                 self.profile["project_version"] = ver_match.group(1)
 
         if not self.profile["project_description"]:
-            desc_match = re.search(r'description\s*=\s*["\']([^"\']+)["\']', content)
+            desc_match = re.search(r'^\s*description\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
             if desc_match:
                 self.profile["project_description"] = desc_match.group(1)
 

@@ -139,6 +139,16 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: Hardcoding a fixed port range (8900-8999) or auto-assigning ports during init interfered with custom per-project port schemes managed by users.
 - **Prevention Rule**: Do not auto-scan or auto-assign port ranges during project initialization. All application ports should be flexibly configured via `.env` per project without enforcing fixed port range constraints.
 
+---
+
+### [LESSON-014] TOML Parser Version Compatibility (Python 3.9/3.10 vs 3.11+)
+- **Date**: 2026-08-14
+- **Category**: Python Compatibility / Pytest CI
+- **Symptom**: `test_scan_pyproject_authors_table_precedence` failed on Python 3.9 and 3.10 CI runners (`assert 'John Author' == 'real-project-name'`).
+- **Root Cause**: `tomllib` standard library is only available in Python 3.11+. On Python 3.9 and 3.10, `import tomllib` threw `ModuleNotFoundError`, falling back to unanchored regex `name\s*=\s*...` which matched `name = "John Author"` inside `authors = [{ name = "John Author" }]` before the top-level `name = "real-project-name"`.
+- **Prevention Rule**: When parsing TOML files, try `tomllib`, then fallback `tomli`/`toml` packages, then a section-aware line parser for `[project]` / `[tool.poetry]`, and use line-start anchored multiline regex (`^\s*name\s*=...`) as final fallback.
+
+
 
 
 
