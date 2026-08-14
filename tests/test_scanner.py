@@ -594,6 +594,37 @@ def test_scan_pyproject_authors_table_precedence(tmp_path: Path):
     assert scanner.profile["project_description"] == "Real project description"
 
 
+def test_scan_pyproject_authors_table_precedence_without_tomllib(tmp_path: Path):
+    import builtins
+    from unittest.mock import patch
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '\n'.join([
+            '[project]',
+            'authors = [{ name = "John Author", email = "john@example.com" }]',
+            'name = "real-project-name"',
+            'version = "1.2.3"',
+            'description = "Real project description"',
+        ]),
+        encoding="utf-8",
+    )
+
+    scanner = ProjectScanner(str(tmp_path))
+    orig_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name in ('tomllib', 'tomli', 'toml'):
+            raise ImportError('No toml library')
+        return orig_import(name, *args, **kwargs)
+
+    with patch('builtins.__import__', side_effect=fake_import):
+        scanner._scan_pyproject()
+
+    assert scanner.profile["project_name"] == "real-project-name"
+    assert scanner.profile["project_version"] == "1.2.3"
+    assert scanner.profile["project_description"] == "Real project description"
+
+
 def test_scan_docker_compose_inline_array_and_env_var_default(tmp_path: Path):
     compose = tmp_path / "docker-compose.yml"
     compose.write_text(
