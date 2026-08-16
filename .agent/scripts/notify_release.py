@@ -71,11 +71,32 @@ def send_discord_notification(version: str, status: str = "success") -> bool:
         return False
 
 
+def _get_zalo_bot_chat_id_from_updates(token: str) -> str:
+    """Try resolving chat_id from recent bot updates via Zalo Bot Platform getUpdates."""
+    try:
+        url = f"https://bot-api.zaloplatforms.com/bot{token}/getUpdates"
+        req = urllib.request.Request(url, headers={"User-Agent": "wedabro-release-bot"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8", errors="ignore"))
+            if data.get("ok") and data.get("result"):
+                # Search for the latest message with a valid chat id
+                for item in reversed(data["result"]):
+                    msg = item.get("message") or item.get("channel_post") or {}
+                    chat = msg.get("chat") or {}
+                    if chat.get("id"):
+                        return str(chat["id"])
+    except Exception as e:
+        print(f"ℹ️ Could not automatically fetch chat_id from getUpdates: {e}")
+    return ""
+
+
 def send_zalo_notification(version: str, status: str = "success") -> bool:
     zalo_webhook_url = os.environ.get("ZALO_WEBHOOK_URL", "").strip()
     zalo_token = os.environ.get("ZALO_BOT_TOKEN", "").strip()
-    zalo_recipient_id = os.environ.get("ZALO_RECIPIENT_ID", "").strip() or os.environ.get("ZALO_CHAT_ID", "").strip()
-    zalo_endpoint = os.environ.get("ZALO_API_ENDPOINT", "https://openapi.zalo.me/v3.0/oa/message/cs").strip()
+    zalo_chat_id = (
+        os.environ.get("ZALO_CHAT_ID", "").strip()
+        or os.environ.get("ZALO_RECIPIENT_ID", "").strip()
+    )
 
     if not zalo_webhook_url and not zalo_token:
         print("ℹ️ Zalo notification skipped: Neither ZALO_WEBHOOK_URL nor ZALO_BOT_TOKEN is configured.")
@@ -98,7 +119,45 @@ def send_zalo_notification(version: str, status: str = "success") -> bool:
 
     success = True
 
-    # 1. Trường hợp dùng Zalo Webhook URL
+    # 1. Trường hợp dùng Zalo Bot Platform (Token có định dạng id:secret như 451078241683572072:...)
+    if zalo_token and ":" in zalo_token:
+        print("🤖 Detected Zalo Bot Platform format (id:secret)...")
+        if not zalo_chat_id:
+            zalo_chat_id = _get_zalo_bot_chat_id_from_updates(zalo_token)
+            if zalo_chat_id:
+                print(f"💡 Auto-detected Zalo chat_id from recent updates: {zalo_chat_id}")
+
+        if not zalo_chat_id:
+            print("⚠️ Zalo Bot Error: Missing ZALO_CHAT_ID. Please send a message to the bot on Zalo or set ZALO_CHAT_ID in GitHub Secrets.")
+            return False
+
+        try:
+            bot_api_url = f"https://bot-api.zaloplatforms.com/bot{zalo_token}/sendMessage"
+            payload = {
+                "chat_id": zalo_chat_id,
+                "text": message_text,
+            }
+            req = urllib.request.Request(
+                bot_api_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "wedabro-release-bot",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                res_body = resp.read().decode("utf-8", errors="ignore")
+                print(f"✅ Zalo Bot Platform sendMessage response: {res_body}")
+                return True
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode("utf-8", errors="ignore")
+            print(f"❌ Zalo Bot Platform HTTP Error {he.code}: {err_body}")
+            return False
+        except Exception as e:
+            print(f"❌ Failed to send Zalo Bot Platform message: {e}")
+            return False
+
+    # 2. Trường hợp dùng Zalo Webhook URL
     if zalo_webhook_url:
         try:
             webhook_payload = {
@@ -116,28 +175,35 @@ def send_zalo_notification(version: str, status: str = "success") -> bool:
                 },
             )
             with urllib.request.urlopen(req, timeout=15) as resp:
-                print(f"✅ Zalo Webhook notification sent successfully (HTTP {resp.status})!")
+                resp_text = resp.read().decode("utf-8", errors="ignore")
+                print(f"✅ Zalo Webhook notification response (HTTP {resp.status}): {resp_text}")
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode("utf-8", errors="ignore")
+            print(f"❌ Zalo Webhook HTTP Error {he.code}: {err_body}")
+            success = False
         except Exception as e:
             print(f"❌ Failed to send Zalo Webhook notification: {e}")
             success = False
 
-    # 2. Trường hợp dùng Zalo Bot Token / OA API
-    if zalo_token:
+    # 3. Trường hợp dùng Zalo OA Access Token (Bearer)
+    if zalo_token and ":" not in zalo_token:
+        zalo_endpoint = os.environ.get("ZALO_API_ENDPOINT", "https://openapi.zalo.me/v3.0/oa/message/cs").strip()
         try:
             headers = {
                 "Content-Type": "application/json",
                 "access_token": zalo_token,
+                "Authorization": f"Bearer {zalo_token}",
                 "User-Agent": "wedabro-release-bot",
             }
-            # Nếu có cấu hình Recipient ID (Zalo User/Group ID) theo format OpenAPI Zalo
-            if zalo_recipient_id:
+            if zalo_chat_id:
                 oa_payload = {
-                    "recipient": {"user_id": zalo_recipient_id},
+                    "recipient": {"user_id": zalo_chat_id},
                     "message": {"text": message_text},
                 }
             else:
                 oa_payload = {
                     "message": {"text": message_text},
+                    "text": message_text,
                     "version": version,
                     "project": repo,
                     "release_url": release_url,
@@ -149,10 +215,14 @@ def send_zalo_notification(version: str, status: str = "success") -> bool:
                 headers=headers,
             )
             with urllib.request.urlopen(req, timeout=15) as resp:
-                res_body = resp.read().decode("utf-8")
-                print(f"✅ Zalo Bot API notification response: {res_body}")
+                res_body = resp.read().decode("utf-8", errors="ignore")
+                print(f"✅ Zalo OA API notification response: {res_body}")
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode("utf-8", errors="ignore")
+            print(f"❌ Zalo OA API HTTP Error {he.code}: {err_body}")
+            success = False
         except Exception as e:
-            print(f"❌ Failed to send Zalo Bot Token notification: {e}")
+            print(f"❌ Failed to send Zalo OA API notification: {e}")
             success = False
 
     return success

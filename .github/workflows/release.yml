@@ -103,6 +103,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           ZALO_BOT_TOKEN: ${{ secrets.ZALO_BOT_TOKEN }}
+          ZALO_CHAT_ID: ${{ secrets.ZALO_CHAT_ID }}
           ZALO_WEBHOOK_URL: ${{ secrets.ZALO_WEBHOOK_URL }}
           ZALO_RECIPIENT_ID: ${{ secrets.ZALO_RECIPIENT_ID }}
           ZALO_API_ENDPOINT: ${{ secrets.ZALO_API_ENDPOINT }}
