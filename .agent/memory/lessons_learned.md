@@ -148,12 +148,15 @@ All AI Agents working on this project **MUST** consult this log before starting 
 - **Root Cause**: `tomllib` standard library is only available in Python 3.11+. On Python 3.9 and 3.10, `import tomllib` threw `ModuleNotFoundError`, falling back to unanchored regex `name\s*=\s*...` which matched `name = "John Author"` inside `authors = [{ name = "John Author" }]` before the top-level `name = "real-project-name"`.
 - **Prevention Rule**: When parsing TOML files, try `tomllib`, then fallback `tomli`/`toml` packages, then a section-aware line parser for `[project]` / `[tool.poetry]`, and use line-start anchored multiline regex (`^\s*name\s*=...`) as final fallback.
 
+---
 
-
-
-
-
-
-
-
-
+### [LESSON-015] Git Branching, Hotfix Lifecycle & Release Notification Policy
+- **Date**: 2026-08-16
+- **Category**: Git Workflow / Release Engineering / CI/CD
+- **Symptom**: Unclear branch push vs release notification triggers.
+- **Root Cause**: Need a standardized git branching lifecycle separating routine development from production releases and hotfixes.
+- **Prevention Rule**:
+  - **Daily Development**: Push code and features to branch `dev`. NEVER trigger chat bots (Zalo/Discord) on `dev` branch pushes.
+  - **Production Merge & Verification**: When merging `dev` into `main`/`prod`, verify all test suites first.
+  - **Hotfix Flow**: If issues occur on `prod`, branch off `hotfix/*` from `prod`, resolve the issue, verify, merge into `prod`, and immediately pull/rebase `prod` back into `dev`.
+  - **Release Notification Trigger**: ONLY trigger Zalo Bot and Discord Bot notifications when officially raising a new version tag (`v*`) on `prod`/`main`.
