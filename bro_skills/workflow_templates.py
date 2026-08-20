@@ -909,6 +909,96 @@ description: Update versions in project configuration files and prepare an appro
 """
 
 
+def wf_ai_engineer():
+    return r"""---
+description: AI & LLM Architecture & RAG Pipeline Workflow
+---
+
+# 🤖 AI Engineering & RAG Pipeline Workflow
+
+## Pre-conditions
+- Model APIs configured in `.env` (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`, etc.)
+- Vector DB instance or embedded client configured
+
+## Steps
+1. **@speckit.ai-engineer** — Ingestion & Chunking Design
+   - Define chunk size, overlap, metadata schema, and vector embedding model.
+2. **@speckit.ai-engineer** — Hybrid Search & Retrieval
+   - Implement dense vector search + BM25 keyword search + Reranking.
+3. **@speckit.ai-engineer** — Strict Tool Calling & Structured Output
+   - Define typed Pydantic / Zod schemas for all model outputs.
+4. **@speckit.ai-engineer** — Automated Evaluation & Quality Gates
+   - Run Ragas/TruLens evals on Golden Test Datasets (faithfulness, relevancy).
+"""
+
+
+def wf_sre_observability():
+    return r"""---
+description: SRE & OpenTelemetry Observability Setup Workflow
+---
+
+# 📈 SRE & Observability Pipeline
+
+## Pre-conditions
+- Docker or Kubernetes deployment environment available
+
+## Steps
+1. **@speckit.sre-observability** — OpenTelemetry SDK Setup
+   - Instrument HTTP/gRPC tracing with W3C context propagation.
+2. **@speckit.sre-observability** — Prometheus Metrics & Dashboards
+   - Implement RED (Rate, Errors, Duration) & USE metrics collectors.
+3. **@speckit.sre-observability** — Structured Logging & Scrubbing
+   - Emit JSON logs with `trace_id`, `span_id`, and zero secrets/PII.
+4. **@speckit.sre-observability** — Health Probes & Graceful Shutdown
+   - Set up isolated `/livez`, dependency-checked `/readyz`, and SIGTERM drainers.
+"""
+
+
+def wf_event_realtime():
+    return r"""---
+description: Realtime & Event-Driven Architecture Workflow
+---
+
+# ⚡ Realtime & Event-Driven Pipeline
+
+## Pre-conditions
+- Redis / RabbitMQ / Kafka service configured in `.env` and `docker-compose.yml`
+
+## Steps
+1. **@speckit.event-realtime** — Channel & Transport Design
+   - Choose WebSocket (bidirectional) or SSE (unidirectional streaming).
+2. **@speckit.event-realtime** — Multi-node Scaling & Heartbeat
+   - Set up Redis Pub/Sub adapter and 30s ping/pong heartbeat.
+3. **@speckit.event-realtime** — Transactional Outbox Pattern
+   - Implement outbox table schema and asynchronous publisher worker.
+4. **@speckit.event-realtime** — Idempotent Consumer & DLQ
+   - Enforce message deduplication and dead-letter queue routing.
+"""
+
+
+def wf_payment_fintech():
+    return r"""---
+description: Payment Gateway & Idempotent Ledger Workflow
+---
+
+# 💳 Payment & FinTech Ledger Pipeline
+
+## Pre-conditions
+- Gateway API credentials configured in `.env` (Stripe, ZaloPay, MoMo, VNPay)
+- Relational database available for ACID transactions
+
+## Steps
+1. **@speckit.payment-fintech** — Money Precision & Schema Setup
+   - Use integer minor units or `DECIMAL(18, 4)`. Absolute ban on `float`.
+2. **@speckit.payment-fintech** — RFC 8935 Idempotency Key Middleware
+   - Implement Redis-backed atomic distributed locks and response caching.
+3. **@speckit.payment-fintech** — Raw Body Webhook Signature Verification
+   - Verify HMAC SHA-256 signatures with timestamp anti-replay validation.
+4. **@speckit.payment-fintech** — Double-Entry Ledger & State Machine
+   - Create balanced immutable journal entries ($\sum \text{Debit} = \sum \text{Credit}$).
+"""
+
+
 # =============================================================================
 # WORKFLOW TEMPLATE MAP — Complete mapping for all workflows
 # =============================================================================
@@ -950,5 +1040,10 @@ WORKFLOW_TEMPLATE_MAP = {
     "speckit.3d": wf_3d,
     "full-stack-orchestration-full-stack-feature": wf_full_stack_feature,
     "conductor-implement": wf_conductor_implement,
+    "speckit.ai-engineer": wf_ai_engineer,
+    "speckit.sre-observability": wf_sre_observability,
+    "speckit.event-realtime": wf_event_realtime,
+    "speckit.payment-fintech": wf_payment_fintech,
 }
+
 

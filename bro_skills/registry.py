@@ -407,6 +407,30 @@ SKILLS_REGISTRY = [
         "project_types": "builder",
     },
     {
+        "name": "speckit.ai-engineer",
+        "description": "AI & LLM Systems Architect - Design RAG pipelines, vector search, semantic caching, evals, and tool-calling guardrails.",
+        "role": "AI & LLM Architect",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.sre-observability",
+        "description": "SRE & Observability Specialist - OpenTelemetry distributed tracing, Prometheus metrics, structured logs, and resilience controls.",
+        "role": "SRE & Observability Specialist",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.event-realtime",
+        "description": "Realtime & Event Systems Engineer - WebSocket channels, Server-Sent Events, Message Queues, and Transactional Outbox workers.",
+        "role": "Realtime & Event Engineer",
+        "project_types": "builder",
+    },
+    {
+        "name": "speckit.payment-fintech",
+        "description": "FinTech & Payment Systems Engineer - Idempotency ledger, payment gateways, signature verification, and financial transaction state machines.",
+        "role": "FinTech & Payment Engineer",
+        "project_types": "builder",
+    },
+    {
         "name": "k8s-manifest-generator",
         "description": "Create production-ready Kubernetes manifests for Deployments, Services, ConfigMaps, and Secrets.",
         "role": "Kubernetes Architect",
@@ -668,6 +692,26 @@ WORKFLOWS_REGISTRY = [
         "description": "Conductor Feature Implementation Workflow",
         "skills": ["conductor-implement"],
     },
+    {
+        "command": "speckit.ai-engineer",
+        "description": "AI & LLM Architecture & RAG Pipeline Workflow",
+        "skills": ["speckit.ai-engineer"],
+    },
+    {
+        "command": "speckit.sre-observability",
+        "description": "SRE & OpenTelemetry Observability Setup Workflow",
+        "skills": ["speckit.sre-observability"],
+    },
+    {
+        "command": "speckit.event-realtime",
+        "description": "Realtime & Event-Driven Architecture Workflow",
+        "skills": ["speckit.event-realtime"],
+    },
+    {
+        "command": "speckit.payment-fintech",
+        "description": "Payment Gateway & Idempotent Ledger Workflow",
+        "skills": ["speckit.payment-fintech"],
+    },
 ]
 
 
@@ -716,6 +760,10 @@ MODIFIERS = {
         "has_pii": ["speckit.security", "speckit.database"],
         "ml": ["speckit.data"],
         "3d": ["speckit.3d"],
+        "ai_llm": ["speckit.ai-engineer", "speckit.data"],
+        "observability": ["speckit.sre-observability", "speckit.devops"],
+        "realtime": ["speckit.event-realtime", "speckit.backend"],
+        "payment": ["speckit.payment-fintech", "speckit.security", "speckit.database"],
     },
 }
 

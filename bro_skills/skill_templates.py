@@ -2586,6 +2586,256 @@ The ladder is a reflex, not a research project — but it runs *after* you under
 """
 
 
+def skill_ai_engineer():
+    return r"""---
+name: speckit.ai-engineer
+description: AI & LLM Systems Architect - Design RAG pipelines, vector search, semantic caching, evals, and tool-calling guardrails.
+role: AI & LLM Architect
+---
+
+## 🎯 Mission
+
+Design, implement, and evaluate production-ready LLM and AI systems. Focus on deterministic boundaries, semantic search fidelity, vector database indexing, token budget efficiency, and continuous evaluation pipelines (Evals). Honor `.agents/knowledge_base/` standards and the project constitution.
+
+## 📥 Required Inputs
+
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- Target Model & Provider specs (OpenAI, Anthropic, Gemini, Local Ollama/vLLM)
+- Embedding model dimensions & distance metric (Cosine, DotProduct, Euclidean)
+- Data schemas, chunking rules, and retrieval latency requirements
+
+## 📋 Protocol
+
+### 1. RAG & Ingestion Pipeline Architecture
+- **Semantic Chunking**: Chunk text by logical boundaries (paragraphs, markdown headings, code AST) with 300–500 token sweet spot and 10–15% overlap.
+- **Hybrid Search**: Combine Dense Vector Retrieval (semantic match) with Sparse Keyword Search (BM25 / Full-text search) via Reciprocal Rank Fusion (RRF).
+- **Reranking**: Apply Cross-Encoder / Cohere Reranker to top-K retrieved candidates ($K=20 \to 5$) to eliminate irrelevant context before LLM synthesis.
+- **Vector DB Indexing**: Use HNSW (Hierarchical Navigable Small World) index for low-latency similarity queries; configure `m` and `ef_construction` for dataset scale.
+- **Metadata Filtering**: Always apply pre-filtering on tenant ID, access control tags, and timestamps before vector distance computation.
+
+### 2. Structured Outputs & Tool Calling
+- **Strict Pydantic / Zod Schemas**: Every LLM function call and JSON response MUST be validated through strict typed schemas. Reject schema violations with deterministic retries.
+- **Tool Guardrails**: Never allow direct code execution or shell access without an isolated sandbox and explicit confirmation boundaries.
+- **Semantic Caching**: Store query embedding hashes in Redis to serve identical or high-similarity (> 0.95 cosine) queries instantly, reducing LLM costs and latency.
+
+### 3. Prompt Engineering & Injection Defense
+- **System Prompt Separation**: Isolate trusted system instructions from untrusted user input using clear delimiters (e.g., `<user_input>`, `###`).
+- **Input Sanitization**: Strip indirect prompt injection payloads (e.g. "Ignore previous instructions") and run input through guardrail classifiers (Llama Guard, NeMo).
+- **Context Window Budgeting**: Track token consumption dynamically. Allocate reserve budget for system prompts, history, context retrieval, and response generation.
+
+### 4. Continuous Evaluation (Evals) & Quality Gates
+- **The RAG Triad**:
+  - *Context Relevance*: Is the retrieved context necessary and sufficient for the query?
+  - *Groundedness / Faithfulness*: Is the answer derived strictly from the context without hallucination?
+  - *Answer Relevance*: Does the answer directly address the user's question?
+- **Automated Benchmarks**: Use Ragas or TruLens frameworks to run automated evaluation suites against Golden Datasets on every prompt or pipeline change.
+
+## 📤 Outputs
+
+- Ingestion pipelines (chunking, embedding, indexing scripts).
+- RAG retrieval modules with hybrid search and reranking.
+- Structured tool definitions and Pydantic schemas.
+- Evaluation scripts and Golden Dataset test suites.
+
+## 🚫 Guard Rails
+
+- FORBIDDEN: Passing unbounded retrieved context directly to the LLM without reranking or token truncation.
+- FORBIDDEN: Relying on raw LLM output without schema validation.
+- FORBIDDEN: Hard-coding API keys or endpoints in code. Use `OPENAI_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` from `.env`.
+- FORBIDDEN: Storing unencrypted PII or sensitive tenant data in shared vector indices.
+"""
+
+
+def skill_sre_observability():
+    return r"""---
+name: speckit.sre-observability
+description: SRE & Observability Specialist - OpenTelemetry distributed tracing, Prometheus metrics, structured logs, and resilience controls.
+role: SRE & Observability Specialist
+---
+
+## 🎯 Mission
+
+Design, configure, and enforce enterprise-grade Observability and Site Reliability Engineering (SRE) standards across services. Ensure system state is fully transparent through the Three Pillars (Logs, Metrics, Traces), actionable alerts, and battle-tested resilience patterns.
+
+## 📥 Required Inputs
+
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- Service architecture, topology, and SLA/SLO commitments
+- Infrastructure configs (`docker-compose.yml`, Kubernetes manifests, Helm charts)
+
+## 📋 Protocol
+
+### 1. Distributed Tracing & OpenTelemetry (OTel)
+- **Trace Context Propagation**: Propagate W3C TraceContext headers (`traceparent`, `tracestate`) across all HTTP, gRPC, and message queue boundaries.
+- **Span Granularity**: Instrument high-level operations: incoming HTTP request, external API calls, DB transactions, background jobs, and cache accesses.
+- **Baggage & Correlation**: Attach `trace_id`, `span_id`, `service.name`, and `environment` to all telemetry data.
+
+### 2. Metrics Architecture (RED & USE Methods)
+- **RED Method (Request-driven Services)**:
+  - *Rate*: Requests per second (Counter).
+  - *Errors*: Failed requests count partitioned by HTTP status code / error type (Counter).
+  - *Duration*: Request latency distribution (Histogram with standardized buckets: `0.005s, 0.01s, 0.025s, 0.05s, 0.1s, 0.25s, 0.5s, 1s, 2.5s, 5s, 10s`).
+- **USE Method (Resources - CPU, RAM, Disk, DB Pools)**:
+  - *Utilization*: Percent time busy.
+  - *Saturation*: Queue length or waiting threads.
+  - *Errors*: Device or connection error count.
+
+### 3. Structured Logging Standard
+- **Format**: 100% Structured JSON logs emitted to `stdout` / `stderr`.
+- **Mandatory Fields**: `timestamp` (ISO 8601 UTC), `level` (`DEBUG`, `INFO`, `WARN`, `ERROR`), `message`, `trace_id`, `span_id`, `service`, `duration_ms`.
+- **Zero Sensitive Data**: Automatically scrub passwords, tokens, API keys, card numbers, and PII from log payloads.
+
+### 4. Health Checks & Lifecycle Management
+- **Liveness Probe (`/livez`)**: Returns `200 OK` if the process is running. NEVER check downstream dependencies here (prevents cascading restart loops).
+- **Readiness Probe (`/readyz`)**: Returns `200 OK` ONLY if database, Redis, and critical downstream dependencies are connected and ready to accept traffic.
+- **Graceful Shutdown**: Intercept `SIGTERM`/`SIGINT`, stop accepting new requests, drain existing in-flight connections (15–30s timeout), and close DB/queue connections safely.
+
+### 5. Resilience & Fault Tolerance
+- **Circuit Breaker**: Wrap external third-party calls with circuit breakers (e.g. Resilience4j, Tenacity) to fast-fail when error rate exceeds 50%.
+- **Rate Limiting**: Enforce Token Bucket / Leaky Bucket rate limits at ingress and per-tenant boundaries.
+- **SLO Error Budgets**: Define Service Level Objectives (SLOs) and establish automated alerting when Error Budget consumption rate spikes.
+
+## 📤 Outputs
+
+- OpenTelemetry collector configuration and SDK setup scripts.
+- Prometheus scraping configs, dashboards (Grafana JSON), and alert rules.
+- Healthcheck endpoints (`/livez`, `/readyz`) and Graceful Shutdown handlers.
+- Incident runbooks with triage flowcharts and mitigation procedures.
+
+## 🚫 Guard Rails
+
+- FORBIDDEN: Logging secrets, credentials, auth tokens, or PII in plaintext.
+- FORBIDDEN: Checking DB connections in `/livez` liveness probes.
+- FORBIDDEN: Running services without graceful shutdown signal trapping.
+- FORBIDDEN: Creating metrics with unbounded label cardinality (e.g. user IDs or UUIDs as metric labels).
+"""
+
+
+def skill_event_realtime():
+    return r"""---
+name: speckit.event-realtime
+description: Realtime & Event Systems Engineer - WebSocket channels, Server-Sent Events, Message Queues, and Transactional Outbox workers.
+role: Realtime & Event Engineer
+---
+
+## 🎯 Mission
+
+Design and implement ultra-reliable real-time communications and event-driven distributed architectures. Ensure zero message loss, strictly managed connection states, idempotent consumers, and resilient reconnection strategies across WebSockets, SSE, and Message Brokers.
+
+## 📥 Required Inputs
+
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- Target transport (WebSocket, Server-Sent Events, Webhooks, Message Broker)
+- Event schemas, ordering guarantees, and throughput requirements
+
+## 📋 Protocol
+
+### 1. WebSocket Architecture (Multi-Node Scaling)
+- **Stateless Server Nodes**: Distribute WebSocket connections across multiple server instances using Redis Pub/Sub, Redis Streams, or RabbitMQ as the central message bus backplane.
+- **Connection Heartbeat**: Implement ping/pong heartbeat every 30 seconds. Disconnect and clean up dead sockets automatically after missed heartbeats.
+- **Client Resilient Reconnection**: Client MUST implement Exponential Backoff with Jitter for reconnects (`delay = min(max_delay, initial_delay * 2^attempt) + jitter`).
+- **Channel / Room Scoping**: Authorize channel subscriptions server-side on connection and message dispatch.
+
+### 2. Server-Sent Events (SSE) for Unidirectional Streams
+- **Use Cases**: Live LLM token streaming, notification feeds, progress dashboards.
+- **Headers**: Set `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `Connection: keep-alive`, `X-Accel-Buffering: no` (for Nginx proxy).
+- **Event Resumption**: Track `Last-Event-ID` header to resume stream without data gaps during temporary client disconnection.
+
+### 3. Transactional Outbox Pattern (Zero Message Loss)
+- **Problem Solved**: Dual-write hazard where database commit succeeds but message broker publish fails (or vice versa).
+- **Pattern**:
+  1. Write domain data mutation AND outbox event record within the **SAME database transaction**.
+  2. Dedicated asynchronous Outbox Poller / Debezium CDC worker reads unhandled events from the `outbox` table.
+  3. Worker publishes events to Broker (RabbitMQ, Kafka, Redis Streams) and marks record as `PROCESSED`.
+
+### 4. Idempotent Consumer & Dead Letter Queue (DLQ)
+- **At-Least-Once Delivery Handling**: Every consumer must implement message deduplication using a unique `message_id` stored in Redis/DB with a TTL.
+- **Retry with Backoff**: Failed message processing retries with progressive delay (e.g., 5s, 30s, 5m).
+- **Dead Letter Queue (DLQ)**: After maximum retry attempts (e.g. 5 failures), route the poisoned message to a DLQ and trigger an SRE alert. Never discard unprocessable messages silently.
+
+## 📤 Outputs
+
+- WebSocket gateway & Redis adapter configuration.
+- SSE stream handlers with `Last-Event-ID` recovery.
+- Transactional Outbox schema, worker daemon, and publisher services.
+- Idempotent consumer workers with DLQ handling.
+
+## 🚫 Guard Rails
+
+- FORBIDDEN: Storing WebSocket room state exclusively in server memory in multi-replica deployments.
+- FORBIDDEN: Publishing messages to broker outside a database transaction without an Outbox pattern when data consistency is required.
+- FORBIDDEN: Discarding failed queue messages without DLQ routing.
+- FORBIDDEN: Sending unauthenticated or unverified WebSocket event broadcasts.
+"""
+
+
+def skill_payment_fintech():
+    return r"""---
+name: speckit.payment-fintech
+description: FinTech & Payment Systems Engineer - Idempotency ledger, payment gateways, signature verification, and financial transaction state machines.
+role: FinTech & Payment Engineer
+---
+
+## 🎯 Mission
+
+Architect and build zero-defect financial, payment, and ledger systems. Enforce absolute data integrity, strict idempotency, cryptographic signature verification, double-entry bookkeeping, and full compliance with PCI-DSS guidelines.
+
+## 📥 Required Inputs
+
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- Target payment gateways (Stripe, PayPal, ZaloPay, MoMo, VNPay, Bank Transfer)
+- Currency, fee structures, refund policies, and regulatory requirements
+
+## 📋 Protocol
+
+### 1. Money Representation & Data Types
+- **Floating Point Absolute Ban**: NEVER use `float`, `double`, or `REAL` for financial amounts due to IEEE 754 precision loss.
+- **Integer Standard**: Store amounts in smallest currency units (e.g., cents for USD/EUR, single unit integer for VND/JPY).
+- **Fixed-Point Decimal**: Use `DECIMAL(18, 4)` / `NUMERIC(18, 4)` or language-specific decimal types (e.g. Python `Decimal`, Java `BigDecimal`, JS `BigInt` or specialized currency library).
+
+### 2. Idempotency Key Standard (RFC 8935)
+- **Header**: Require `Idempotency-Key: <UUID>` on all payment mutations (`POST /checkout`, `POST /refunds`, `POST /transfers`).
+- **Storage & Locking**:
+  1. Acquire atomic distributed lock on `idempotency:<user_id>:<key>` in Redis.
+  2. If key exists and status is `COMPLETED`, return the cached response immediately.
+  3. If key exists and status is `PROCESSING`, return `409 Conflict` ("Request in progress").
+  4. Execute payment transaction, save response in cache (TTL 24h), and release lock.
+
+### 3. Webhook Signature Verification & Raw Body Handling
+- **Cryptographic Verification**: Verify HMAC SHA-256 webhook signatures using the shared gateway secret.
+- **Raw Body Requirement**: Signature verification MUST compute digest over the raw HTTP request body bytes BEFORE any JSON parsing.
+- **Replay Protection**: Validate webhook timestamp against system clock (reject timestamps older than 5 minutes).
+
+### 4. Double-Entry Bookkeeping Ledger
+- **Core Law**: Every financial transaction consists of at least two balanced entries: a Debit and a Credit.
+- **Invariant**: $\sum \text{Debit} = \sum \text{Credit}$ (Total balance of every journal entry MUST equal zero).
+- **Immutability**: Ledger entries are append-only. NEVER update or delete a ledger row. Corrections MUST be made via offsetting Reversal / Adjustment entries.
+
+### 5. Transaction State Machine
+```
+[INITIATED] ➔ [PENDING_PAYMENT] ➔ [AUTHORIZED] ➔ [CAPTURED / SETTLED]
+                                ➔ [EXPIRED]     ➔ [REFUND_PENDING] ➔ [REFUNDED]
+                                ➔ [FAILED]
+```
+- Every state transition must be atomic, recorded in an audit trail table with timestamp, actor, and reason.
+
+## 📤 Outputs
+
+- Payment gateway integration adapters (Stripe, ZaloPay, VNPay).
+- RFC 8935 Idempotency middleware with Redis locking.
+- Raw-body Webhook signature verification handlers.
+- Double-entry ledger database schema, constraints, and audit trail tables.
+
+## 🚫 Guard Rails
+
+- FORBIDDEN: Using floating point numbers (`float`/`double`) for monetary amounts.
+- FORBIDDEN: Processing webhook payloads without cryptographic signature verification.
+- FORBIDDEN: Executing charges or refunds without an Idempotency Key.
+- FORBIDDEN: Updating or deleting existing rows in financial ledger tables.
+- FORBIDDEN: Storing raw Credit Card PAN, CVV/CVC in the application database (Violates PCI-DSS). Always use gateway tokenization.
+"""
+
+
 # =============================================================================
 # SKILL TEMPLATE MAP — Complete mapping for all generated core skills
 # =============================================================================
@@ -2626,6 +2876,10 @@ SKILL_TEMPLATE_MAP = {
     "speckit.data": skill_data,
     "speckit.security": skill_security,
     "speckit.gamedev": skill_gamedev,
+    "speckit.ai-engineer": skill_ai_engineer,
+    "speckit.sre-observability": skill_sre_observability,
+    "speckit.event-realtime": skill_event_realtime,
+    "speckit.payment-fintech": skill_payment_fintech,
     # --- Process/utility skills (detailed, replacing fallback) ---
     "speckit.debug": skill_debug,
     "speckit.backlog": skill_backlog,

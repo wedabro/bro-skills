@@ -279,6 +279,26 @@ def test_core_engineering_specialists_are_registered_and_policy_complete():
             "untested backup",
             "restore/failover",
         ),
+        "speckit.ai-engineer": (
+            "Semantic Chunking",
+            "Hybrid Search",
+            "The RAG Triad",
+        ),
+        "speckit.sre-observability": (
+            "OpenTelemetry",
+            "RED Method",
+            "Structured Logging Standard",
+        ),
+        "speckit.event-realtime": (
+            "WebSocket Architecture",
+            "Transactional Outbox Pattern",
+            "Dead Letter Queue",
+        ),
+        "speckit.payment-fintech": (
+            "Floating Point Absolute Ban",
+            "Idempotency Key Standard (RFC 8935)",
+            "Double-Entry Bookkeeping Ledger",
+        ),
     }
     for name, clauses in expected.items():
         checked_in = (REPO_ROOT / ".agents/skills" / name / "SKILL.md").read_text(
