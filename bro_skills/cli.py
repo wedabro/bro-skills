@@ -343,7 +343,7 @@ def _ask_agent_selection(lang="en"):
         ("claude", "Claude Code (CLAUDE.md)", "Claude Code (CLAUDE.md)"),
         ("cursor", "Cursor (.cursor/rules/bro-skills.mdc)", "Cursor (.cursor/rules/bro-skills.mdc)"),
         ("windsurf", "Windsurf (.windsurf/rules/bro-skills.md)", "Windsurf (.windsurf/rules/bro-skills.md)"),
-        ("antigravity", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)", "Antigravity (.agent/rules/bro-skills.md + AGENTS.md)"),
+        ("antigravity", "Antigravity (.agents/rules/bro-skills.md + AGENTS.md)", "Antigravity (.agents/rules/bro-skills.md + AGENTS.md)"),
         ("copilot", "GitHub Copilot (.github/copilot-instructions.md)", "GitHub Copilot (.github/copilot-instructions.md)"),
         ("kiro", "Kiro (.kiro/steering/tech.md + MCP)", "Kiro (.kiro/steering/tech.md + MCP)"),
         ("codex", "Codex (skills.json in customizations root)", "Codex (skills.json trong customizations root)"),
@@ -362,18 +362,29 @@ def _ask_agent_selection(lang="en"):
 
 
 def cmd_init(args):
-    """Initialize the .agent/ structure for the project."""
+    """Initialize the .agents/ structure for the project."""
     target = os.path.abspath(args.target or os.getcwd())
     name = args.name or os.path.basename(target)
     force = getattr(args, 'force', False)
     project_type = getattr(args, 'type', None)
-    agent_dir = os.path.join(target, ".agent")
+    agent_dir = os.path.join(target, ".agents")
+    legacy_agent_dir = os.path.join(target, ".agent")
 
     print(f"\n⚡ bro-skills v{__version__} — Antigravity Spec Framework 4.0 Elite")
     print(f"{'─' * 55}")
     print(f"  📁 Target:  {target}")
     print(f"  📛 Project: {name}")
     print(f"{'─' * 55}\n")
+
+    # Check for legacy .agents/ folder to migrate
+    if os.path.exists(legacy_agent_dir) and not os.path.exists(agent_dir):
+        print("🔍 Detected legacy .agents/ folder, auto-migrating to .agents/...")
+        try:
+            import shutil
+            shutil.move(legacy_agent_dir, agent_dir)
+            print("  ✅ Migrated .agents/ ➔ .agents/")
+        except Exception as e:
+            print(f"  ⚠️ Could not auto-move .agents/: {e}")
 
     # MIGRATION AUDIT LOGIC
     existing_config = {}
@@ -388,7 +399,7 @@ def cmd_init(args):
                 pass
 
     if os.path.exists(agent_dir) and not force:
-        print("🔍 Scanning existing .agent/ structure...")
+        print("🔍 Scanning existing .agents/ structure...")
         audit_report = _audit_existing_agent(agent_dir)
 
         if audit_report["is_legacy"]:
@@ -652,36 +663,36 @@ def cmd_init(args):
     
     if is_vi:
         print(f"\n✅ Khởi tạo/Nâng cấp thành công!")
-        print(f"  📁 Thư mục .agent/ đã được tối ưu tại: {agent_dir}")
+        print(f"  📁 Thư mục .agents/ đã được tối ưu tại: {agent_dir}")
         print(f"  🏗️ Loại dự án: {type_info['label']}")
         print(f"  🎯 Kỹ năng:    {len(filtered_skills)} skills (Chuẩn ASF 3.3)")
         print(f"  🔄 Quy trình:  {len(filtered_workflows)} workflows")
         
         print(f"\n💡 Các bước tiếp theo:")
-        print(f"  1. Kiểm tra '.agent/identity/master-identity.md' để AI nhận diện dự án")
+        print(f"  1. Kiểm tra '.agents/identity/master-identity.md' để AI nhận diện dự án")
         print(f"  2. Chạy /01-speckit.constitution để cập nhật Tech Stack & Docker Ports")
         if project_type in ("web_public", "fullstack"):
             print(f"  3. Chạy @speckit.seo để kiểm tra Technical SEO")
             print(f"  4. Chạy @speckit.geo để tối ưu hóa cho công cụ tìm kiếm AI (ChatGPT, Gemini)")
-            print(f"  5. Kiểm tra '.agent/knowledge_base/seo_standards.md' để xem danh sách SEO checklist")
+            print(f"  5. Kiểm tra '.agents/knowledge_base/seo_standards.md' để xem danh sách SEO checklist")
         elif project_type == "web_saas":
             print(f"  3. Chạy @speckit.seo cho Landing Page & Blog")
         else:
             print(f"  3. Chạy @speckit.devops để tạo môi trường Docker chuẩn bảo mật")
     else:
         print(f"\n✅ Initialization/Upgrade successful!")
-        print(f"  📁 .agent/ has been optimized at: {agent_dir}")
+        print(f"  📁 .agents/ has been optimized at: {agent_dir}")
         print(f"  🏗️ Type:      {type_info['label']}")
         print(f"  🎯 Skills:    {len(filtered_skills)} skills (ASF 3.3 Standard)")
         print(f"  🔄 Workflows: {len(filtered_workflows)} workflows")
         
         print(f"\n💡 Next steps:")
-        print(f"  1. Check '.agent/identity/master-identity.md' to let AI identify the project")
+        print(f"  1. Check '.agents/identity/master-identity.md' to let AI identify the project")
         print(f"  2. Run /01-speckit.constitution to update Tech Stack & Docker Ports")
         if project_type in ("web_public", "fullstack"):
             print(f"  3. Run @speckit.seo to audit Technical SEO")
             print(f"  4. Run @speckit.geo to optimize for AI Search (ChatGPT, Gemini)")
-            print(f"  5. Check '.agent/knowledge_base/seo_standards.md' for SEO checklist")
+            print(f"  5. Check '.agents/knowledge_base/seo_standards.md' for SEO checklist")
         elif project_type == "web_saas":
             print(f"  3. Run @speckit.seo for Landing Page & Blog")
         else:
@@ -692,12 +703,12 @@ def cmd_init(args):
 
 
 def cmd_install(args):
-    """Install specific skills into an existing .agent/ structure."""
+    """Install specific skills into an existing .agents/ structure."""
     target = os.path.abspath(args.target or os.getcwd())
-    agent_dir = os.path.join(target, ".agent")
+    agent_dir = os.path.join(target, ".agents")
 
     if not os.path.exists(agent_dir):
-        print(f"❌ Error: Cannot find .agent/ folder at {target}")
+        print(f"❌ Error: Cannot find .agents/ folder at {target}")
         print("💡 Run: 'bro-skills init' to initialize the project first.")
         sys.exit(1)
 
@@ -769,7 +780,7 @@ def _audit_existing_agent(agent_dir):
 
     # 2. Check for odd/redundant files that do not belong to the new standard
     for item in os.listdir(agent_dir):
-        if item in [".", "..", "skills", "workflows", "templates", "scripts", "identity", "knowledge_base", "memory", "README.md"]:
+        if item in [".", "..", "skills", "workflows", "templates", "scripts", "identity", "knowledge_base", "memory", "README.md", "specs", "rules", "codebase", "agents", "debug", "project.json"]:
             continue
         report["is_legacy"] = True
         report["items"].append({"name": item, "status": "NON-STANDARD", "action": "Backup & Move"})
@@ -814,15 +825,15 @@ def cmd_list_workflows(args):
 
 
 def cmd_validate(args):
-    """Validate the project's .agent/ structure."""
+    """Validate the project's .agents/ structure."""
     target = os.path.abspath(args.target or os.getcwd())
-    agent_dir = os.path.join(target, ".agent")
+    agent_dir = os.path.join(target, ".agents")
 
-    print(f"\n🔍 Validating .agent/ at: {target}")
+    print(f"\n🔍 Validating .agents/ at: {target}")
     print(f"{'─' * 50}\n")
 
     if not os.path.exists(agent_dir):
-        print("❌ Cannot find .agent/ folder")
+        print("❌ Cannot find .agents/ folder")
         print("💡 Run: bro-skills init to initialize\n")
         return
 
@@ -1142,127 +1153,6 @@ def cmd_update(args):
 
     print("\n❌ Update failed. Please check your internet connection.")
 
-def clean_empty_parents(path, root_dir):
-    """Clean empty parent directories up to root_dir."""
-    current = os.path.dirname(path)
-    while current and current != root_dir and len(current) > len(root_dir):
-        if os.path.exists(current) and os.path.isdir(current):
-            try:
-                if not os.listdir(current):
-                    os.rmdir(current)
-                else:
-                    break
-            except Exception:
-                break
-        current = os.path.dirname(current)
-
-
-def cmd_uninstall(args):
-    """Uninstall bro-skills by removing .agent/ and IDE rules from the project."""
-    import shutil
-
-    target = os.path.abspath(args.target or os.getcwd())
-    force = getattr(args, 'force', False)
-    agent_dir = os.path.join(target, ".agent")
-
-    # If the user didn't specify --force, we should double check if .agent exists
-    # If not even .agent exists and not force, we exit
-    if not os.path.exists(agent_dir) and not force:
-        print("❌ Không tìm thấy thư mục `.agent` tại dự án này.")
-        return
-
-    print(f"\n⚡ bro-skills - Gỡ cài đặt (Uninstall)")
-    print(f"{'─' * 50}")
-    print(f"  📁 Target:  {target}")
-    print(f"{'─' * 50}\n")
-
-    if not force:
-        confirm = input("⚠️  Bạn có chắc chắn muốn gỡ bỏ hoàn toàn bro-skills khỏi dự án này không? (y/N): ").strip().lower()
-        if confirm != 'y':
-            print("❌ Đã hủy yêu cầu gỡ cài đặt.")
-            return
-
-    print("\n🧹 Bắt đầu gỡ bỏ các tệp và thư mục liên quan...")
-
-    paths_to_delete = [
-        ".agent",
-        "AGENTS.md",
-        "CLAUDE.md",
-        ".clinerules",
-        ".roomember",
-        ".traerules",
-        ".cursor/rules/bro-skills.mdc",
-        ".windsurf/rules/bro-skills.md",
-        ".github/copilot-instructions.md",
-        ".aiassistant/rules/bro-skills.md",
-        ".kiro/steering/tech.md",
-        ".kiro/settings/mcp.json",
-        ".kiro/skills",
-        ".qoder/rules/bro-skills.md",
-        ".opencode/rules/bro-skills.md",
-        ".gemini/rules/bro-skills.md",
-        ".continue/config.json",
-        ".agents/AGENTS.md",
-        ".agents/skills",
-    ]
-
-    deleted_count = 0
-    for rel_path in paths_to_delete:
-        abs_path = os.path.join(target, rel_path)
-        if os.path.exists(abs_path) or os.path.islink(abs_path):
-            success = False
-            try:
-                if os.path.islink(abs_path) or os.path.isfile(abs_path):
-                    os.unlink(abs_path)
-                    success = True
-                elif os.path.isdir(abs_path):
-                    if os.name == "nt":
-                        try:
-                            os.rmdir(abs_path)
-                            success = True
-                        except OSError:
-                            shutil.rmtree(abs_path, ignore_errors=True)
-                            success = True
-                    else:
-                        shutil.rmtree(abs_path, ignore_errors=True)
-                        success = True
-            except Exception as e:
-                print(f"  ⚠️ Lỗi khi xóa {rel_path}: {e}")
-            
-            if success:
-                print(f"  🗑️ Đã xóa: {rel_path}")
-                deleted_count += 1
-                clean_empty_parents(abs_path, target)
-
-    print(f"\n✅ Hoàn tất gỡ bỏ! Đã dọn dẹp {deleted_count} tệp/thư mục.")
-
-
-def main():
-    if sys.platform.startswith('win'):
-        try:
-            sys.stdout.reconfigure(encoding='utf-8')
-            sys.stderr.reconfigure(encoding='utf-8')
-        except AttributeError:
-            pass
-
-    parser = argparse.ArgumentParser(
-        prog="bro-skills",
-        description="⚡ bro-skills - Spec-Driven Development CLI",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""For example:
-    bro-skills init # Init at current directory
-    bro-skills init --target /path/to/project # Init at the specified directory
-    bro-skills init --name "My Project" # Init with project name
-    bro-skills init → /01-speckit.constitution → /util-speckit.migrate → /02-speckit.specify → /07-speckit.implement"""
-    )
-
-    parser.add_argument(
-        "-v", "--version",
-        action="version",
-        version=f"%(prog)s {__version__}"
-    )
-    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
-
 
 def clean_empty_parents(path, root_dir):
     """Clean empty parent directories up to root_dir."""
@@ -1280,17 +1170,17 @@ def clean_empty_parents(path, root_dir):
 
 
 def cmd_uninstall(args):
-    """Uninstall bro-skills by removing .agent/ and IDE rules from the project."""
+    """Uninstall bro-skills by removing .agents/ and IDE rules from the project."""
     import shutil
 
     target = os.path.abspath(args.target or os.getcwd())
     force = getattr(args, 'force', False)
-    agent_dir = os.path.join(target, ".agent")
+    agent_dir = os.path.join(target, ".agents")
+    legacy_agent_dir = os.path.join(target, ".agent")
 
-    # If the user didn't specify --force, we should double check if .agent exists
-    # If not even .agent exists and not force, we exit
-    if not os.path.exists(agent_dir) and not force:
-        print("❌ Không tìm thấy thư mục `.agent` tại dự án này.")
+    # If the user didn't specify --force, check if .agents or legacy .agent exists
+    if not os.path.exists(agent_dir) and not os.path.exists(legacy_agent_dir) and not force:
+        print("❌ Không tìm thấy thư mục `.agents` tại dự án này.")
         return
 
     print(f"\n⚡ bro-skills - Gỡ cài đặt (Uninstall)")
@@ -1307,6 +1197,7 @@ def cmd_uninstall(args):
     print("\n🧹 Bắt đầu gỡ bỏ các tệp và thư mục liên quan...")
 
     paths_to_delete = [
+        ".agents",
         ".agent",
         "AGENTS.md",
         "CLAUDE.md",
@@ -1324,8 +1215,6 @@ def cmd_uninstall(args):
         ".opencode/rules/bro-skills.md",
         ".gemini/rules/bro-skills.md",
         ".continue/config.json",
-        ".agents/AGENTS.md",
-        ".agents/skills",
     ]
 
     deleted_count = 0
@@ -1379,7 +1268,7 @@ def main():
     bro-skills init --force # Init and override without asking
     bro-skills list-skills # View skills list
     bro-skills list-workflows # View list of workflows
-    bro-skills validate # Validate the .agent/ structure
+    bro-skills validate # Validate the .agents/ structure
     bro-skills version # View version
     bro-skills update # Update to the latest version
 
@@ -1410,7 +1299,7 @@ AVAILABLE project process:
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # init
-    init_parser = subparsers.add_parser("init", help="Initialize the .agent/ structure for the project")
+    init_parser = subparsers.add_parser("init", help="Initialize the .agents/ structure for the project")
     init_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
     init_parser.add_argument("--name", "-n", help="Project name (default: folder name)")
     init_parser.add_argument(
@@ -1418,14 +1307,14 @@ AVAILABLE project process:
         choices=PROJECT_TYPES.keys(),
         help="Project type: web_public, web_saas, mobile_app, desktop_cli, fullstack, simple_script, custom_infra, wordpress",
     )
-    init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agent/ and force interactive setup prompts from scratch")
+    init_parser.add_argument("--force", "-f", action="store_true", help="Overwrite .agents/ and force interactive setup prompts from scratch")
     init_parser.add_argument("--lang", "-l", help="Agent response language (e.g., en, vi, dynamic)")
     init_parser.add_argument("--ai", help="Specify target AI agent (e.g., claude, cursor, windsurf, antigravity, copilot, kiro, codex, roocode, qoder, gemini, trae, opencode, continue, all)")
     init_parser.add_argument("--skills", "-s", help="Comma-separated list of additional/specific skills to install (e.g. 3d,wordpress)")
     init_parser.add_argument("--vault", help="Path to external skill vault directory (e.g. F:\\code\\github\\antigravity-skills)")
 
     # install
-    install_parser = subparsers.add_parser("install", help="Install specific skills into an existing .agent/ structure")
+    install_parser = subparsers.add_parser("install", help="Install specific skills into an existing .agents/ structure")
     install_parser.add_argument("skills", help="Comma-separated list of skills to install (e.g. 3d,wordpress)")
     install_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
     install_parser.add_argument("--vault", help="Path to external skill vault directory (e.g. F:\\code\\github\\antigravity-skills)")
@@ -1438,7 +1327,7 @@ AVAILABLE project process:
     subparsers.add_parser("list-workflows", help="List all workflows")
 
     # validate
-    validate_parser = subparsers.add_parser("validate", help="Validate the .agent/ structure")
+    validate_parser = subparsers.add_parser("validate", help="Validate the .agents/ structure")
     validate_parser.add_argument("--target", "-t", help="Destination directory (default: current directory)")
 
     # version

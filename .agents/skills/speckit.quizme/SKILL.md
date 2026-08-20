@@ -7,8 +7,8 @@ description: Logic Challenger (Red Team) - Ask critical questions, find edge cas
 Challenge spec + plan with edge-case questions, find logic flaws before implementation.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
 
 ## 📋 Protocol
 1. Read spec + plan → find implicit assumptions.
@@ -23,7 +23,7 @@ Challenge spec + plan with edge-case questions, find logic flaws before implemen
 
 ## 📤 Output
 - Console: Interactive Q&A session
-- File: `.agent/memory/quizme-findings.md` (if issues are detected)
+- File: `.agents/memory/quizme-findings.md` (if issues are detected)
 
 ## 🚫 Guard Rails
 - MAXIMUM 5 questions — don't overwhelm the developer.

@@ -7,7 +7,7 @@ description: Ambiguity Resolver - Detect and resolve ambiguity in spec.
 Scan spec.md → detect ambiguity → ask developer up to 3 questions → update spec.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/spec.md`
 
 ## 📋 Protocol
 1. Scan spec.md to find:
@@ -34,7 +34,7 @@ Scan spec.md → detect ambiguity → ask developer up to 3 questions → update
 5. Update spec.md with clarifications → mark `[CLARIFIED]` .
 
 ## 📤 Output
-- File: Updated `.agent/specs/[feature]/spec.md`
+- File: Updated `.agents/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
 - MAXIMUM 3 questions — don't ask too many.

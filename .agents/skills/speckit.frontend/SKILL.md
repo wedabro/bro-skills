@@ -6,16 +6,16 @@ description: Frontend Developer - Build production UI components, typed data flo
 ## Mission
 
 Turn approved UI requirements and API contracts into cohesive production UI.
-Honor `.agent/knowledge_base/ui_ux_standards.md` as the visual source of truth,
+Honor `.agents/knowledge_base/ui_ux_standards.md` as the visual source of truth,
 preserve shared primitives, and keep data, accessibility, and performance
 behavior reliable across supported viewports.
 
 ## Required Inputs
 
-- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
-- `.agent/knowledge_base/ui_ux_standards.md`, current shell, tokens, and shared UI
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- `.agents/knowledge_base/ui_ux_standards.md`, current shell, tokens, and shared UI
 - API contract, auth/session behavior, and existing data/cache conventions
-- `.agent/memory/constitution.md` for ENV and Docker policy
+- `.agents/memory/constitution.md` for ENV and Docker policy
 
 Use `speckit.uiux` for new design-system decisions, `speckit.backend` for API
 contract changes, `speckit.security` for security review, and `speckit.tester`

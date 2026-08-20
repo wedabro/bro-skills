@@ -8,7 +8,7 @@ Set up and manage a standardized and secure Docker system for the project.
 Published ports MUST always be configured via environment variables.
 
 ## 📥 Input
-- `.agent/memory/constitution.md` (port range, security rules)
+- `.agents/memory/constitution.md` (port range, security rules)
 - Existing `Dockerfile` , `docker-compose.yml` (if available)
 - `.env.example`
 
@@ -61,13 +61,13 @@ docker compose ps --format json 2>$null
 - Only EXPOSE ports are needed
 
 ### 5. Documentation:
-- Update `.agent/knowledge_base/infrastructure.md` with the results
+- Update `.agents/knowledge_base/infrastructure.md` with the results
 - Update `.env.example` with all port vars
 
 ## 📤 Output
 - Files: `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`
 - Config: `.env` (ports), `.env.example` (documented)
-- Doc: `.agent/knowledge_base/infrastructure.md` (updated)
+- Doc: `.agents/knowledge_base/infrastructure.md` (updated)
 
 ## 🚫 Guard Rails
 - Flexibly configure ports via environment variables (.env) to avoid conflicts.

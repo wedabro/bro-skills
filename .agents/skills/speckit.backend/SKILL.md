@@ -8,14 +8,14 @@ description: Backend/API Developer - Build production API services, business log
 Build the smallest production-ready backend change that honors the feature
 specification and the existing architecture. Prefer a modular monolith unless
 the specification demonstrates a need for distributed complexity. Match
-`.agent/knowledge_base/api_standards.md`, `data_schema.md`, and the project
+`.agents/knowledge_base/api_standards.md`, `data_schema.md`, and the project
 constitution.
 
 ## Required Inputs
 
-- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
 - Existing API contracts, domain model, data schema, and error conventions
-- `.agent/memory/constitution.md` for ENV, Docker, port, and safety policy
+- `.agents/memory/constitution.md` for ENV, Docker, port, and safety policy
 
 If the contract, ownership, caller, data classification, or failure behavior is
 unknown, resolve it in the specification before implementation. Use

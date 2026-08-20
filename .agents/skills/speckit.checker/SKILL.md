@@ -10,8 +10,8 @@ anti-patterns using commands appropriate to the actual project stack.
 
 ## 📥 Input
 - Source code and dependency manifests
-- `.agent/memory/constitution.md` (coding standards)
-- `.agent/project.json` and documented build/test commands
+- `.agents/memory/constitution.md` (coding standards)
+- `.agents/project.json` and documented build/test commands
 - Docker files when the project is containerized
 
 ## 📋 Protocol
@@ -56,7 +56,7 @@ anti-patterns using commands appropriate to the actual project stack.
   behavior according to the framework and project requirements.
 
 ## 📤 Output
-- File: `.agent/memory/checker-report.md`
+- File: `.agents/memory/checker-report.md`
 - Format:
   ```
   ## 🔴 CRITICAL (N issues)

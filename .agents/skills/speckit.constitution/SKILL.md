@@ -8,7 +8,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 
 ## 📥 Input
 - Developer provides: tech stack, principles, constraints
-- `.agent/knowledge_base/infrastructure.md` (if available)
+- `.agents/knowledge_base/infrastructure.md` (if available)
 
 ## 📋 Protocol
 1. Collected from developers:
@@ -16,7 +16,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
    - Docker ports (cấu hình qua biến môi trường)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
-2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
+2. Create/update `.agents/memory/constitution.md` with REQUIRED sections:
    - **§1 Infrastructure**: Docker-first policy, port allocation, environments
    - **§2 Security**: No root containers, no hardcoded secrets, multi-stage builds
    - **§3 Code Standards**: Language, naming conventions, ENV policy
@@ -40,7 +40,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 3. Validate: Each section must have at least 1 specific rule, not general.
 
 ## 📤 Output
-- File: `.agent/memory/constitution.md`
+- File: `.agents/memory/constitution.md`
 
 ## 🚫 Guard Rails
 - Constitution does NOT contain implementation details (HOW) — only rules (WHAT).

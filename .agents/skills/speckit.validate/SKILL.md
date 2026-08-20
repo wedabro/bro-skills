@@ -9,8 +9,8 @@ Check whether the ENTIRE implementation meets spec.md or not — final gate befo
 ## 📥 Input
 - All artifacts: spec.md, plan.md, tasks.md
 - Source code (implementation)
-- `.agent/memory/constitution.md`
-- `.agent/project.json`, dependency manifests, and documented verification commands
+- `.agents/memory/constitution.md`
+- `.agents/project.json`, dependency manifests, and documented verification commands
 
 ## 📋 Protocol
 1. **Tasks Completion**: All tasks in tasks.md have `[X]` ?
@@ -51,7 +51,7 @@ Check whether the ENTIRE implementation meets spec.md or not — final gate befo
    ```
 
 ## 📤 Output
-- File: `.agent/memory/validation-report.md`
+- File: `.agents/memory/validation-report.md`
 - Verdict: ✅ PASS or ❌ FAIL (with blockers list)
 
 ## 🚫 Guard Rails

@@ -9,11 +9,11 @@
 Kiro auto-discovers `SKILL.md` files in `.kiro/skills/`. Each skill activates on demand when its `description` matches your task.
 
 ```bash
-# Init the full .agent/ structure
+# Init the full .agents/ structure
 bro-skills init --target /path/to/project
 
 # Mirror skills into the Kiro skill dir
-# (this repo already ships .kiro/skills/ in sync with .agent/skills/)
+# (this repo already ships .kiro/skills/ in sync with .agents/skills/)
 ```
 
 - **Project-level**: `.kiro/skills/<skill-name>/SKILL.md`
@@ -66,7 +66,7 @@ Hook file schema (`.kiro/hooks/<id>.kiro.hook`):
   "when": { "type": "userTriggered" },
   "then": {
     "type": "askAgent",
-    "prompt": "Read and execute `.agent/workflows/02-speckit.specify.md` ..."
+    "prompt": "Read and execute `.agents/workflows/02-speckit.specify.md` ..."
   }
 }
 ```
@@ -107,7 +107,7 @@ Reconnect servers from the MCP Server view in the Kiro feature panel after editi
 
 ## Usage Tips
 
-1. **Keep `.agent/skills/` and `.kiro/skills/` in sync** — this repo mirrors both; if you edit one, update the other.
+1. **Keep `.agents/skills/` and `.kiro/skills/` in sync** — this repo mirrors both; if you edit one, update the other.
 2. **Skill descriptions matter** — the `description` field drives auto-discovery. State both *what* and *when*.
 3. **Use hooks for the pipeline** — trigger Speckit workflows from the Agent Hooks panel instead of typing commands.
 4. **Auto-commit on task done** — the postTaskExecution hook keeps commits atomic (one task = one commit).

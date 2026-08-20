@@ -110,5 +110,5 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
-          python .agent/scripts/notify_release.py "${{ github.ref_name }}" "${{ job.status }}"
+          python .agents/scripts/notify_release.py "${{ github.ref_name }}" "${{ job.status }}"
 

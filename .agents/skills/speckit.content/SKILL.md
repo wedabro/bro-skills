@@ -8,7 +8,7 @@ Ensure website content meets standards for both readers AND AI search engines.
 
 ## 📥 Input
 - Content pages (articles, products, landing pages)
-- `.agent/knowledge_base/seo_standards.md`
+- `.agents/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
@@ -33,7 +33,7 @@ Ensure website content meets standards for both readers AND AI search engines.
 - Quotes from experts when appropriate
 
 ## 📤 Output
-- File: `.agent/memory/content-guidelines.md`
+- File: `.agents/memory/content-guidelines.md`
 
 ## 🔗 Handoffs
 - `@speckit.seo`: Validate SEO compliance sau khi optimize

@@ -6,7 +6,7 @@ description: Database Architect - Design schemas, indexes, migrations, query opt
 ## Mission
 
 Design data systems that are correct, performant, recoverable, and operable.
-Use `.agent/knowledge_base/data_schema.md`, the feature plan, and the project
+Use `.agents/knowledge_base/data_schema.md`, the feature plan, and the project
 constitution. Coordinate with `speckit.backend` for transaction ownership,
 `speckit.security` for sensitive data, and `speckit.devops` for runtime setup.
 

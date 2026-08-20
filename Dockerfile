@@ -10,9 +10,9 @@ RUN useradd --create-home --uid 10001 appuser
 COPY pyproject.toml README.md LICENSE ./
 COPY bro_skills ./bro_skills
 COPY tests ./tests
-COPY .agent/skills ./.agent/skills
-COPY .agent/knowledge_base ./.agent/knowledge_base
-COPY .agent/workflows ./.agent/workflows
+COPY .agents/skills ./.agents/skills
+COPY .agents/knowledge_base ./.agents/knowledge_base
+COPY .agents/workflows ./.agents/workflows
 
 RUN pip install --no-cache-dir ".[test]"
 

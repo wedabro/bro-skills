@@ -10,7 +10,7 @@
 
 ## 🎯 Purpose
 
-This tool automatically creates the standard `.agent/` structure for Antigravity IDE, including:
+This tool automatically creates the standard `.agents/` structure for Antigravity IDE, including:
 
 - **Skills** (46 generated core skills + 13 repository extension skills) — Autonomous AI capabilities for each SDLC phase, domain builders, and optional design/image-generation packs
 - **Workflows** (37 workflows) — Orchestration commands with pre-conditions, gate checks, and success criteria
@@ -219,7 +219,7 @@ bro-skills update
 
 ```
 Step 0: Init → bro-skills init --name "My Project"
-    ↓ Create ~90 files in .agent/
+    ↓ Create ~90 files in .agents/
     ↓
 Step 1: Constitution → /01-speckit.constitution
     ↓ Set up "rules" for the project (tech stack, principles)
@@ -266,8 +266,8 @@ Step 6: Implement → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Create a project-tailored `.agent/` structure from 46 core skills and 37 workflows, plus templates, scripts, identity, knowledge base, constitution, and README
-- Open the project in Antigravity IDE — the agent automatically detects the `.agent/` folder
+- Create a project-tailored `.agents/` structure from 46 core skills and 37 workflows, plus templates, scripts, identity, knowledge base, constitution, and README
+- Open the project in Antigravity IDE — the agent automatically detects the `.agents/` folder
 
 #### Step 1 — `/01-speckit.constitution` ⚠️ REQUIRED
 
@@ -363,7 +363,7 @@ bro-skills init --target /path/to/project --name "My Project"
 
 ```
 Step 0: Init → bro-skills init --target /path/to/existing --name "Legacy Project"
-    ↓ Create .agent/ INSIDE the current project
+    ↓ Create .agents/ INSIDE the current project
     ↓
 Step 1: Constitution → /01-speckit.constitution
     ↓ Declare CURRENT tech stack + NEW principles
@@ -394,7 +394,7 @@ Step 5: Implement → /07-speckit.implement
 ### Real-life example
 
 ```bash
-# 1. Init — creates .agent/ in the current project
+# 1. Init — creates .agents/ in the current project
 bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 # 2. Constitution — declares the current stack
@@ -429,10 +429,10 @@ Every time AI implements code, these 4 protocols are implemented **mandatory**:
 
 ---
 
-## 📂 The .agent/ structure is created
+## 📂 The .agents/ structure is created
 
 ```
-.agent/
+.agents/
 ├── identity/ # AI personality layer
 │   └── master-identity.md     # Persona, Soul, Core Capabilities
 │
@@ -561,7 +561,7 @@ bro-skills/
     ├── workflow_templates.py  # Workflow templates (Pre-conditions, Gates, Success Criteria)
     ├── templates.py           # Document + Script templates aggregator
     ├── scanner.py             # Codebase scanner — auto-detect tech stack, DB, Docker, API
-    ├── generator.py           # Generator engine — orchestrates .agent/ creation
+    ├── generator.py           # Generator engine — orchestrates .agents/ creation
     └── validators.py          # 10 validation checks
 ```
 
@@ -573,14 +573,14 @@ bro-skills validate --target /path/to/project
 
 | # | Check | Describe |
 |---|-------|-------|
-| 1 | .agent/ directory | Exist |
+| 1 | .agents/ directory | Exist |
 | 2 | Core directories | skills/, workflows/, templates/, scripts/, memory/ |
 | 3 | Skills | Project-appropriate folders + valid SKILL.md |
 | 4 | Workflows | 33 .md files |
 | 5 | Templates | 4 document templates |
 | 6 | Scripts | 4 bash scripts |
 | 7 | Constitution | memory/constitution.md |
-| 8 | README | .agent/README.md |
+| 8 | README | .agents/README.md |
 | 9 | Content quality | Each SKILL.md > 100 bytes |
 | 10 | Frontmatter | Each workflow has a YAML header |
 

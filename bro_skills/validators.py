@@ -1,5 +1,5 @@
 """
-Validators - Validate generated .agent/ structure.
+Validators - Validate generated .agents/ structure.
 """
 
 import os
@@ -25,7 +25,7 @@ def _load_project_config(agent_dir):
 
 def validate_agent_structure(agent_dir: str) -> list:
     """
-    Validate .agent/ directory structure.
+    Validate .agents/ directory structure.
     Returns list of check results: [{name, passed, details}]
 
     Validates correct set of skills/workflows according to project_type + attributes in
@@ -33,11 +33,11 @@ def validate_agent_structure(agent_dir: str) -> list:
     """
     results = []
 
-    # Check 1: .agent/ directory exists
+    # Check 1: .agents/ directory exists
     results.append({
-        "name": "Directory .agent/ exists",
+        "name": "Directory .agents/ exists",
         "passed": os.path.isdir(agent_dir),
-        "details": [] if os.path.isdir(agent_dir) else ["Directory .agent/ not found"],
+        "details": [] if os.path.isdir(agent_dir) else ["Directory .agents/ not found"],
     })
 
     if not os.path.isdir(agent_dir):

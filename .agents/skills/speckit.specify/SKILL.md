@@ -8,7 +8,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
 
 ## 📥 Input
 - Feature description from developer (free text)
-- `.agent/memory/constitution.md` (constraints)
+- `.agents/memory/constitution.md` (constraints)
 
 ## 📋 Protocol
 1. Read description → extract:
@@ -16,7 +16,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
    - **Actions**: Do what? (CRUD, search, filter, export)
    - **Data**: What data? (entities, fields, relationships)
    - **Constraints**: What limits? (auth, permissions, limits)
-2. Create `.agent/specs/[feature]/spec.md` with REQUIRED format:
+2. Create `.agents/specs/[feature]/spec.md` with REQUIRED format:
    ```markdown
    ---
    title: [Feature Name]
@@ -44,7 +44,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
 4. Each Functional Requirement MUST be measurable (have specific data).
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/spec.md`
+- File: `.agents/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
 - DO NOT write implementation details (HOW) — just describe WHAT.

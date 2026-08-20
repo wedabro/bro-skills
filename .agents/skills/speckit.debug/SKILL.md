@@ -16,7 +16,7 @@ Before starting to code, make it clear:
 - **Reproduction**: Specific steps to reproduce the error (required).
 
 ### Phase 2: Isolation & Hypothesis (Isolation & Hypothesis)
-- Create file `.agent/debug/[issue-slug].md` to save the investigation log.
+- Create file `.agents/debug/[issue-slug].md` to save the investigation log.
 - Hypotheses: "Maybe the error lies in function X because of Y".
 - Use the commands `grep` , `log` to verify the hypothesis.
 

@@ -77,6 +77,7 @@ def test_update_keeps_pip_path_for_non_frozen_install(monkeypatch):
     commands = []
     monkeypatch.delattr(cli.sys, "frozen", raising=False)
     monkeypatch.setattr(cli, "_get_latest_github_version", lambda: "99.0.0")
+    monkeypatch.setattr("importlib.util.find_spec", lambda name: object() if name == "pip" else None)
     monkeypatch.setattr("subprocess.run", lambda command, **kwargs: commands.append(command) or SimpleNamespace(returncode=0))
 
     cli.cmd_update(SimpleNamespace())
@@ -90,6 +91,7 @@ def test_update_force_flag_triggers_update_even_when_versions_match(monkeypatch)
     commands = []
     monkeypatch.delattr(cli.sys, "frozen", raising=False)
     monkeypatch.setattr(cli, "_get_latest_github_version", lambda: cli.__version__)
+    monkeypatch.setattr("importlib.util.find_spec", lambda name: object() if name == "pip" else None)
     monkeypatch.setattr("subprocess.run", lambda command, **kwargs: commands.append(command) or SimpleNamespace(returncode=0))
 
     cli.cmd_update(SimpleNamespace(force=True))
@@ -110,6 +112,7 @@ def test_update_fallback_to_zip_archive_when_git_pip_fails(monkeypatch):
 
     monkeypatch.delattr(cli.sys, "frozen", raising=False)
     monkeypatch.setattr(cli, "_get_latest_github_version", lambda: "99.0.0")
+    monkeypatch.setattr("importlib.util.find_spec", lambda name: object() if name == "pip" else None)
     monkeypatch.setattr("subprocess.run", fake_run)
 
     cli.cmd_update(SimpleNamespace())
@@ -117,4 +120,5 @@ def test_update_fallback_to_zip_archive_when_git_pip_fails(monkeypatch):
     assert len(commands) == 2
     assert "git+https" in commands[0][-1]
     assert "archive/refs/heads/main.zip" in commands[1][-1]
+
 

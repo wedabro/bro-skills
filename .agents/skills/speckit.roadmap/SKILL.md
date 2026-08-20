@@ -9,7 +9,7 @@ Ensure the project is on track according to the long-term vision, managing depen
 ## 📋 Protocol
 
 ### Phase 1: Milestone Definition
-- Create/Update `.agent/ROADMAP.md` .
+- Create/Update `.agents/ROADMAP.md` .
 - Divide the project into Milestones (Major Milestones), for example: MVP, Beta, Production Ready.
 - Each Milestone contains a list of Phases.
 

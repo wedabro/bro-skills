@@ -8,8 +8,8 @@ Review implementation code → ensure correct spec, security, performance.
 
 ## 📥 Input
 - Source code (implemented files)
-- `.agent/specs/[feature]/spec.md` + `plan.md`
-- `.agent/memory/constitution.md`
+- `.agents/specs/[feature]/spec.md` + `plan.md`
+- `.agents/memory/constitution.md`
 
 ## 📋 Protocol
 1. **Spec Compliance**: Does the code correctly implement all requirements in the spec?
@@ -26,7 +26,7 @@ Review implementation code → ensure correct spec, security, performance.
 7. Verdict: ✅ **APPROVE** or ❌ **REQUEST CHANGES** (with list to fix).
 
 ## 📤 Output
-- File: `.agent/memory/review-report.md`
+- File: `.agents/memory/review-report.md`
 
 ## 🚫 Guard Rails
 - DO NOT fix the code yourself — only review and make suggestions.

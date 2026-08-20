@@ -7,9 +7,9 @@ description: Consistency Checker - Analyze consistency between spec, plan, tasks
 Make sure spec.md, plan.md, tasks.md do not conflict and cover all requirements.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/plan.md`
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. **Coverage Check**: Each User Scenario in the spec → must have task(s) in tasks.md.
@@ -27,7 +27,7 @@ Make sure spec.md, plan.md, tasks.md do not conflict and cover all requirements.
 
 ## 📤 Output
 - Console: Gap Analysis table + Coverage Score
-- File: `.agent/memory/analyze-report.md`
+- File: `.agents/memory/analyze-report.md`
 
 ## 🚫 Guard Rails
 - Reporting ONLY — DO NOT arbitrarily edit artifacts.

@@ -45,14 +45,11 @@ Desktop.ini
 
 # Testing & Artifacts
 test-output*/
-.agent/temp/
-.agent/specs/
-.agent/brain/
-.agent/logs/
-#!/.agent/skills/
-#!/.agent/workflows/
-#!/.agent/identity/
-#!/.agent/memory/
+.agents/temp/
+.agents/specs/
+.agents/brain/
+.agents/logs/
+.agent/
 .pytest_cache/
 htmlcov/
 .coverage

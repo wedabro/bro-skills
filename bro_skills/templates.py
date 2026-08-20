@@ -143,7 +143,7 @@ Bạn tuân thủ các tiêu chuẩn của **ASF 3.3**.
 3. **Định hướng Đặc tả**: Không viết code khi chưa có kế hoạch cụ thể.
 4. **Ngữ cảnh là số một**: Tuyệt đối không lập trình khi chưa hiểu rõ lý do "Tại sao".
 5. **bro-skills trước tiên**: Mọi thay đổi và vận hành phải đi qua luồng xử lý của bro-skills.
-6. **Kích hoạt 00-speckit.all Bắt buộc**: Mọi yêu cầu phát triển tính năng BẮT BUỘC phải thực thi `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) trước tiên.
+6. **Kích hoạt 00-speckit.all Bắt buộc**: Mọi yêu cầu phát triển tính năng BẮT BUỘC phải thực thi `/.agents/workflows/00-speckit.all.md` (`/00-speckit.all`) trước tiên.
 """
 
     seo_section = ""
@@ -183,7 +183,7 @@ You follow **ASF 3.3** standards.
 3. **Spec-Driven**: No code without a plan.
 4. **Context is King**: Never code without understanding the "Why".
 5. **bro-skills First**: All changes and operations must go through bro-skills workflows.
-6. **Mandatory 00-speckit.all Execution**: Every feature request MUST execute `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) first.
+6. **Mandatory 00-speckit.all Execution**: Every feature request MUST execute `/.agents/workflows/00-speckit.all.md` (`/00-speckit.all`) first.
 """
 
 def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynamic"):
@@ -209,9 +209,9 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §0 Giao thức bro-skills ({must_label})
 - **{must_label}**: Mọi hoạt động phát triển (Code), kiểm thử (Test) và triển khai (Deploy Production) {shall_label} sử dụng tiện ích `bro-skills`.
-- **Luồng phát triển tính năng bắt buộc**: Khi bắt đầu phát triển bất kỳ tính năng hoặc yêu cầu mới nào, Tác nhân AI (Antigravity hoặc bất kỳ Model AI nào) BẮT BUỘC phải thực thi chuẩn quy trình thông qua `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) trước khi triển khai.
+- **Luồng phát triển tính năng bắt buộc**: Khi bắt đầu phát triển bất kỳ tính năng hoặc yêu cầu mới nào, Tác nhân AI (Antigravity hoặc bất kỳ Model AI nào) BẮT BUỘC phải thực thi chuẩn quy trình thông qua `/.agents/workflows/00-speckit.all.md` (`/00-speckit.all`) trước khi triển khai.
 - **Quy trình**: Tuân thủ nghiêm ngặt quy trình SDLC: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
-- **Công cụ**: Chỉ sử dụng các workflow trong thư mục `.agent/workflows` để thực hiện công việc.
+- **Công cụ**: Chỉ sử dụng các workflow trong thư mục `.agents/workflows` để thực hiện công việc.
 {docker_infra}
 ## §2 An toàn Production & Bảo mật
 - **{forbidden_label}**: Chạy lệnh `docker compose down -v` trên môi trường Production.
@@ -230,7 +230,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §4 Quy trình & Viết Script
 - **Tự động hóa**: Chủ động tạo các script khi gặp lỗi lặp lại hoặc các công việc lặp đi lặp lại.
-- **Git**: Lưu trữ các script trong thư mục `.agent/scripts` và commit vào hệ thống kiểm soát phiên bản.
+- **Git**: Lưu trữ các script trong thư mục `.agents/scripts` và commit vào hệ thống kiểm soát phiên bản.
 - **Tự động Commit**: BẮT BUỘC thực hiện git commit & push ngay sau khi hoàn thành bất kỳ tính năng hoặc tác vụ nào theo chuẩn Conventional Commits.
 - **Cập nhật**: Cập nhật lại các workflow tương ứng sau khi tạo script mới.
 
@@ -260,9 +260,9 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §0 bro-skills Protocol ({must_label})
 - **{must_label}**: All development (Code), testing (Test), and deployment (Deploy Production) activities {shall_label} use `bro-skills`.
-- **Mandatory Feature Workflow**: Whenever starting development on any new feature/requirement, the AI Agent (Antigravity or any AI model) MUST execute `/00-speckit.all` (`.agent/workflows/00-speckit.all.md`) before implementation.
+- **Mandatory Feature Workflow**: Whenever starting development on any new feature/requirement, the AI Agent (Antigravity or any AI model) MUST execute `/00-speckit.all` (`.agents/workflows/00-speckit.all.md`) before implementation.
 - **Pipeline**: Strictly adhere to the SDLC pipeline: Specify → Plan → Tasks → Implement.
-- **Tools**: Only use workflows under `.agent/workflows` to execute tasks.
+- **Tools**: Only use workflows under `.agents/workflows` to execute tasks.
 {docker_infra}
 ## §2 Security & Production Safety
 - **{forbidden_label}**: Running `docker compose down -v` on Production.
@@ -283,7 +283,7 @@ def doc_constitution_template(use_docker=True, is_soft_rules=False, lang="dynami
 
 ## §4 Workflow & Scripting
 - **Automation**: Create scripts when encountering errors or repetitive tasks.
-- **Git**: Save scripts in `.agent/scripts` and commit them to version control.
+- **Git**: Save scripts in `.agents/scripts` and commit them to version control.
 - **Verified Commits**: {shall_label} commit completed, verified atomic tasks
   using Conventional Commits. Push only when the user explicitly requests
   publishing or the active workflow includes an approved remote-publish boundary.
@@ -522,7 +522,7 @@ def script_create_feature():
 # Create new feature branch + specs directory
 set -e
 FEATURE_NAME=${1:?"Usage: ./create-new-feature.sh <feature-name>"}
-SPECS_DIR=".agent/specs/$FEATURE_NAME"
+SPECS_DIR=".agents/specs/$FEATURE_NAME"
 mkdir -p "$SPECS_DIR"
 echo "✅ Created specs directory: $SPECS_DIR"
 echo "📋 Next: Run /02-speckit.specify to create spec.md"
@@ -533,7 +533,7 @@ def script_setup_plan():
 # Locate feature spec for planning
 set -e
 FEATURE_NAME=${1:?"Usage: ./setup-plan.sh <feature-name>"}
-SPEC_FILE=".agent/specs/$FEATURE_NAME/spec.md"
+SPEC_FILE=".agents/specs/$FEATURE_NAME/spec.md"
 if [ ! -f "$SPEC_FILE" ]; then
   echo "❌ spec.md not found at $SPEC_FILE"
   echo "💡 Run /02-speckit.specify first"
@@ -548,7 +548,7 @@ def script_check_prerequisites():
 # Verify prerequisite artifacts exist
 set -e
 FEATURE_NAME=${1:?"Usage: ./check-prerequisites.sh <feature-name>"}
-SPECS_DIR=".agent/specs/$FEATURE_NAME"
+SPECS_DIR=".agents/specs/$FEATURE_NAME"
 ERRORS=0
 for f in spec.md plan.md tasks.md; do
   if [ ! -f "$SPECS_DIR/$f" ]; then
@@ -570,12 +570,12 @@ def script_update_context():
 # Update agent context files after changes
 set -e
 echo "🔄 Updating agent context..."
-if [ -f ".agent/memory/constitution.md" ]; then
+if [ -f ".agents/memory/constitution.md" ]; then
   echo "✅ Constitution: OK"
 else
   echo "⚠️  Constitution missing — run /01-speckit.constitution"
 fi
-if [ -d ".agent/identity" ]; then
+if [ -d ".agents/identity" ]; then
   echo "✅ Identity: OK"
 else
   echo "⚠️  Identity missing — run bro-skills init"
@@ -610,14 +610,14 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
         return f"""Project: {project_name}
 
 ## 1. MỆNH LỆNH TỐI THƯỢNG
-- {must_label_vi} tệp `.agent/memory/constitution.md`.
+- {must_label_vi} tệp `.agents/memory/constitution.md`.
 {docker_rule_vi}
 {port_rule_vi}
 
 ## 2. GIAO THỨC bro-skills
-- **Kích hoạt Workflow tính năng bắt buộc**: Khi bắt đầu phát triển hoặc gọi bất kỳ tính năng nào, Tác nhân AI (Antigravity hoặc bất kỳ Model nào) BẮT BUỘC phải gọi workflow `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) để thực thi chuẩn quy trình SDLC (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze).
+- **Kích hoạt Workflow tính năng bắt buộc**: Khi bắt đầu phát triển hoặc gọi bất kỳ tính năng nào, Tác nhân AI (Antigravity hoặc bất kỳ Model nào) BẮT BUỘC phải gọi workflow `/.agents/workflows/00-speckit.all.md` (`/00-speckit.all`) để thực thi chuẩn quy trình SDLC (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze).
 - Mọi tác vụ {shall_label_vi} đi qua quy trình: Đặc tả (Specify) → Kế hoạch (Plan) → Tác vụ (Tasks) → Thực thi (Implement).
-- Sử dụng các Workflow trong `.agent/workflows/` và các Skill trong `.agent/skills/`.
+- Sử dụng các Workflow trong `.agents/workflows/` và các Skill trong `.agents/skills/`.
 
 ## 3. NGÔN NGỮ & MÃ NGUỒN
 - Trả lời bằng tiếng Việt.
@@ -627,7 +627,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 
 ## 4. AN TOÀN HỆ THỐNG
 - {forbidden_label_vi} chạy lệnh `docker compose down -v` trên môi trường Production.
-- Tự động tạo script (`.agent/scripts/`) cho các lỗi lặp đi lặp lại.
+- Tự động tạo script (`.agents/scripts/`) cho các lỗi lặp đi lặp lại.
 - Kiểm tra logs ngay lập tức khi xảy ra lỗi: `docker compose logs -f <service>`.
 - **Tự động Commit**: BẮT BUỘC thực hiện git commit & push ngay sau khi hoàn thành bất kỳ tính năng hoặc tác vụ nào theo chuẩn Conventional Commits.
 
@@ -647,14 +647,14 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
     return f"""Project: {project_name}
 
 ## 1. SUPREME ORDER
-- {must_label} the `.agent/memory/constitution.md` file.
+- {must_label} the `.agents/memory/constitution.md` file.
 {docker_rule}
 {port_rule}
 
 ## 2. bro-skills PROTOCOL
-- **Mandatory Feature Workflow**: Whenever requested to develop or implement any new feature/requirement, the Agent (Antigravity or any AI model) MUST trigger `/.agent/workflows/00-speckit.all.md` (`/00-speckit.all`) to run the full SDLC pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) before implementation.
+- **Mandatory Feature Workflow**: Whenever requested to develop or implement any new feature/requirement, the Agent (Antigravity or any AI model) MUST trigger `/.agents/workflows/00-speckit.all.md` (`/00-speckit.all`) to run the full SDLC pipeline (Brainstorm → Specify → Clarify → Plan → Tasks → Analyze) before implementation.
 - Every task {shall_label} go through the process: Specify → Plan → Tasks → Implement.
-- Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
+- Use Workflows in `.agents/workflows/` and Skills in `.agents/skills/`.
 
 ## 3. LANGUAGE & CODE
 {lang_instruction}
@@ -664,7 +664,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 
 ## 4. SAFETY
 - {forbidden_label} run `docker compose down -v` on Production.
-- Generate automatic scripts (`.agent/scripts/`) for recurring errors.
+- Generate automatic scripts (`.agents/scripts/`) for recurring errors.
 - Check logs immediately on error: `docker compose logs -f <service>`.
 - **Verified Commits**: Commit completed, verified atomic tasks using
   Conventional Commits. Push only when the user explicitly requests publishing
@@ -678,7 +678,7 @@ def _core_rules_content(project_name="Project", use_docker=True, is_soft_rules=F
 
 
 def doc_antigravity_rules_template(project_name="Project", use_docker=True, is_soft_rules=False, lang="dynamic"):
-    """Antigravity IDE (Google) — .agent/rules/bro-skills.md"""
+    """Antigravity IDE (Google) — .agents/rules/bro-skills.md"""
     return f"""---
 trigger: always_on
 glob: "**/*"
@@ -722,20 +722,20 @@ def doc_vscode_copilot_template(project_name="Project", use_docker=True, is_soft
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## Tài liệu tham khảo
-- Hiến pháp: `.agent/memory/constitution.md`
-- Hạ tầng: `.agent/knowledge_base/infrastructure.md`
-- Quy trình (Workflows): `.agent/workflows/`
-- Năng lực (Skills): `.agent/skills/`
+- Hiến pháp: `.agents/memory/constitution.md`
+- Hạ tầng: `.agents/knowledge_base/infrastructure.md`
+- Quy trình (Workflows): `.agents/workflows/`
+- Năng lực (Skills): `.agents/skills/`
 """
     return f"""# Copilot Instructions for {project_name}
 
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## References
-- Constitution: `.agent/memory/constitution.md`
-- Infrastructure: `.agent/knowledge_base/infrastructure.md`
-- Workflows: `.agent/workflows/`
-- Skills: `.agent/skills/`
+- Constitution: `.agents/memory/constitution.md`
+- Infrastructure: `.agents/knowledge_base/infrastructure.md`
+- Workflows: `.agents/workflows/`
+- Skills: `.agents/skills/`
 """
 
 
@@ -775,8 +775,8 @@ Shell: PowerShell 5.1+ (Windows)
 
 ## Quy trình phát triển
 - Tuân thủ Spec-Driven Development (SDD): Đặc tả → Kế hoạch → Tác vụ → Thực thi.
-- Thư mục Đặc tả: `.agent/specs/`
-- Hiến pháp dự án: `.agent/memory/constitution.md`
+- Thư mục Đặc tả: `.agents/specs/`
+- Hiến pháp dự án: `.agents/memory/constitution.md`
 - Quy tắc 15 phút: Mỗi tác vụ phải mang tính nguyên tử, ≤ 15 phút, ảnh hưởng ≤ 3 tệp.
 
 ## Môi trường
@@ -808,8 +808,8 @@ Shell: PowerShell 5.1+ (Windows)
 
 ## Development Protocol
 - Follow Spec-Driven Development (SDD): Specify → Plan → Tasks → Implement.
-- Specs directory: `.agent/specs/`
-- Constitution: `.agent/memory/constitution.md`
+- Specs directory: `.agents/specs/`
+- Constitution: `.agents/memory/constitution.md`
 - 15-Minute Rule: Each task must be atomic, ≤ 15 minutes, affecting ≤ 3 files.
 
 ## Environment
@@ -835,24 +835,24 @@ def doc_claude_md_template(project_name="Project", use_docker=True, is_soft_rule
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## Cấu trúc dự án
-- `.agent/memory/constitution.md` — Hiến pháp dự án (Nguồn luật tối cao)
-- `.agent/identity/master-identity.md` — Định danh nhân vật & Linh hồn AI
-- `.agent/knowledge_base/` — Cơ sở tri thức nghiệp vụ (hạ tầng, dữ liệu, API)
-- `.agent/skills/` — Năng lực của Agent (gọi bằng @)
-- `.agent/workflows/` — Quy trình tự động hóa (gọi bằng /)
-- `.agent/specs/` — Đặc tả tính năng
+- `.agents/memory/constitution.md` — Hiến pháp dự án (Nguồn luật tối cao)
+- `.agents/identity/master-identity.md` — Định danh nhân vật & Linh hồn AI
+- `.agents/knowledge_base/` — Cơ sở tri thức nghiệp vụ (hạ tầng, dữ liệu, API)
+- `.agents/skills/` — Năng lực của Agent (gọi bằng @)
+- `.agents/workflows/` — Quy trình tự động hóa (gọi bằng /)
+- `.agents/specs/` — Đặc tả tính năng
 """
     return f"""# {project_name}
 
 {_core_rules_content(project_name, use_docker, is_soft_rules, lang)}
 
 ## Project Structure
-- `.agent/memory/constitution.md` — Project Constitution (Source of Law)
-- `.agent/identity/master-identity.md` — AI Persona & Soul
-- `.agent/knowledge_base/` — Domain knowledge (infrastructure, data, API)
-- `.agent/skills/` — AI skills (@mentions)
-- `.agent/workflows/` — Automation workflows (/commands)
-- `.agent/specs/` — Feature specifications
+- `.agents/memory/constitution.md` — Project Constitution (Source of Law)
+- `.agents/identity/master-identity.md` — AI Persona & Soul
+- `.agents/knowledge_base/` — Domain knowledge (infrastructure, data, API)
+- `.agents/skills/` — AI skills (@mentions)
+- `.agents/workflows/` — Automation workflows (/commands)
+- `.agents/specs/` — Feature specifications
 """
 
 

@@ -10,7 +10,7 @@
 
 ## 🎯 Mục tiêu
 
-Công cụ này tự động tạo cấu trúc `.agent/` tiêu chuẩn cho Antigravity IDE, bao gồm:
+Công cụ này tự động tạo cấu trúc `.agents/` tiêu chuẩn cho Antigravity IDE, bao gồm:
 
 - **Skills** (46 skill lõi được sinh tự động + 13 skill mở rộng trong repository) — Các năng lực AI cho từng giai đoạn SDLC, builder theo domain và các gói thiết kế/tạo ảnh tùy chọn.
 - **Workflows** (37 workflows) — Các lệnh điều phối với điều kiện tiền quyết, kiểm tra cổng chặn và tiêu chí thành công.
@@ -217,7 +217,7 @@ bro-skills update
 
 ```
 Bước 0: Khởi tạo → bro-skills init --name "My Project"
-    ↓ Tạo khoảng 90 tệp tin trong thư mục .agent/
+    ↓ Tạo khoảng 90 tệp tin trong thư mục .agents/
     ↓
 Bước 1: Thiết lập hiến pháp → /01-speckit.constitution
     ↓ Thiết lập "luật" cho dự án (tech stack, nguyên tắc)
@@ -264,8 +264,8 @@ Bước 6: Thực thi → /07-speckit.implement
 bro-skills init --target /path/to/project --name "My Project"
 ```
 
-- Tạo cấu trúc `.agent/` phù hợp từng dự án từ 46 skill lõi và 37 workflow, cùng templates, scripts, identity, knowledge base, constitution và README
-- Mở thư mục dự án trong Antigravity IDE — tác nhân AI sẽ tự động nhận diện thư mục `.agent/`
+- Tạo cấu trúc `.agents/` phù hợp từng dự án từ 46 skill lõi và 37 workflow, cùng templates, scripts, identity, knowledge base, constitution và README
+- Mở thư mục dự án trong Antigravity IDE — tác nhân AI sẽ tự động nhận diện thư mục `.agents/`
 
 #### Bước 1 — `/01-speckit.constitution` ⚠️ BẮT BUỘC
 
@@ -361,7 +361,7 @@ bro-skills init --target /path/to/project --name "My Project"
 
 ```
 Bước 0: Khởi tạo → bro-skills init --target /path/to/existing --name "Legacy Project"
-    ↓ Tạo thư mục .agent/ NGAY TRONG dự án hiện tại
+    ↓ Tạo thư mục .agents/ NGAY TRONG dự án hiện tại
     ↓
 Bước 1: Thiết lập hiến pháp → /01-speckit.constitution
     ↓ Khai báo tech stack HIỆN TẠI + các nguyên tắc MỚI
@@ -392,7 +392,7 @@ Bước 5: Thực thi → /07-speckit.implement
 ### Ví dụ thực tế
 
 ```bash
-# 1. Khởi tạo — tạo cấu trúc .agent/ trong thư mục dự án cũ
+# 1. Khởi tạo — tạo cấu trúc .agents/ trong thư mục dự án cũ
 bro-skills init --target /path/to/dinhchopmonngon --name "DinhChopMonNgon"
 
 # 2. Hiến pháp — khai báo công nghệ hiện hành
@@ -427,10 +427,10 @@ Mỗi lần AI thực thi viết code, 4 giao thức sau bắt buộc phải đ�
 
 ---
 
-## 📂 Cấu trúc thư mục .agent/ được tạo ra
+## 📂 Cấu trúc thư mục .agents/ được tạo ra
 
 ```
-.agent/
+.agents/
 ├── identity/                  # Lớp định danh nhân vật AI
 │   └── master-identity.md     # Persona, Linh hồn, Năng lực cốt lõi của Agent
 │
@@ -559,7 +559,7 @@ bro-skills/
     ├── workflow_templates.py  # Định nghĩa cấu hình mẫu cho các Workflow
     ├── templates.py           # Tổng hợp các mẫu tài liệu và tiện ích
     ├── scanner.py             # Quét mã nguồn tự động nhận dạng tech stack, DB, Docker, API
-    ├── generator.py           # Engine điều phối chính để khởi tạo thư mục .agent/
+    ├── generator.py           # Engine điều phối chính để khởi tạo thư mục .agents/
     └── validators.py          # Bộ kiểm tra tính hợp lệ với 10 cổng xác thực
 ```
 
@@ -571,14 +571,14 @@ bro-skills validate --target /path/to/project
 
 | # | Cổng kiểm tra | Mô tả |
 |---|-------|-------|
-| 1 | Thư mục `.agent/` | Phải tồn tại trong dự án |
+| 1 | Thư mục `.agents/` | Phải tồn tại trong dự án |
 | 2 | Thư mục cốt lõi | Phải có đủ: skills/, workflows/, templates/, scripts/, memory/ |
 | 3 | Danh sách Skills | Phải chứa đầy đủ 38 thư mục con kèm file SKILL.md |
 | 4 | Danh sách Workflows| Phải chứa đủ 33 tệp định dạng `.md` |
 | 5 | Danh sách Templates| Phải chứa đủ 7 tệp tài liệu mẫu |
 | 6 | Danh sách Scripts | Phải chứa đủ 4 tệp tiện ích bash shell |
 | 7 | Hiến pháp | Phải tồn tại `memory/constitution.md` |
-| 8 | Hướng dẫn sử dụng | Phải có tệp `.agent/README.md` |
+| 8 | Hướng dẫn sử dụng | Phải có tệp `.agents/README.md` |
 | 9 | Chất lượng nội dung| Dung lượng mỗi tệp `SKILL.md` phải lớn hơn 100 bytes |
 | 10| Frontmatter | Mỗi tệp workflow bắt buộc phải khai báo YAML header |
 

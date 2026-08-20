@@ -8,7 +8,7 @@ Scan legacy codebase → create spec + preliminary plan → evaluate tech debt �
 
 ## 📥 Input
 - Existing codebase (source code, configs, DB schema)
-- `.agent/memory/constitution.md` (target standards)
+- `.agents/memory/constitution.md` (target standards)
 
 ## 📋 Protocol
 1. **Scan Phase**: Use ProjectScanner patterns to detect:
@@ -26,8 +26,8 @@ Scan legacy codebase → create spec + preliminary plan → evaluate tech debt �
 4. **Migration Sequence**: Suggested migration order (less risk first).
 
 ## 📤 Output
-- `.agent/specs/migration/spec.md` (draft)
-- `.agent/specs/migration/migration-risk.md`
+- `.agents/specs/migration/spec.md` (draft)
+- `.agents/specs/migration/migration-risk.md`
 
 ## 🚫 Guard Rails
 - DO NOT refactor code in this step — just analyze and document.

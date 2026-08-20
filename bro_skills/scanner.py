@@ -1,5 +1,5 @@
 """
-Scanner - Scan the existing codebase to auto-populate .agent/ files.
+Scanner - Scan the existing codebase to auto-populate .agents/ files.
 Understand the project through config files, source code, and folder structure.
 """
 
@@ -698,7 +698,7 @@ class ProjectScanner:
     def _scan_source_structure(self):
         """Scan folder structure at level 1-2 to understand the architecture."""
         ignore_dirs = {
-            "node_modules", ".git", ".next", ".agent", "__pycache__",
+            "node_modules", ".git", ".next", ".agent", ".agents", "__pycache__",
             "dist", "build", ".cache", ".turbo", "coverage",
             "test-output", "test-output-deep", "test-output-infra",
         }
@@ -709,7 +709,7 @@ class ProjectScanner:
 
             for item in sorted(os.listdir(self.target_dir)):
                 if item.startswith(".") and item not in (".env.example",):
-                    if item == ".agent":
+                    if item in (".agent", ".agents"):
                         self.profile["source_structure"].append(f"📁 {item}/ (Agent config)")
                     continue
                 if item in ignore_dirs:

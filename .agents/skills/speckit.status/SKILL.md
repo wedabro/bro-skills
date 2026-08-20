@@ -7,7 +7,7 @@ description: Progress Dashboard - Displays project progress status.
 Parse tasks.md → calculate progress → display visual dashboard.
 
 ## 📥 Input
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. Parse tasks.md → count checkboxes:

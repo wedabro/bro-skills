@@ -7,8 +7,8 @@ description: Requirements Validator - Create and validate checklist from spec.
 Extract all functional requirements from spec.md into a trackable checklist.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/tasks.md` (if available)
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/tasks.md` (if available)
 
 ## 📋 Protocol
 1. Read spec.md → extract all requirements (from User Scenarios + Success Criteria).
@@ -23,7 +23,7 @@ Extract all functional requirements from spec.md into a trackable checklist.
 4. Enter status: ✅ Met / ❌ Not Met / ⚠️ Partial.
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/checklist.md`
+- File: `.agents/specs/[feature]/checklist.md`
 
 ## 🚫 Guard Rails
 - Each requirement MUST be quoted from spec.md (not made up).

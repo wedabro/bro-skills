@@ -7,8 +7,8 @@ description: UI/UX Architect - Definition of Design System Anti-Slop, UI Compone
 Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium, professional, unique interface and ABSOLUTELY no "AI slops" (avoid AI's boring default designs).
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md` (contains User Scenarios)
-- `.agent/memory/constitution.md` (tech stack constraints)
+- `.agents/specs/[feature]/spec.md` (contains User Scenarios)
+- `.agents/memory/constitution.md` (tech stack constraints)
 - Brand guidelines (if any)
 
 ## 📋 Protocol
@@ -53,8 +53,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
   - Tactile feedback using a built-in utility such as `active:scale-95`.
 
 ## 📤 Output
-- File: `.agent/knowledge_base/ui_ux_standards.md`
-- File: `.agent/specs/[feature]/ui-specs.md` (for each feature)
+- File: `.agents/knowledge_base/ui_ux_standards.md`
+- File: `.agents/specs/[feature]/ui-specs.md` (for each feature)
 
 ## 🚫 Guard Rails
 - FORBIDDEN: Modifying the main page layout shell without asking and getting explicit user approval.

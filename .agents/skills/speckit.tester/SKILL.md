@@ -8,8 +8,8 @@ Make sure the implementation has full test coverage and passes 100%.
 
 ## 📥 Input
 - Source code (implemented files)
-- `.agent/specs/[feature]/tasks.md` (completed tasks)
-- `.agent/specs/[feature]/spec.md` (success criteria)
+- `.agents/specs/[feature]/tasks.md` (completed tasks)
+- `.agents/specs/[feature]/spec.md` (success criteria)
 
 ## 📋 Protocol
 1. **Test Plan**: From tasks.md (completed) → list functions/routes to test.
@@ -32,7 +32,7 @@ Make sure the implementation has full test coverage and passes 100%.
 
 ## 📤 Output
 - Test files (theo convention: `*.test.ts`, `*.spec.ts`)
-- File: `.agent/memory/test-report.md`
+- File: `.agents/memory/test-report.md`
 
 ## 🚫 Guard Rails
 - DO NOT skip error path tests — must also test failing cases.

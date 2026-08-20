@@ -7,8 +7,8 @@ description: Task Breaker - Create atomic tasks.md, with dependency order from p
 Convert plan.md into a list of atomic tasks, ordered by dependency, each task ≤15 minutes.
 
 ## 📥 Input
-- `.agent/specs/[feature]/plan.md`
-- `.agent/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/spec.md`
 
 ## 📋 Protocol
 1. Read plan.md → break down each component into atomic tasks.
@@ -32,7 +32,7 @@ Convert plan.md into a list of atomic tasks, ordered by dependency, each task �
 5. **15-Minute Rule**: Each task takes ≤ 15 minutes, affects ≤ 3 files.
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/tasks.md`
+- File: `.agents/specs/[feature]/tasks.md`
 
 ## 🚫 Guard Rails
 - DO NOT create tasks that are too large (>3 files or >15 minutes).

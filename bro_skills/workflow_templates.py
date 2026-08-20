@@ -16,14 +16,14 @@ description: Full Pipeline (Brainstorm → Specify → Clarify → Plan → Task
 
 0. **Brainstorm & Align** — Discuss and clarify requirements with the User, propose solution alternatives (with pros/cons), and get final confirmation.
 1. **@speckit.map** — (IF old project) Scans the structure and understands the current codebase.
-   - Output: `.agent/codebase/` docs.
+   - Output: `.agents/codebase/` docs.
 
 2. **@speckit.specify** — Generates spec.md from feature description.
-   - Output: `.agent/specs/[feature]/spec.md`.
+   - Output: `.agents/specs/[feature]/spec.md`.
 
 3. **@speckit.clarify** — Resolve ambiguity and close User Scenarios.
 
-4. **@speckit.roadmap** — Updated `.agent/ROADMAP.md` with new Phase/Milestone.
+4. **@speckit.roadmap** — Updated `.agents/ROADMAP.md` with new Phase/Milestone.
 
 5. **@speckit.plan** — Create architecture (Goal-Backward).
    - Output: plan.md, must_haves.
@@ -48,7 +48,7 @@ description: Establish/update Constitution (Source of Law)
 # 📜 Constitution Setup
 
 ## Pre-conditions
-- `.agent/` directory already exists (run `bro-skills init` first)
+- `.agents/` directory already exists (run `bro-skills init` first)
 
 ## Steps
 
@@ -57,7 +57,7 @@ description: Establish/update Constitution (Source of Law)
    - Docker port configuration
    - Coding principles (VD: No hardcode, Docker-first)
    - Security requirements
-2. Create/update `.agent/memory/constitution.md`
+2. Create/update `.agents/memory/constitution.md`
 3. Validate: Each section has ≥1 specific rule
 
 ## Success Criteria
@@ -75,7 +75,7 @@ description: Create Feature Specification (spec.md)
 # 📝 Feature Specification
 
 ## Pre-conditions
-- `.agent/memory/constitution.md` exists
+- `.agents/memory/constitution.md` exists
 - **Brainstorm & Align session is completed and confirmed by the User**
 
 ## Steps
@@ -101,7 +101,7 @@ description: Resolve ambiguity in Specification
 # 🔍 Ambiguity Resolution
 
 ## Pre-conditions
-- `.agent/specs/[feature]/spec.md` exists
+- `.agents/specs/[feature]/spec.md` exists
 
 ## Steps
 
@@ -146,8 +146,8 @@ description: Create Task Breakdown (tasks.md)
 # 📋 Task Breakdown
 
 ## Pre-conditions
-- `.agent/specs/[feature]/plan.md` exists
-- `.agent/specs/[feature]/spec.md` exists
+- `.agents/specs/[feature]/plan.md` exists
+- `.agents/specs/[feature]/spec.md` exists
 
 ## Steps
 
@@ -235,7 +235,7 @@ description: Run Static Analysis
 3. Run every applicable repository-defined command in the runtime required by
    the constitution. Mark unavailable checks `N/A` with a reason.
 4. Report every finding with a specific file and line while redacting secrets.
-5. Write `.agent/memory/checker-report.md`.
+5. Write `.agents/memory/checker-report.md`.
 
 ## Success Criteria
 - ✅ Every applicable compile/type/lint check passes
@@ -318,7 +318,7 @@ description: Validate Implementation vs Spec
 5. Mark non-applicable checks `N/A` with a reason and block on any failed
    applicable check.
 6. Verify constitutional compliance and write
-   `.agent/memory/validation-report.md`.
+   `.agents/memory/validation-report.md`.
 
 ## Success Criteria
 
@@ -337,7 +337,7 @@ description: Technical SEO Audit & Optimization
 
 ## Pre-conditions
 - Public pages implemented
-- `.agent/knowledge_base/seo_standards.md` exists
+- `.agents/knowledge_base/seo_standards.md` exists
 
 ## Steps
 
@@ -388,8 +388,8 @@ description: Create/update Master Identity for AI Agent
 # 🆔 Identity Setup
 
 ## Pre-conditions
-- `.agent/project.json` exists (run `bro-skills init` first)
-- `.agent/memory/constitution.md` exists (recommended)
+- `.agents/project.json` exists (run `bro-skills init` first)
+- `.agents/memory/constitution.md` exists (recommended)
 
 ## Steps
 
@@ -397,7 +397,7 @@ description: Create/update Master Identity for AI Agent
    - Read `project.json` → project type, name
    - Read `constitution.md` → tech stack, principles
    - Scan codebase → existing patterns, conventions
-2. Create/update `.agent/identity/master-identity.md` :
+2. Create/update `.agents/identity/master-identity.md` :
    - Persona + Core Capabilities
    - Soul (Core Beliefs): "bro-skills First", "Docker is the Law"
    - Project Context (auto-detected)
@@ -419,7 +419,7 @@ description: Docker Infrastructure & Port Allocation (ENV-first)
 # 🐳 DevOps Infrastructure Setup
 
 ## Pre-conditions
-- `.agent/memory/constitution.md` exists
+- `.agents/memory/constitution.md` exists
 - Docker Desktop (local) or Docker Engine (server) installed
 
 ## Steps
@@ -488,7 +488,7 @@ Scan TCP bind availability on 127.0.0.1 for available ports.
 - Only EXPOSE ports are needed
 
 ### Step 6: Documentation
-- Update `.agent/knowledge_base/infrastructure.md`
+- Update `.agents/knowledge_base/infrastructure.md`
 - Update `.env.example` with all port vars
 
 ## Success Criteria
@@ -696,7 +696,7 @@ description: Set up/update UI/UX Design System & Standards
 2. Recommended Brand Palette & Typography
 3. Definition of Spacing & Grid system
 4. Set up Core Components (Buttons, Cards, Inputs)
-5. Output/Update: `.agent/knowledge_base/ui_ux_standards.md`
+5. Output/Update: `.agents/knowledge_base/ui_ux_standards.md`
 
 ## Success Criteria
 - ✅ `ui_ux_standards.md` exists with all sections Brand, Typography, Components.
@@ -794,9 +794,9 @@ description: Multi-Agent Orchestration - Select and coordinate agents by project
 # 🧭 Multi-Agent Orchestration
 
 ## Pre-conditions
-- `.agent/project.json` exists (has `project_type` + `attributes` )
-- `.agent/agents/registry.json` exists
-- `.agent/memory/constitution.md` exists
+- `.agents/project.json` exists (has `project_type` + `attributes` )
+- `.agents/agents/registry.json` exists
+- `.agents/memory/constitution.md` exists
 
 ## Steps
 

@@ -10,7 +10,7 @@ Bridging the actual user experience and code logic, ensuring features run as cus
 
 ### Phase 1: UAT Intake (Acceptance)
 - Collect manual user feedback after each Phase.
-- Recorded in `.agent/verification/[phase]-UAT.md` .
+- Recorded in `.agents/verification/[phase]-UAT.md` .
 
 ### Phase 2: Gap Analysis (Gap Analysis)
 - Compare the actual results User reports with the original Spec.md.

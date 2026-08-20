@@ -7,7 +7,7 @@ description: Issue Tracker Syncer - Synchronize tasks.md to issue tracker.
 Parse tasks.md → create issues ready to import into GitHub/GitLab/Jira.
 
 ## 📥 Input
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. Parse each task → extract: ID, title, description, phase, user story link.
@@ -21,10 +21,10 @@ Parse tasks.md → create issues ready to import into GitHub/GitLab/Jira.
    - Acceptance: User can register with email/password
    ```
 3. Group issues by Phase → create Milestones.
-4. Output file `.agent/memory/issues-export.md`.
+4. Output file `.agents/memory/issues-export.md`.
 
 ## 📤 Output
-- File: `.agent/memory/issues-export.md`
+- File: `.agents/memory/issues-export.md`
 
 ## 🚫 Guard Rails
 - DO NOT create an issue on the remote — just generate an export file.

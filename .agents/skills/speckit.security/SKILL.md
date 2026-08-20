@@ -7,8 +7,8 @@ description: Security Auditor - Audit application security using OWASP guidance,
 Ensuring full lifecycle security: auditing code according to OWASP, detecting secret leaks, scanning dependency vulnerabilities, threat modeling for sensitive features.
 
 ## 📥 Input
-- Codebase + `.agent/specs/[feature]/spec.md`
-- `.agent/memory/constitution.md` (§2 Security, §3 ENV)
+- Codebase + `.agents/specs/[feature]/spec.md`
+- `.agents/memory/constitution.md` (§2 Security, §3 ENV)
 - Dependency manifest (package.json, requirements.txt...)
 
 ## 📋 Protocol

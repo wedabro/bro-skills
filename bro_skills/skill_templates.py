@@ -16,15 +16,15 @@ role: Persona Architect
 Create and maintain file `master-identity.md` — defines who AI is in this project context.
 
 ## 📥 Input
-- `.agent/project.json` (project type, name)
-- `.agent/memory/constitution.md` (tech stack, principles)
+- `.agents/project.json` (project type, name)
+- `.agents/memory/constitution.md` (tech stack, principles)
 - Codebase scan results (if any)
 
 ## 📋 Protocol
 1. Read `project.json` → determine project type and domain.
 2. Read `constitution.md` → extract tech stack, principles, non-negotiables.
 3. Analyze the codebase (if any) → determine the patterns and conventions in use.
-4. Create/update `.agent/identity/master-identity.md` with sections:
+4. Create/update `.agents/identity/master-identity.md` with sections:
    - **Persona**: Role + expertise domain. **MANDATORY communication in Vietnamese**.
    - **Core Capabilities**: 3-5 main abilities.
    - **Collaboration Style**: How to interact with developers.
@@ -33,7 +33,7 @@ Create and maintain file `master-identity.md` — defines who AI is in this proj
 5. If project type is `web_public` / `fullstack` → add SEO & GEO Awareness section.
 
 ## 📤 Output
-- File: `.agent/identity/master-identity.md`
+- File: `.agents/identity/master-identity.md`
 
 ## 🚫 Guard Rails
 - DO NOT create a persona that is too general — it must be closely tied to the project domain.
@@ -55,7 +55,7 @@ Set up and manage a standardized and secure Docker system for the project.
 Published ports MUST always be configured via environment variables.
 
 ## 📥 Input
-- `.agent/memory/constitution.md` (port range, security rules)
+- `.agents/memory/constitution.md` (port range, security rules)
 - Existing `Dockerfile` , `docker-compose.yml` (if available)
 - `.env.example`
 
@@ -108,13 +108,13 @@ docker compose ps --format json 2>$null
 - Only EXPOSE ports are needed
 
 ### 5. Documentation:
-- Update `.agent/knowledge_base/infrastructure.md` with the results
+- Update `.agents/knowledge_base/infrastructure.md` with the results
 - Update `.env.example` with all port vars
 
 ## 📤 Output
 - Files: `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`, `.dockerignore`
 - Config: `.env` (ports), `.env.example` (documented)
-- Doc: `.agent/knowledge_base/infrastructure.md` (updated)
+- Doc: `.agents/knowledge_base/infrastructure.md` (updated)
 
 ## 🚫 Guard Rails
 - Flexibly configure ports via environment variables (.env) to avoid conflicts.
@@ -137,9 +137,9 @@ role: Consistency Analyst
 Make sure spec.md, plan.md, tasks.md do not conflict and cover all requirements.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/plan.md`
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. **Coverage Check**: Each User Scenario in the spec → must have task(s) in tasks.md.
@@ -157,7 +157,7 @@ Make sure spec.md, plan.md, tasks.md do not conflict and cover all requirements.
 
 ## 📤 Output
 - Console: Gap Analysis table + Coverage Score
-- File: `.agent/memory/analyze-report.md`
+- File: `.agents/memory/analyze-report.md`
 
 ## 🚫 Guard Rails
 - Reporting ONLY — DO NOT arbitrarily edit artifacts.
@@ -180,8 +180,8 @@ anti-patterns using commands appropriate to the actual project stack.
 
 ## 📥 Input
 - Source code and dependency manifests
-- `.agent/memory/constitution.md` (coding standards)
-- `.agent/project.json` and documented build/test commands
+- `.agents/memory/constitution.md` (coding standards)
+- `.agents/project.json` and documented build/test commands
 - Docker files when the project is containerized
 
 ## 📋 Protocol
@@ -221,7 +221,7 @@ anti-patterns using commands appropriate to the actual project stack.
   behavior according to the framework and project requirements.
 
 ## 📤 Output
-- File: `.agent/memory/checker-report.md`
+- File: `.agents/memory/checker-report.md`
 - Format:
   ```
   ## 🔴 CRITICAL (N issues)
@@ -252,8 +252,8 @@ role: Requirements Auditor
 Extract all functional requirements from spec.md into a trackable checklist.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/tasks.md` (if available)
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/tasks.md` (if available)
 
 ## 📋 Protocol
 1. Read spec.md → extract all requirements (from User Scenarios + Success Criteria).
@@ -268,7 +268,7 @@ Extract all functional requirements from spec.md into a trackable checklist.
 4. Enter status: ✅ Met / ❌ Not Met / ⚠️ Partial.
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/checklist.md`
+- File: `.agents/specs/[feature]/checklist.md`
 
 ## 🚫 Guard Rails
 - Each requirement MUST be quoted from spec.md (not made up).
@@ -287,7 +287,7 @@ role: Clarity Engineer
 Scan spec.md → detect ambiguity → ask developer up to 3 questions → update spec.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/spec.md`
 
 ## 📋 Protocol
 1. Scan spec.md to find:
@@ -314,7 +314,7 @@ Scan spec.md → detect ambiguity → ask developer up to 3 questions → update
 5. Update spec.md with clarifications → mark `[CLARIFIED]` .
 
 ## 📤 Output
-- File: Updated `.agent/specs/[feature]/spec.md`
+- File: Updated `.agents/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
 - MAXIMUM 3 questions — don't ask too many.
@@ -336,7 +336,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 
 ## 📥 Input
 - Developer provides: tech stack, principles, constraints
-- `.agent/knowledge_base/infrastructure.md` (if available)
+- `.agents/knowledge_base/infrastructure.md` (if available)
 
 ## 📋 Protocol
 1. Collected from developers:
@@ -344,7 +344,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
    - Docker ports (cấu hình qua biến môi trường)
    - Coding principles (VD: No hardcode, API-first)
    - Security requirements
-2. Create/update `.agent/memory/constitution.md` with REQUIRED sections:
+2. Create/update `.agents/memory/constitution.md` with REQUIRED sections:
    - **§1 Infrastructure**: Docker-first policy, port allocation, environments
    - **§2 Security**: No root containers, no hardcoded secrets, multi-stage builds
    - **§3 Code Standards**: Language, naming conventions, ENV policy
@@ -368,7 +368,7 @@ Create and maintain constitution.md — the "supreme law" that every agent must 
 3. Validate: Each section must have at least 1 specific rule, not general.
 
 ## 📤 Output
-- File: `.agent/memory/constitution.md`
+- File: `.agents/memory/constitution.md`
 
 ## 🚫 Guard Rails
 - Constitution does NOT contain implementation details (HOW) — only rules (WHAT).
@@ -402,7 +402,7 @@ Compare 2 versions of artifact → highlight changes → evaluate impact.
 
 ## 📤 Output
 - Console: Diff summary table
-- File: `.agent/memory/diff-report.md` (if needed to save)
+- File: `.agents/memory/diff-report.md` (if needed to save)
 
 ## 🚫 Guard Rails
 - Compare and report ONLY — DO NOT arbitrarily edit artifacts.
@@ -460,7 +460,7 @@ Scan legacy codebase → create spec + preliminary plan → evaluate tech debt �
 
 ## 📥 Input
 - Existing codebase (source code, configs, DB schema)
-- `.agent/memory/constitution.md` (target standards)
+- `.agents/memory/constitution.md` (target standards)
 
 ## 📋 Protocol
 1. **Scan Phase**: Use ProjectScanner patterns to detect:
@@ -478,8 +478,8 @@ Scan legacy codebase → create spec + preliminary plan → evaluate tech debt �
 4. **Migration Sequence**: Suggested migration order (less risk first).
 
 ## 📤 Output
-- `.agent/specs/migration/spec.md` (draft)
-- `.agent/specs/migration/migration-risk.md`
+- `.agents/specs/migration/spec.md` (draft)
+- `.agents/specs/migration/migration-risk.md`
 
 ## 🚫 Guard Rails
 - DO NOT refactor code in this step — just analyze and document.
@@ -541,8 +541,8 @@ role: Red Team Analyst
 Challenge spec + plan with edge-case questions, find logic flaws before implementation.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
 
 ## 📋 Protocol
 1. Read spec + plan → find implicit assumptions.
@@ -557,7 +557,7 @@ Challenge spec + plan with edge-case questions, find logic flaws before implemen
 
 ## 📤 Output
 - Console: Interactive Q&A session
-- File: `.agent/memory/quizme-findings.md` (if issues are detected)
+- File: `.agents/memory/quizme-findings.md` (if issues are detected)
 
 ## 🚫 Guard Rails
 - MAXIMUM 5 questions — don't overwhelm the developer.
@@ -578,8 +578,8 @@ Review implementation code → ensure correct spec, security, performance.
 
 ## 📥 Input
 - Source code (implemented files)
-- `.agent/specs/[feature]/spec.md` + `plan.md`
-- `.agent/memory/constitution.md`
+- `.agents/specs/[feature]/spec.md` + `plan.md`
+- `.agents/memory/constitution.md`
 
 ## 📋 Protocol
 1. **Spec Compliance**: Does the code correctly implement all requirements in the spec?
@@ -596,7 +596,7 @@ Review implementation code → ensure correct spec, security, performance.
 7. Verdict: ✅ **APPROVE** or ❌ **REQUEST CHANGES** (with list to fix).
 
 ## 📤 Output
-- File: `.agent/memory/review-report.md`
+- File: `.agents/memory/review-report.md`
 
 ## 🚫 Guard Rails
 - DO NOT fix the code yourself — only review and make suggestions.
@@ -617,7 +617,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
 
 ## 📥 Input
 - Feature description from developer (free text)
-- `.agent/memory/constitution.md` (constraints)
+- `.agents/memory/constitution.md` (constraints)
 
 ## 📋 Protocol
 1. Read description → extract:
@@ -625,7 +625,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
    - **Actions**: Do what? (CRUD, search, filter, export)
    - **Data**: What data? (entities, fields, relationships)
    - **Constraints**: What limits? (auth, permissions, limits)
-2. Create `.agent/specs/[feature]/spec.md` with REQUIRED format:
+2. Create `.agents/specs/[feature]/spec.md` with REQUIRED format:
    ```markdown
    ---
    title: [Feature Name]
@@ -653,7 +653,7 @@ Pass natural language description → standardized spec.md (WHAT, not HOW).
 4. Each Functional Requirement MUST be measurable (have specific data).
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/spec.md`
+- File: `.agents/specs/[feature]/spec.md`
 
 ## 🚫 Guard Rails
 - DO NOT write implementation details (HOW) — just describe WHAT.
@@ -674,7 +674,7 @@ role: Progress Tracker
 Parse tasks.md → calculate progress → display visual dashboard.
 
 ## 📥 Input
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. Parse tasks.md → count checkboxes:
@@ -713,8 +713,8 @@ role: Execution Strategist
 Convert plan.md into a list of atomic tasks, ordered by dependency, each task ≤15 minutes.
 
 ## 📥 Input
-- `.agent/specs/[feature]/plan.md`
-- `.agent/specs/[feature]/spec.md`
+- `.agents/specs/[feature]/plan.md`
+- `.agents/specs/[feature]/spec.md`
 
 ## 📋 Protocol
 1. Read plan.md → break down each component into atomic tasks.
@@ -738,7 +738,7 @@ Convert plan.md into a list of atomic tasks, ordered by dependency, each task �
 5. **15-Minute Rule**: Each task takes ≤ 15 minutes, affects ≤ 3 files.
 
 ## 📤 Output
-- File: `.agent/specs/[feature]/tasks.md`
+- File: `.agents/specs/[feature]/tasks.md`
 
 ## 🚫 Guard Rails
 - DO NOT create tasks that are too large (>3 files or >15 minutes).
@@ -759,7 +759,7 @@ role: Issue Syncer
 Parse tasks.md → create issues ready to import into GitHub/GitLab/Jira.
 
 ## 📥 Input
-- `.agent/specs/[feature]/tasks.md`
+- `.agents/specs/[feature]/tasks.md`
 
 ## 📋 Protocol
 1. Parse each task → extract: ID, title, description, phase, user story link.
@@ -773,10 +773,10 @@ Parse tasks.md → create issues ready to import into GitHub/GitLab/Jira.
    - Acceptance: User can register with email/password
    ```
 3. Group issues by Phase → create Milestones.
-4. Output file `.agent/memory/issues-export.md`.
+4. Output file `.agents/memory/issues-export.md`.
 
 ## 📤 Output
-- File: `.agent/memory/issues-export.md`
+- File: `.agents/memory/issues-export.md`
 
 ## 🚫 Guard Rails
 - DO NOT create an issue on the remote — just generate an export file.
@@ -796,8 +796,8 @@ Make sure the implementation has full test coverage and passes 100%.
 
 ## 📥 Input
 - Source code (implemented files)
-- `.agent/specs/[feature]/tasks.md` (completed tasks)
-- `.agent/specs/[feature]/spec.md` (success criteria)
+- `.agents/specs/[feature]/tasks.md` (completed tasks)
+- `.agents/specs/[feature]/spec.md` (success criteria)
 
 ## 📋 Protocol
 1. **Test Plan**: From tasks.md (completed) → list functions/routes to test.
@@ -820,7 +820,7 @@ Make sure the implementation has full test coverage and passes 100%.
 
 ## 📤 Output
 - Test files (theo convention: `*.test.ts`, `*.spec.ts`)
-- File: `.agent/memory/test-report.md`
+- File: `.agents/memory/test-report.md`
 
 ## 🚫 Guard Rails
 - DO NOT skip error path tests — must also test failing cases.
@@ -842,8 +842,8 @@ Check whether the ENTIRE implementation meets spec.md or not — final gate befo
 ## 📥 Input
 - All artifacts: spec.md, plan.md, tasks.md
 - Source code (implementation)
-- `.agent/memory/constitution.md`
-- `.agent/project.json`, dependency manifests, and documented verification commands
+- `.agents/memory/constitution.md`
+- `.agents/project.json`, dependency manifests, and documented verification commands
 
 ## 📋 Protocol
 1. **Tasks Completion**: All tasks in tasks.md have `[X]` ?
@@ -884,7 +884,7 @@ Check whether the ENTIRE implementation meets spec.md or not — final gate befo
    ```
 
 ## 📤 Output
-- File: `.agent/memory/validation-report.md`
+- File: `.agents/memory/validation-report.md`
 - Verdict: ✅ PASS or ❌ FAIL (with blockers list)
 
 ## 🚫 Guard Rails
@@ -909,7 +909,7 @@ Ensure all public pages meet Technical SEO standards and are ready for AI Search
 
 ## 📥 Input
 - Source code (pages, layouts, components)
-- `.agent/knowledge_base/seo_standards.md` (checklist)
+- `.agents/knowledge_base/seo_standards.md` (checklist)
 
 ## 📋 Protocol
 
@@ -932,13 +932,13 @@ Ensure all public pages meet Technical SEO standards and are ready for AI Search
 - Custom 404 page
 
 ### Step 4: Output
-Report at `.agent/memory/seo-audit-report.md` :
+Report at `.agents/memory/seo-audit-report.md` :
 - Issues: 🔴 Critical / 🟡 Warning / 🟢 Info
 - Fix suggestions for each issue
 - Total Score (0-100)
 
 ## 📤 Output
-- File: `.agent/memory/seo-audit-report.md`
+- File: `.agents/memory/seo-audit-report.md`
 
 ## 🔗 Handoffs
 - `@speckit.geo` : After Technical SEO passes → switch to GEO audit
@@ -959,7 +959,7 @@ Make sure the website is **cited** by AI Search engines in the answer.
 
 ## 📥 Input
 - Source code (content pages)
-- `.agent/knowledge_base/seo_standards.md`
+- `.agents/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
@@ -986,7 +986,7 @@ Make sure the website is **cited** by AI Search engines in the answer.
 - Internal linking between articles on the same topic
 
 ## 📤 Output
-- File: `.agent/memory/geo-audit-report.md`
+- File: `.agents/memory/geo-audit-report.md`
 
 ## 🔗 Handoffs
 - `@speckit.content` : Optimize content according to GEO standards
@@ -1006,7 +1006,7 @@ Ensure website content meets standards for both readers AND AI search engines.
 
 ## 📥 Input
 - Content pages (articles, products, landing pages)
-- `.agent/knowledge_base/seo_standards.md`
+- `.agents/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
@@ -1031,7 +1031,7 @@ Ensure website content meets standards for both readers AND AI search engines.
 - Quotes from experts when appropriate
 
 ## 📤 Output
-- File: `.agent/memory/content-guidelines.md`
+- File: `.agents/memory/content-guidelines.md`
 
 ## 🔗 Handoffs
 - `@speckit.seo`: Validate SEO compliance sau khi optimize
@@ -1050,8 +1050,8 @@ role: UI/UX Architect
 Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium, professional, unique interface and ABSOLUTELY no "AI slops" (avoid AI's boring default designs).
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md` (contains User Scenarios)
-- `.agent/memory/constitution.md` (tech stack constraints)
+- `.agents/specs/[feature]/spec.md` (contains User Scenarios)
+- `.agents/memory/constitution.md` (tech stack constraints)
 - Brand guidelines (if any)
 
 ## 📋 Protocol
@@ -1096,8 +1096,8 @@ Set up and manage "Pro Max" UI/UX standards for the project, ensuring a premium,
   - Tactile feedback using a built-in utility such as `active:scale-95`.
 
 ## 📤 Output
-- File: `.agent/knowledge_base/ui_ux_standards.md`
-- File: `.agent/specs/[feature]/ui-specs.md` (for each feature)
+- File: `.agents/knowledge_base/ui_ux_standards.md`
+- File: `.agents/specs/[feature]/ui-specs.md` (for each feature)
 
 ## 🚫 Guard Rails
 - FORBIDDEN: Modifying the main page layout shell without asking and getting explicit user approval.
@@ -1129,14 +1129,14 @@ role: Backend Engineer
 Build the smallest production-ready backend change that honors the feature
 specification and the existing architecture. Prefer a modular monolith unless
 the specification demonstrates a need for distributed complexity. Match
-`.agent/knowledge_base/api_standards.md`, `data_schema.md`, and the project
+`.agents/knowledge_base/api_standards.md`, `data_schema.md`, and the project
 constitution.
 
 ## Required Inputs
 
-- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
 - Existing API contracts, domain model, data schema, and error conventions
-- `.agent/memory/constitution.md` for ENV, Docker, port, and safety policy
+- `.agents/memory/constitution.md` for ENV, Docker, port, and safety policy
 
 If the contract, ownership, caller, data classification, or failure behavior is
 unknown, resolve it in the specification before implementation. Use
@@ -1301,16 +1301,16 @@ role: Frontend Engineer
 ## Mission
 
 Turn approved UI requirements and API contracts into cohesive production UI.
-Honor `.agent/knowledge_base/ui_ux_standards.md` as the visual source of truth,
+Honor `.agents/knowledge_base/ui_ux_standards.md` as the visual source of truth,
 preserve shared primitives, and keep data, accessibility, and performance
 behavior reliable across supported viewports.
 
 ## Required Inputs
 
-- `.agent/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
-- `.agent/knowledge_base/ui_ux_standards.md`, current shell, tokens, and shared UI
+- `.agents/specs/[feature]/spec.md`, `plan.md`, and `tasks.md`
+- `.agents/knowledge_base/ui_ux_standards.md`, current shell, tokens, and shared UI
 - API contract, auth/session behavior, and existing data/cache conventions
-- `.agent/memory/constitution.md` for ENV and Docker policy
+- `.agents/memory/constitution.md` for ENV and Docker policy
 
 Use `speckit.uiux` for new design-system decisions, `speckit.backend` for API
 contract changes, `speckit.security` for security review, and `speckit.tester`
@@ -1438,7 +1438,7 @@ role: Database Architect
 ## Mission
 
 Design data systems that are correct, performant, recoverable, and operable.
-Use `.agent/knowledge_base/data_schema.md`, the feature plan, and the project
+Use `.agents/knowledge_base/data_schema.md`, the feature plan, and the project
 constitution. Coordinate with `speckit.backend` for transaction ownership,
 `speckit.security` for sensitive data, and `speckit.devops` for runtime setup.
 
@@ -1759,8 +1759,8 @@ role: iOS Engineer
 Build native production iOS apps: Swift + SwiftUI/UIKit, clean architecture, complying with Human Interface Guidelines & App Store Review.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/knowledge_base/ui_ux_standards.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/knowledge_base/ui_ux_standards.md`
 - API contract from `@speckit.backend`
 
 ## 📋 Protocol
@@ -1808,8 +1808,8 @@ role: Android Engineer
 Build native production Android apps: Kotlin + Jetpack Compose, clean architecture, complying with Material Design & Play Store Policy.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/knowledge_base/ui_ux_standards.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/knowledge_base/ui_ux_standards.md`
 - API contract from `@speckit.backend`
 
 ## 📋 Protocol
@@ -1857,8 +1857,8 @@ role: Mobile Engineer
 Build cross-platform mobile production apps: React Native/Flutter, 1 codebase running on iOS + Android, offline-first, complying with store guidelines.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/knowledge_base/ui_ux_standards.md`
+- `.agents/specs/[feature]/spec.md`
+- `.agents/knowledge_base/ui_ux_standards.md`
 - API contract from `@speckit.backend`
 - Target framework (RN/Flutter; ASK if missing)
 
@@ -1905,9 +1905,9 @@ role: Data Engineer
 Build production data pipelines: reliable ingest → transform → load, guaranteed data quality, reproducible ML workflows.
 
 ## 📥 Input
-- `.agent/specs/[feature]/spec.md`
-- `.agent/knowledge_base/data_schema.md`
-- `.agent/memory/constitution.md` (Docker-First, ENV)
+- `.agents/specs/[feature]/spec.md`
+- `.agents/knowledge_base/data_schema.md`
+- `.agents/memory/constitution.md` (Docker-First, ENV)
 
 ## 📋 Protocol
 
@@ -1958,8 +1958,8 @@ role: Security Auditor
 Ensuring full lifecycle security: auditing code according to OWASP, detecting secret leaks, scanning dependency vulnerabilities, threat modeling for sensitive features.
 
 ## 📥 Input
-- Codebase + `.agent/specs/[feature]/spec.md`
-- `.agent/memory/constitution.md` (§2 Security, §3 ENV)
+- Codebase + `.agents/specs/[feature]/spec.md`
+- `.agents/memory/constitution.md` (§2 Security, §3 ENV)
 - Dependency manifest (package.json, requirements.txt...)
 
 ## 📋 Protocol
@@ -2011,9 +2011,9 @@ role: Game Developer
 Build production-grade games: stable gameplay loop, performance within frame-budget, compact asset pipeline, scalable architecture. Engine-agnostic (Unity/Unreal/Godot/Phaser/PixiJS/custom).
 
 ## 📥 Input
-- `.agent/project.json` (project_type = `game`)
-- `.agent/memory/constitution.md` (Docker-First, ENV)
-- `.agent/specs/[feature]/spec.md` (gameplay requirements)
+- `.agents/project.json` (project_type = `game`)
+- `.agents/memory/constitution.md` (Docker-First, ENV)
+- `.agents/specs/[feature]/spec.md` (gameplay requirements)
 - Target engine (from spec or ask developer if missing)
 
 ## 📋 Protocol
@@ -2054,7 +2054,7 @@ Build production-grade games: stable gameplay loop, performance within frame-bud
 ## 📤 Output
 - Game source code based on target engine.
 - `config/` for balance values (DO NOT hard-code gameplay balance data into logic).
-- Update `.agent/knowledge_base/` with architecture decisions (game loop, ECS, netcode).
+- Update `.agents/knowledge_base/` with architecture decisions (game loop, ECS, netcode).
 
 ## 🚫 Guard Rails
 - DO NOT hard-code: gameplay balance, asset paths, server URLs, keys -> use config/ENV.
@@ -2086,7 +2086,7 @@ Before starting to code, make it clear:
 - **Reproduction**: Specific steps to reproduce the error (required).
 
 ### Phase 2: Isolation & Hypothesis (Isolation & Hypothesis)
-- Create file `.agent/debug/[issue-slug].md` to save the investigation log.
+- Create file `.agents/debug/[issue-slug].md` to save the investigation log.
 - Hypotheses: "Maybe the error lies in function X because of Y".
 - Use the commands `grep` , `log` to verify the hypothesis.
 
@@ -2119,12 +2119,12 @@ Organize and prioritize unfulfilled requirements, ensuring no ideas or bugs are 
 ## 📋 Protocol
 
 ### Phase 1: Idea Scoping (Idea recording)
-- When a user makes a request that they don't want to do right away, save it to `.agent/backlog/IDEAS.md` .
+- When a user makes a request that they don't want to do right away, save it to `.agents/backlog/IDEAS.md` .
 - Each idea needs: Description, Priority (Low/Med/High), Status (Pending).
 
 ### Phase 2: Automated Todo Scan (Scan source code)
 - Use the command `grep` to find the keywords: `TODO:` , `FIXME:` , `HACK:` , `BUG:` .
-- Summarize the results found into `.agent/backlog/TECHNICAL_DEBT.md` .
+- Summarize the results found into `.agents/backlog/TECHNICAL_DEBT.md` .
 
 ### Phase 3: Backlog Grooming (Backlog filtering)
 - Periodically review items in the backlog to convert to `spec.md` when the user is ready to deploy.
@@ -2149,7 +2149,7 @@ Ensure the project is on track according to the long-term vision, managing depen
 ## 📋 Protocol
 
 ### Phase 1: Milestone Definition
-- Create/Update `.agent/ROADMAP.md` .
+- Create/Update `.agents/ROADMAP.md` .
 - Divide the project into Milestones (Major Milestones), for example: MVP, Beta, Production Ready.
 - Each Milestone contains a list of Phases.
 
@@ -2185,15 +2185,15 @@ Helps Agents and Users quickly understand the entire "map" of the codebase, espe
 
 ### Phase 2: Dependency Mapping (Dependency Diagram)
 - Analyze the `import` or `require` commands to find dependencies between modules.
-- Save the results to `.agent/codebase/STRUCTURE.md` .
+- Save the results to `.agents/codebase/STRUCTURE.md` .
 
 ### Phase 3: Integration Inventory (Integration Inventory)
 - List 3rd party services (external API, DB connection).
-- Save to `.agent/codebase/INTEGRATIONS.md` .
+- Save to `.agents/codebase/INTEGRATIONS.md` .
 
 ## 📤 Output Artifacts
-- `.agent/codebase/ARCHITECTURE.md` : Architecture overview.
-- `.agent/codebase/CONVENTIONS.md` : Code conventions in use.
+- `.agents/codebase/ARCHITECTURE.md` : Architecture overview.
+- `.agents/codebase/CONVENTIONS.md` : Code conventions in use.
 
 ## 🚫 Guard Rails
 - DO NOT read the contents of all files at the same time to avoid context overflow. Prioritize reading headers and exports.
@@ -2216,7 +2216,7 @@ Bridging the actual user experience and code logic, ensuring features run as cus
 
 ### Phase 1: UAT Intake (Acceptance)
 - Collect manual user feedback after each Phase.
-- Recorded in `.agent/verification/[phase]-UAT.md` .
+- Recorded in `.agents/verification/[phase]-UAT.md` .
 
 ### Phase 2: Gap Analysis (Gap Analysis)
 - Compare the actual results User reports with the original Spec.md.
@@ -2321,7 +2321,7 @@ role: 3D Architect & Developer
 Provide standards, best practices, and implementation guidelines for 3D graphics development, rendering, assets pipeline, and engine integration (Web 3D and native Game engines).
 
 ## 📥 Input
-- `.agent/memory/constitution.md` (principles, tech stack)
+- `.agents/memory/constitution.md` (principles, tech stack)
 - Spec & Plan files (e.g., `spec.md`, `plan.md`)
 - Assets catalog and directories (e.g., glTF, FBX, OBJ, textures)
 

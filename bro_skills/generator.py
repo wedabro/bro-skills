@@ -1,5 +1,5 @@
 """
-Scaffolder Generator - Core logic for creating the .agent/ directory structure.
+Scaffolder Generator - Core logic for creating the .agents/ directory structure.
 Supports filtering skills/workflows by Project Type.
 Automatically populates content from Scanner when the project already exists.
 """
@@ -66,7 +66,7 @@ class AgentMatcher:
 
 
 class ProjectGenerator:
-    """Scaffold .agent/ structure for a project compliant with Spec-Kit & ASF 4.0 Elite."""
+    """Scaffold .agents/ structure for a project compliant with Spec-Kit & ASF 4.0 Elite."""
 
     def __init__(self, target_dir: str, project_name: str, project_type: str = "fullstack", scan_profile: dict = None, attributes: dict = None, lang: str = "dynamic", ai_agent: str = "all", selected_skills: list = None, vault_path: str = None, force: bool = False):
         self.target_dir = target_dir
@@ -74,7 +74,7 @@ class ProjectGenerator:
         self.project_type = project_type
         self.scan_profile = scan_profile  # Result from ProjectScanner
         self.attributes = attributes or {}  # Multi-agent attributes (architecture/platforms/flags)
-        self.agent_dir = os.path.join(target_dir, ".agent")
+        self.agent_dir = os.path.join(target_dir, ".agents")
         self.lang = lang or "dynamic"
         self.ai_agent = ai_agent or "all"
         self.selected_skills = selected_skills
@@ -112,7 +112,6 @@ class ProjectGenerator:
             self.filtered_skills = get_skills_for_project_type(project_type, self.attributes)
             self.filtered_workflows = get_workflows_for_project_type(project_type)
 
-
         self.stats = {
             "skills": 0,
             "workflows": 0,
@@ -122,7 +121,6 @@ class ProjectGenerator:
             "identity": 0,
             "knowledge": 0
         }
-
 
     def generate(self):
         """Execute the entire scaffolding process."""
@@ -134,7 +132,6 @@ class ProjectGenerator:
         print(f"📁 Scaffolding directory structure (ASF 4.0 Elite Standard — {self.project_type})...")
         self._create_directories()
 
-        # ─── 0. Check Port (Only if project uses Docker and port config is missing in .env) ───
         self.assigned_ports = None
 
         print("🎭 Setting up Identity & Soul...")
@@ -181,7 +178,7 @@ class ProjectGenerator:
                 os.path.join(self.target_dir, "AGENTS.md"),
                 doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
             )
-            print("  ✅ Antigravity  → .agent/rules/bro-skills.md & AGENTS.md")
+            print("  ✅ Antigravity  → .agents/rules/bro-skills.md & AGENTS.md")
 
         # ─── 2. Cursor ──────────────────────────────────────
         if agent in ("cursor", "all"):
@@ -305,66 +302,14 @@ class ProjectGenerator:
 
         # ─── 14. Codex ──────────────────────────────────────
         if agent in ("codex", "all"):
-            self._create_codex_skills_bridge()
             self._write_file(
                 os.path.join(self.target_dir, ".agents", "AGENTS.md"),
                 doc_agents_md_template(name, self.use_docker, self.is_soft_rules, self.lang)
             )
-            print("  ✅ Codex        → .agents/AGENTS.md & Skills Bridge")
-
-    def _create_codex_skills_bridge(self):
-        """Bridge .agent/skills -> .agents/skills for Codex customizations root."""
-        import shutil
-
-        src = os.path.join(self.agent_dir, "skills")
-        dst = os.path.join(self.target_dir, ".agents", "skills")
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-
-        # Clean old links/dirs
-        if os.path.islink(dst) or os.path.isfile(dst):
-            os.unlink(dst)
-        elif os.path.isdir(dst):
-            if os.name == "nt":
-                try:
-                    os.rmdir(dst)
-                except OSError:
-                    shutil.rmtree(dst, ignore_errors=True)
-            else:
-                shutil.rmtree(dst, ignore_errors=True)
-
-        rel_src = os.path.relpath(src, os.path.dirname(dst))
-
-        # 1) POSIX: relative symlink
-        if os.name != "nt":
-            try:
-                os.symlink(rel_src, dst, target_is_directory=True)
-                print("  🔗 Codex Skills → .agents/skills (symlink → .agent/skills)")
-                return
-            except (OSError, NotImplementedError):
-                pass
-        else:
-            # 2) Windows: junction
-            try:
-                import subprocess
-                subprocess.run(
-                    ["cmd", "/c", "mklink", "/J", dst, src],
-                    check=True, capture_output=True, text=True,
-                )
-                print("  🔗 Codex Skills → .agents/skills (junction → .agent/skills)")
-                return
-            except (subprocess.CalledProcessError, FileNotFoundError):
-                pass
-
-        # 3) Fallback: copy
-        shutil.copytree(src, dst)
-        print("  📄 Codex Skills → .agents/skills (copy — symlink/junction unavailable)")
+            print("  ✅ Codex        → .agents/AGENTS.md")
 
     def _create_kiro_mcp(self):
-        """Create/merge .kiro/settings/mcp.json (merge-safe).
-
-        - File does not exist -> create new with default scaffold.
-        - File exists -> ONLY add missing servers, DO NOT overwrite existing servers/configs.
-        """
+        """Create/merge .kiro/settings/mcp.json (merge-safe)."""
         import json
 
         mcp_path = os.path.join(self.target_dir, ".kiro", "settings", "mcp.json")
@@ -394,12 +339,7 @@ class ProjectGenerator:
             print("  ✅ Kiro MCP     → .kiro/settings/mcp.json (keeping existing servers)")
 
     def _create_kiro_skills_bridge(self):
-        """Bridge .agent/skills -> .kiro/skills for Kiro (AWS) to auto-load skills.
-
-        The SKILL.md format of bro-skills (frontmatter name + description) matches
-        the Kiro skill standard so it can be used directly. Prefer symlink/junction
-        (2-way sync, no duplication); fallback to copy on failure.
-        """
+        """Bridge .agents/skills -> .kiro/skills for Kiro (AWS) to auto-load skills."""
         import shutil
 
         src = os.path.join(self.agent_dir, "skills")
@@ -411,7 +351,6 @@ class ProjectGenerator:
             os.unlink(dst)
         elif os.path.isdir(dst):
             if os.name == "nt":
-                # Junction is recognized as dir; delete safely
                 try:
                     os.rmdir(dst)
                 except OSError:
@@ -425,7 +364,7 @@ class ProjectGenerator:
         if os.name != "nt":
             try:
                 os.symlink(rel_src, dst, target_is_directory=True)
-                print("  🔗 Kiro Skills  → .kiro/skills (symlink → .agent/skills)")
+                print("  🔗 Kiro Skills  → .kiro/skills (symlink → .agents/skills)")
                 return
             except (OSError, NotImplementedError):
                 pass
@@ -437,29 +376,29 @@ class ProjectGenerator:
                     ["cmd", "/c", "mklink", "/J", dst, src],
                     check=True, capture_output=True, text=True,
                 )
-                print("  🔗 Kiro Skills  → .kiro/skills (junction → .agent/skills)")
+                print("  🔗 Kiro Skills  → .kiro/skills (junction → .agents/skills)")
                 return
             except (subprocess.CalledProcessError, FileNotFoundError):
                 pass
 
-        # 3) Fallback: copy (loses 2-way sync)
+        # 3) Fallback: copy
         shutil.copytree(src, dst)
         print("  📄 Kiro Skills  → .kiro/skills (copy — symlink/junction unavailable)")
 
     def _create_directories(self):
-        """Scaffold .agent/ directory structure compliant with ASF 4.0 Elite."""
+        """Scaffold .agents/ directory structure compliant with ASF 4.0 Elite."""
         dirs = [
-            ".agent/identity",       # Identity layer
-            ".agent/knowledge_base", # Project knowledge base layer
-            ".agent/skills",         # Skills layer (@skill)
-            ".agent/workflows",      # Workflows layer (/command)
-            ".agent/scripts/bash",   # Infrastructure scripts layer
-            ".agent/templates",      # Scaffolding templates layer
-            ".agent/memory",         # Constitution storage layer
-            ".agent/rules",          # Antigravity rules layer
-            ".agent/codebase",       # Structure map layer (speckit.map)
-            ".agent/specs",          # Specification & Planning layer
-            ".agent/agents",         # Multi-Agent layer (registry + orchestrator)
+            ".agents/identity",       # Identity layer
+            ".agents/knowledge_base", # Project knowledge base layer
+            ".agents/skills",         # Skills layer (@skill)
+            ".agents/workflows",      # Workflows layer (/command)
+            ".agents/scripts/bash",   # Infrastructure scripts layer
+            ".agents/templates",      # Scaffolding templates layer
+            ".agents/memory",         # Constitution storage layer
+            ".agents/rules",          # Antigravity rules layer
+            ".agents/codebase",       # Structure map layer (speckit.map)
+            ".agents/specs",          # Specification & Planning layer
+            ".agents/agents",         # Multi-Agent layer (registry + orchestrator)
         ]
 
         for d in dirs:
@@ -488,7 +427,6 @@ class ProjectGenerator:
         base_path = os.path.join(self.agent_dir, "knowledge_base")
 
         if self.scan_profile and self.scan_profile.get("has_existing_code"):
-            # READ REAL DATA FROM SCANNER
             scanner = ProjectScanner(self.target_dir)
             scanner.profile = self.scan_profile
 
@@ -512,7 +450,6 @@ class ProjectGenerator:
             )
             self.stats["knowledge"] += 4
         else:
-            # New project - use template placeholder
             infra_path = os.path.join(base_path, "infrastructure.md")
             infra_template = DOCUMENT_TEMPLATE_MAP.get("infrastructure-template.md")
             self._write_file(infra_path, infra_template())
@@ -526,18 +463,15 @@ class ProjectGenerator:
                 self._write_file(os.path.join(base_path, name), content)
                 self.stats["knowledge"] += 1
 
-        # SEO & UI/UX Standards — ONLY create for Web projects
         type_info = PROJECT_TYPES.get(self.project_type, {})
         allowed_skills = type_info.get("includes_skills", [])
         
         if "web" in allowed_skills or "web_public" in allowed_skills:
-            # SEO
             seo_path = os.path.join(base_path, "seo_standards.md")
             self._write_file(seo_path, doc_seo_standards_template())
             self.stats["knowledge"] += 1
             print("  🔍 SEO & GEO Standards → knowledge_base/seo_standards.md")
 
-            # UI/UX
             uiux_path = os.path.join(base_path, "ui_ux_standards.md")
             self._write_file(uiux_path, doc_ui_ux_standards_template())
             self.stats["knowledge"] += 1
@@ -598,8 +532,8 @@ You are **{skill['role']}**.
 {skill['description']}
 
 ## Execution Outline
-1. Load context from `.agent/identity/master-identity.md`.
-2. Check `.agent/memory/constitution.md` for rules.
+1. Load context from `.agents/identity/master-identity.md`.
+2. Check `.agents/memory/constitution.md` for rules.
 3. Perform the primary task.
 4. Report results.
 """
@@ -614,19 +548,17 @@ You are **{skill['role']}**.
                 self.stats["workflows"] += 1
                 continue
 
-            # Prioritize detailed templates from WORKFLOW_TEMPLATE_MAP
             template_fn = WORKFLOW_TEMPLATE_MAP.get(cmd)
             if template_fn:
                 content = template_fn()
             else:
-                # Fallback for workflows without templates
                 content = f"---\ndescription: {wf['description']}\n---\n\n# Workflow: {cmd}\n\n1. Run @{wf['skills'][0] if wf['skills'] else 'speckit.tasks'}"
 
             self._write_file(filepath, content)
             self.stats["workflows"] += 1
 
     def _create_agents(self):
-        """Scaffold .agent/agents/: registry.json + orchestrator.md (Multi-Agent v2)."""
+        """Scaffold .agents/agents/: registry.json + orchestrator.md (Multi-Agent v2)."""
         import json
 
         agents_dir = os.path.join(self.agent_dir, "agents")
@@ -646,7 +578,7 @@ You are **{skill['role']}**.
             "base_by_type": BASE_BUILDERS_BY_TYPE,
             "modifiers": MODIFIERS,
             "orchestration": {
-                "entry": ".agent/agents/orchestrator.md",
+                "entry": ".agents/agents/orchestrator.md",
                 "selection_rule": "active = core + base_by_type[type] + flatten(modifiers[attr] for attr in attributes)",
                 "fallback_project_type": "fullstack",
             },
@@ -677,9 +609,9 @@ Coordinate specialized agents in the project **{self.project_name}** (`{self.pro
 Decide which agent handles which task based on `project_type` + `attributes` and pipeline phases.
 
 ## 📥 Input
-- `.agent/project.json` → `project_type` + `attributes`
-- `.agent/agents/registry.json` → base + modifiers
-- `.agent/memory/constitution.md` → constraints (Docker-First, Port 8900-8999, ENV)
+- `.agents/project.json` → `project_type` + `attributes`
+- `.agents/agents/registry.json` → base + modifiers
+- `.agents/memory/constitution.md` → constraints (Docker-First, ENV)
 
 ## 🎛️ Resolved Agent Set (auto-generated)
 - **Active agents**: {active_list}
@@ -724,10 +656,8 @@ No tag -> inferred from keyword + project_type.
 
     def _create_templates(self):
         for filename, template_fn in DOCUMENT_TEMPLATE_MAP.items():
-            # Skip internal templates
             if filename in ("identity-template.md",):
                 continue
-            # Skip SEO template for non-web projects
             type_info = PROJECT_TYPES.get(self.project_type, {})
             allowed_skills = type_info.get("includes_skills", [])
             if filename == "seo-standards-template.md" and "web" not in allowed_skills:
@@ -754,7 +684,7 @@ No tag -> inferred from keyword + project_type.
             self.stats["scripts"] += 1
 
     def _create_project_config(self):
-        """Save project type info to .agent/project.json."""
+        """Save project type info to .agents/project.json."""
         import json
         config = {
             "project_name": self.project_name,
@@ -768,7 +698,7 @@ No tag -> inferred from keyword + project_type.
             "skills_count": self.stats["skills"],
             "workflows_count": self.stats["workflows"],
             "multi_agent": True,
-            "agent_registry": ".agent/agents/registry.json",
+            "agent_registry": ".agents/agents/registry.json",
         }
         filepath = os.path.join(self.agent_dir, "project.json")
         self._write_file(filepath, json.dumps(config, indent=2, ensure_ascii=False))
@@ -796,11 +726,11 @@ No tag -> inferred from keyword + project_type.
 
 ## 🏗️ Architecture
 
-- `.agent/identity/`: Persona & Soul definition of the AI.
-- `.agent/knowledge_base/`: Project knowledge base (Business, Data, API, SEO).
-- `.agent/skills/`: Specialized AI skills (@mentions).
-- `.agent/workflows/`: Automation workflows (/commands).
-- `.agent/memory/`: Project Constitution (Rules of the project).
+- `.agents/identity/`: Persona & Soul definition of the AI.
+- `.agents/knowledge_base/`: Project knowledge base (Business, Data, API, SEO).
+- `.agents/skills/`: Specialized AI skills (@mentions).
+- `.agents/workflows/`: Automation workflows (/commands).
+- `.agents/memory/`: Project Constitution (Rules of the project).
 {seo_section}
 ## 🚀 Quick Start
 1. Run `/01-speckit.constitution` to establish the project constitution.
@@ -810,14 +740,8 @@ No tag -> inferred from keyword + project_type.
         self._write_file(os.path.join(self.agent_dir, "README.md"), content)
 
     def _write_file(self, filepath, content):
-        # Template functions use triple-quoted strings for readability. Normalize
-        # their leading newline so YAML frontmatter remains the first bytes in the
-        # generated file, as required by skill/workflow loaders.
         content = content.lstrip("\ufeff\r\n")
 
-        # `role` and `argument-hint` are useful prose, but are not portable
-        # SKILL.md frontmatter keys. Emit only metadata keys supported by the
-        # Codex skill loader and the other agents targeted by this project.
         if os.path.basename(filepath) == "SKILL.md" and content.startswith("---"):
             lines = content.splitlines(keepends=True)
             try:
@@ -840,8 +764,6 @@ No tag -> inferred from keyword + project_type.
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
-
-
 
     def _print_stats(self):
         type_info = PROJECT_TYPES.get(self.project_type, {})
@@ -870,10 +792,7 @@ No tag -> inferred from keyword + project_type.
         
         # 4. Bridge if needed
         agent = AgentMatcher(self.ai_agent)
-        if agent in ("codex", "all"):
-            self._create_codex_skills_bridge()
         if agent in ("kiro", "all"):
             self._create_kiro_skills_bridge()
             
         print(f"✅ Installed {self.stats['skills']} skills and {self.stats['workflows']} workflows successfully.")
-

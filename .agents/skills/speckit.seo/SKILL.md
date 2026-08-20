@@ -8,7 +8,7 @@ Ensure all public pages meet Technical SEO standards and are ready for AI Search
 
 ## 📥 Input
 - Source code (pages, layouts, components)
-- `.agent/knowledge_base/seo_standards.md` (checklist)
+- `.agents/knowledge_base/seo_standards.md` (checklist)
 
 ## 📋 Protocol
 
@@ -31,13 +31,13 @@ Ensure all public pages meet Technical SEO standards and are ready for AI Search
 - Custom 404 page
 
 ### Step 4: Output
-Report at `.agent/memory/seo-audit-report.md` :
+Report at `.agents/memory/seo-audit-report.md` :
 - Issues: 🔴 Critical / 🟡 Warning / 🟢 Info
 - Fix suggestions for each issue
 - Total Score (0-100)
 
 ## 📤 Output
-- File: `.agent/memory/seo-audit-report.md`
+- File: `.agents/memory/seo-audit-report.md`
 
 ## 🔗 Handoffs
 - `@speckit.geo` : After Technical SEO passes → switch to GEO audit

@@ -8,7 +8,7 @@ Make sure the website is **cited** by AI Search engines in the answer.
 
 ## 📥 Input
 - Source code (content pages)
-- `.agent/knowledge_base/seo_standards.md`
+- `.agents/knowledge_base/seo_standards.md`
 
 ## 📋 Protocol
 
@@ -35,7 +35,7 @@ Make sure the website is **cited** by AI Search engines in the answer.
 - Internal linking between articles on the same topic
 
 ## 📤 Output
-- File: `.agent/memory/geo-audit-report.md`
+- File: `.agents/memory/geo-audit-report.md`
 
 ## 🔗 Handoffs
 - `@speckit.content` : Optimize content according to GEO standards

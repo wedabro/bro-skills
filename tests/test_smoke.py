@@ -99,7 +99,7 @@ def test_generator_scaffolds_with_language(tmp_path):
     )
     generator.generate()
     
-    project_json_path = tmp_path / ".agent" / "project.json"
+    project_json_path = tmp_path / ".agents" / "project.json"
     assert project_json_path.exists()
     
     with open(project_json_path, "r", encoding="utf-8") as f:
@@ -107,16 +107,16 @@ def test_generator_scaffolds_with_language(tmp_path):
     assert config["agent_language"] == "vi"
     assert config["ai_agent"] == "all"
     
-    rules_path = tmp_path / ".agent" / "rules" / "bro-skills.md"
+    rules_path = tmp_path / ".agents" / "rules" / "bro-skills.md"
     assert rules_path.exists()
     
     rules_content = rules_path.read_text(encoding="utf-8")
     assert "- Trả lời bằng tiếng Việt." in rules_content
 
-    results = validate_agent_structure(str(tmp_path / ".agent"))
+    results = validate_agent_structure(str(tmp_path / ".agents"))
     assert all(result["passed"] for result in results), results
 
-    skill_path = tmp_path / ".agent" / "skills" / "speckit.identity" / "SKILL.md"
+    skill_path = tmp_path / ".agents" / "skills" / "speckit.identity" / "SKILL.md"
     skill_content = skill_path.read_text(encoding="utf-8")
     assert skill_content.startswith("---\n")
     assert "\nrole:" not in skill_content.split("---", 2)[1]
@@ -136,7 +136,7 @@ def test_uninstall_removes_agent_structure(tmp_path):
     )
     generator.generate()
     
-    agent_dir = tmp_path / ".agent"
+    agent_dir = tmp_path / ".agents"
     assert agent_dir.exists()
     
     # Create some dummy rules to simulate what generator does
@@ -160,7 +160,7 @@ def test_uninstall_removes_agent_structure(tmp_path):
 
 
 def test_checked_in_skills_have_lean_valid_entrypoints():
-    for skill_dir in (REPO_ROOT / ".agent" / "skills").iterdir():
+    for skill_dir in (REPO_ROOT / ".agents" / "skills").iterdir():
         if not skill_dir.is_dir():
             continue
 
@@ -181,7 +181,7 @@ def test_skill_registry_matches_embedded_templates_and_documented_extensions():
     registered = {skill["name"] for skill in SKILLS_REGISTRY}
     checked_in = {
         path.name
-        for path in (REPO_ROOT / ".agent" / "skills").iterdir()
+        for path in (REPO_ROOT / ".agents" / "skills").iterdir()
         if path.is_dir()
     }
 
@@ -191,7 +191,7 @@ def test_skill_registry_matches_embedded_templates_and_documented_extensions():
 
 
 def test_checked_in_core_skills_match_embedded_templates_semantically():
-    checked_in_root = REPO_ROOT / ".agent" / "skills"
+    checked_in_root = REPO_ROOT / ".agents" / "skills"
     for name, template in SKILL_TEMPLATE_MAP.items():
         checked_in = checked_in_root / name / "SKILL.md"
         if not checked_in.exists():
@@ -204,7 +204,7 @@ def test_checked_in_core_skills_match_embedded_templates_semantically():
 
 def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
     frontend_sources = (
-        (REPO_ROOT / ".agent/skills/speckit.frontend/SKILL.md").read_text(
+        (REPO_ROOT / ".agents/skills/speckit.frontend/SKILL.md").read_text(
             encoding="utf-8"
         ),
         SKILL_TEMPLATE_MAP["speckit.frontend"](),
@@ -220,7 +220,7 @@ def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
         assert "keyboard operation" in content
 
     checked_in_ui = (
-        REPO_ROOT / ".agent/knowledge_base/ui_ux_standards.md"
+        REPO_ROOT / ".agents/knowledge_base/ui_ux_standards.md"
     ).read_text(encoding="utf-8")
     generated_ui = doc_ui_ux_standards_template()
     assert re.sub(r"\s+", " ", checked_in_ui).strip() == re.sub(
@@ -236,7 +236,7 @@ def test_frontend_policy_enforces_systemic_reuse_and_shared_tokens():
 
 def test_backend_policy_enforces_contract_safety_and_operational_reliability():
     backend_sources = (
-        (REPO_ROOT / ".agent/skills/speckit.backend/SKILL.md").read_text(
+        (REPO_ROOT / ".agents/skills/speckit.backend/SKILL.md").read_text(
             encoding="utf-8"
         ),
         SKILL_TEMPLATE_MAP["speckit.backend"](),
@@ -281,7 +281,7 @@ def test_core_engineering_specialists_are_registered_and_policy_complete():
         ),
     }
     for name, clauses in expected.items():
-        checked_in = (REPO_ROOT / ".agent/skills" / name / "SKILL.md").read_text(
+        checked_in = (REPO_ROOT / ".agents/skills" / name / "SKILL.md").read_text(
             encoding="utf-8"
         )
         generated = SKILL_TEMPLATE_MAP[name]()
@@ -293,7 +293,7 @@ def test_core_engineering_specialists_are_registered_and_policy_complete():
 def test_workflow_registry_matches_templates_and_checked_in_files():
     registered = {workflow["command"] for workflow in WORKFLOWS_REGISTRY}
     checked_in = {
-        path.stem for path in (REPO_ROOT / ".agent" / "workflows").glob("*.md")
+        path.stem for path in (REPO_ROOT / ".agents" / "workflows").glob("*.md")
     }
 
     assert registered == set(WORKFLOW_TEMPLATE_MAP)
@@ -301,7 +301,7 @@ def test_workflow_registry_matches_templates_and_checked_in_files():
 
 
 def test_checked_in_workflows_match_embedded_templates_semantically():
-    checked_in_root = REPO_ROOT / ".agent" / "workflows"
+    checked_in_root = REPO_ROOT / ".agents" / "workflows"
     for name, template in WORKFLOW_TEMPLATE_MAP.items():
         checked_in = checked_in_root / f"{name}.md"
         assert re.sub(

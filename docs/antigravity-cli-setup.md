@@ -9,11 +9,11 @@
 Antigravity CLI auto-discovers `SKILL.md` files in `.antigravity/skills/` (or `.agents/skills/`). Each skill activates on demand when it matches your task.
 
 ```bash
-# Init the full .agent/ structure first
+# Init the full .agents/ structure first
 bro-skills init --target /path/to/project
 
 # Or install skills directly into the workspace skill dir
-antigravity skills install /path/to/bro-skills/.agent/skills/
+antigravity skills install /path/to/bro-skills/.agents/skills/
 ```
 
 - Workspace-scoped skills go into `.antigravity/skills/`.
@@ -34,8 +34,8 @@ For rules you want always loaded as persistent project context (rather than on-d
 ```markdown
 # Project Instructions
 
-@.agent/skills/speckit.implement/SKILL.md
-@.agent/skills/speckit.reviewer/SKILL.md
+@.agents/skills/speckit.implement/SKILL.md
+@.agents/skills/speckit.reviewer/SKILL.md
 ```
 
 > **Skills vs AGENTS.md:** Skills are on-demand expertise that activate only when relevant, keeping your context window clean. `AGENTS.md` provides persistent context loaded for every prompt. Use skills for phase-specific workflows and `AGENTS.md` for always-on project conventions.
@@ -74,12 +74,12 @@ Antigravity CLI supports session lifecycle hooks. Configure a `SessionStart` hoo
 Load any skill into the current session with the `@` symbol:
 
 ```markdown
-Use the @.agent/skills/speckit.tester/SKILL.md skill to implement this fix.
+Use the @.agents/skills/speckit.tester/SKILL.md skill to implement this fix.
 ```
 
 ## Workflows (Slash Commands)
 
-The repo ships workflows under `.agent/workflows/` mapped to the SDD lifecycle. Run from the project root:
+The repo ships workflows under `.agents/workflows/` mapped to the SDD lifecycle. Run from the project root:
 
 | Command | What it does |
 |---------|--------------|
@@ -96,4 +96,4 @@ The repo ships workflows under `.agent/workflows/` mapped to the SDD lifecycle. 
 1. **Prefer skills over AGENTS.md** — Skills activate on demand and keep your context window focused. Only put skills in `AGENTS.md` if you want them always loaded.
 2. **Skill descriptions matter** — Each `SKILL.md` has a `description` field that tells the agent when to activate it. Descriptions in this repo state both *what* the skill does and *when* to trigger it.
 3. **Respond in Vietnamese** — Per the project constitution, the agent communicates with developers in Vietnamese.
-4. **Combine with knowledge base** — Reference `.agent/knowledge_base/` files for project-specific standards.
+4. **Combine with knowledge base** — Reference `.agents/knowledge_base/` files for project-specific standards.

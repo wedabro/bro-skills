@@ -14,15 +14,15 @@ Helps Agents and Users quickly understand the entire "map" of the codebase, espe
 
 ### Phase 2: Dependency Mapping (Dependency Diagram)
 - Analyze the `import` or `require` commands to find dependencies between modules.
-- Save the results to `.agent/codebase/STRUCTURE.md` .
+- Save the results to `.agents/codebase/STRUCTURE.md` .
 
 ### Phase 3: Integration Inventory (Integration Inventory)
 - List 3rd party services (external API, DB connection).
-- Save to `.agent/codebase/INTEGRATIONS.md` .
+- Save to `.agents/codebase/INTEGRATIONS.md` .
 
 ## 📤 Output Artifacts
-- `.agent/codebase/ARCHITECTURE.md` : Architecture overview.
-- `.agent/codebase/CONVENTIONS.md` : Code conventions in use.
+- `.agents/codebase/ARCHITECTURE.md` : Architecture overview.
+- `.agents/codebase/CONVENTIONS.md` : Code conventions in use.
 
 ## 🚫 Guard Rails
 - DO NOT read the contents of all files at the same time to avoid context overflow. Prioritize reading headers and exports.

@@ -21,7 +21,7 @@ Compare 2 versions of artifact → highlight changes → evaluate impact.
 
 ## 📤 Output
 - Console: Diff summary table
-- File: `.agent/memory/diff-report.md` (if needed to save)
+- File: `.agents/memory/diff-report.md` (if needed to save)
 
 ## 🚫 Guard Rails
 - Compare and report ONLY — DO NOT arbitrarily edit artifacts.

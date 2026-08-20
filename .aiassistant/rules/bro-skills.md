@@ -3,13 +3,13 @@
 Project: bro-skills
 
 ## 1. SUPREME ORDER
-- Strictly follow the `.agent/memory/constitution.md` file.
+- Strictly follow the `.agents/memory/constitution.md` file.
 - Docker-First: All coding and app running activities must take place in the container. DO NOT run node/python on the host.
 - Ports: Flexibly configure ports via environment variables (.env) to avoid conflicts.
 
 ## 2. bro-skills PROTOCOL
 - Every task must go through the process: Specify → Plan → Tasks → Implement.
-- Use Workflows in `.agent/workflows/` and Skills in `.agent/skills/`.
+- Use Workflows in `.agents/workflows/` and Skills in `.agents/skills/`.
 
 ## 3. LANGUAGE & CODE
 - Respond in English.
@@ -19,7 +19,7 @@ Project: bro-skills
 
 ## 4. SAFETY
 - DO NOT run `docker compose down -v` on Production.
-- Generate automatic scripts (`.agent/scripts/`) for recurring errors.
+- Generate automatic scripts (`.agents/scripts/`) for recurring errors.
 - Check logs immediately on error: `docker compose logs -f <service>`.
 - **Auto-Commit**: MUST perform git commit & push immediately after completing any function or task according to Conventional Commits standards.
 
